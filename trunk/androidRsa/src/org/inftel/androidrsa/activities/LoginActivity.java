@@ -18,6 +18,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 public class LoginActivity extends Activity {
     private static final String TAG = "LoginActivity";
@@ -84,7 +85,7 @@ public class LoginActivity extends Activity {
             Log.i(TAG, "Conexión creada correctamente!");
         } catch (Exception e) {
             Log.e(TAG, "ERROR al crear conexión.");
-            // TODO mostrar error y cerrar.
+            Toast.makeText(this, "Error al conectar,intentelo de nuevo.", Toast.LENGTH_LONG).show();
             e.printStackTrace();
         }
 
@@ -126,7 +127,7 @@ public class LoginActivity extends Activity {
                 i = new Intent(this, RegisterActivity.class);
                 startActivity(i);
                 break;
-        // TODO cambiar contrase�a
+        // TODO cambiar contrase�a
         // case R.id.button_change_password:
         // i = new Intent(this, ChangePassword.class);
         // startActivity(i);
