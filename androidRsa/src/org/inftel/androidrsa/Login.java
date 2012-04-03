@@ -63,8 +63,8 @@ public class Login extends Activity {
     }
 
     public void onClickButtonLogin(View view) throws IOException {
-        textoEmail = (EditText) findViewById(R.id.texto_email_login);
-        textoPassword = (EditText) findViewById(R.id.texto_password_login);
+        textoEmail = (EditText) findViewById(R.id.text_email_login);
+        textoPassword = (EditText) findViewById(R.id.text_password_login);
 
     }
 
