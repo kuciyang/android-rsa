@@ -4,7 +4,6 @@ package org.inftel.androidrsa;
 import java.io.IOException;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -16,12 +15,7 @@ import android.widget.EditText;
 
 public class Login extends Activity {
 
-    private static final String TAG = "TAG_LOGIN";
-
-    private static ProgressDialog pd;
-
-    private static EditText textoEmail;
-    private static EditText textoPassword;
+    private static final String TAG = "Login";
 
     /** Called when the activity is first created. */
     @Override
@@ -63,15 +57,14 @@ public class Login extends Activity {
     }
 
     public void onClickButtonLogin(View view) throws IOException {
-        textoEmail = (EditText) findViewById(R.id.text_email_login);
-        textoPassword = (EditText) findViewById(R.id.text_password_login);
+        EditText textEmail = (EditText) findViewById(R.id.text_email_login);
+        EditText textPassword = (EditText) findViewById(R.id.text_password_login);
 
     }
 
     public void onClickButtonRegister(View view) throws IOException {
-        // TODO registro
-        // Intent i = new Intent(this, Register.class);
-        // startActivity(i);
+        Intent i = new Intent(this, Register.class);
+        startActivity(i);
     }
 
 }
