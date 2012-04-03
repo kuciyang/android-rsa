@@ -8,10 +8,14 @@ import org.jivesoftware.smack.Connection;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 
@@ -103,5 +107,32 @@ public class LoginActivity extends Activity {
         editor.putString("service", host.getText().toString());
         editor.putString("userid", host.getText().toString());
 
+    }
+
+    /** llamado cuando se pulsa el boton menu. */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_login, menu);
+        return true;
+    }
+
+    /** llamado cuando un elemento del menu es seleccionado. */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Intent i;
+        switch (item.getItemId()) {
+            case R.id.button_register:
+                i = new Intent(this, RegisterActivity.class);
+                startActivity(i);
+                break;
+        // TODO cambiar contraseña
+        // case R.id.button_change_password:
+        // i = new Intent(this, ChangePassword.class);
+        // startActivity(i);
+        // break;
+
+        }
+        return true;
     }
 }
