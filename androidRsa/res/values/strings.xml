@@ -18,5 +18,9 @@
     <string name="certificate">Certificate</string>
     <string name="choose_certificate">Choose certificate</string>
     <string name="pick_photo">Choose your avatar</string>
+    <string name="default_host">talk.google.com</string>
+    <string name="default_port">5222</string>
+    <string name="default_service">gmail.com</string>
+    <string name="default_userid">xxxxxx@gmail.com</string>
 
 </resources>
