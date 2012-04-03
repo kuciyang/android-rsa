@@ -3,5 +3,10 @@
 
     <string name="hello">Hello World, AndroidRsaActivity!</string>
     <string name="app_name">AndroidRsa</string>
+    <string name="login">Login</string>
+    <string name="password">Password</string>
+    <string name="register">Register</string>
+    <string name="preferences">Preferences</string>
+    <string name="change_password">Change Password</string>
 
 </resources>
