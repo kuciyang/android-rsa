@@ -17,5 +17,6 @@
     <string name="done">Done</string>
     <string name="certificate">Certificate</string>
     <string name="choose_certificate">Choose certificate</string>
+    <string name="pick_photo">Choose your avatar</string>
 
 </resources>
