@@ -8,5 +8,14 @@
     <string name="register">Register</string>
     <string name="preferences">Preferences</string>
     <string name="change_password">Change Password</string>
+    <string name="user">User</string>
+    <string name="enter_user">Enter your user name&#8230;</string>
+    <string name="enter_password">Enter your password&#8230;</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="enter_confirm_password">Re-enter password&#8230;</string>
+    <string name="image_description">Pick your avatar&#8230;</string>
+    <string name="done">Done</string>
+    <string name="certificate">Certificate</string>
+    <string name="choose_certificate">Choose certificate</string>
 
 </resources>
