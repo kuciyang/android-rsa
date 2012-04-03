@@ -11,7 +11,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
-import android.widget.EditText;
 
 public class Login extends Activity {
 
@@ -57,8 +56,9 @@ public class Login extends Activity {
     }
 
     public void onClickButtonLogin(View view) throws IOException {
-        EditText textEmail = (EditText) findViewById(R.id.text_email_login);
-        EditText textPassword = (EditText) findViewById(R.id.text_password_login);
+        // EditText textEmail = (EditText) findViewById(R.id.text_email_login);
+        // EditText textPassword = (EditText)
+        // findViewById(R.id.text_password_login);
 
     }
 
