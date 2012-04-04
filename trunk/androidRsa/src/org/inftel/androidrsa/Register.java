@@ -29,6 +29,8 @@ public class Register extends Activity {
         setContentView(R.layout.register);
     }
 
+    // find a image-avatar
+    // TODO controlar el tamaño
     public void onClickPickImage(View view) throws IOException {
         Intent i = new Intent(Intent.ACTION_PICK,
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
