@@ -27,6 +27,7 @@
         </activity>
         <activity android:name="org.inftel.androidrsa.activities.LoginActivity"></activity>
         <activity android:name="org.inftel.androidrsa.activities.EncodeActivity"></activity>
+        <activity android:name="org.inftel.androidrsa.activities.DecodeActivity"></activity>
     </application>
 
 </manifest>
