@@ -41,7 +41,7 @@ public class Conexion {
             // Connect to the server
             con.connect();
             // Log into the server
-            // con.login(userid, password);
+            con.login(userid, password, service);
             return con;
         }
 
