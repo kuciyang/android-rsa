@@ -21,13 +21,18 @@ import java.io.File;
 import android.os.Environment;
 
 public class AndroidRsaConstants {
+    // Constants for directories, images...
 
     public static final File EXTERNAL_SD_PATH = new File(Environment.getExternalStorageDirectory()
             .getAbsolutePath());
     public static final String SP_KEY_RUN_ONCE = "SP_KEY_RUN_ONCE";
     public static final String FTYPE = ".crt";
-    public static final String ENCODED_IMAGE_NAME = "encondedImage.png";
+    public static final String ENCODED_IMAGE_NAME = "_mobistego";
 
+    // Constants for intents
+
+    public static final String IMAGE_PATH = "img_path";
+    public static final String FILE_PATH = "file_path";
     /**
      * PREFERENCES: Se corresponden con las keys definidas en
      * res/xml/preferences.xml
