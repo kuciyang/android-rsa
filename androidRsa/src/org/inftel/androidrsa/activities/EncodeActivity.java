@@ -55,7 +55,7 @@ public class EncodeActivity extends Activity {
         // Encoding..
         progressBar = new MobiProgressBar(EncodeActivity.this);
         progressBar.setMax(100);
-        progressBar.setMessage("Enconding");
+        progressBar.setMessage(getResources().getString(R.string.encoding));
         progressBar.show();
         Thread tt = new Thread(new Runnable() {
             public void run() {
@@ -96,7 +96,7 @@ public class EncodeActivity extends Activity {
             progressBar.dismiss();
             AlertDialog.Builder builder = new AlertDialog.Builder(
                     context);
-            builder.setMessage("Saved")
+            builder.setMessage(getResources().getString(R.string.saved))
                     .setCancelable(false).setPositiveButton(
                             context.getText(R.string.ok),
                             new DialogInterface.OnClickListener() {
@@ -227,7 +227,7 @@ public class EncodeActivity extends Activity {
 
     final Runnable mSetInderminate = new Runnable() {
         public void run() {
-            progressBar.setMessage("saving");
+            progressBar.setMessage(getResources().getString(R.string.saving));
             progressBar.setIndeterminate(true);
         }
     };

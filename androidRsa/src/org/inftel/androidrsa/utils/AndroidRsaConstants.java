@@ -21,26 +21,28 @@ import java.io.File;
 import android.os.Environment;
 
 public class AndroidRsaConstants {
-    // Constants for directories, images...
+
+    // Constants for directories, names, types...
 
     public static final File EXTERNAL_SD_PATH = new File(Environment.getExternalStorageDirectory()
             .getAbsolutePath());
     public static final String SP_KEY_RUN_ONCE = "SP_KEY_RUN_ONCE";
     public static final String FTYPE = ".crt";
     public static final String ENCODED_IMAGE_NAME = "_mobistego";
+    public static final String KEY_NAME = "key_";
 
     // Constants for intents
 
     public static final String IMAGE_PATH = "img_path";
     public static final String FILE_PATH = "file_path";
-    /**
-     * PREFERENCES: Se corresponden con las keys definidas en
-     * res/xml/preferences.xml
-     */
+
+    // Constants for preferences
+
     public static String SHARED_PREFERENCE_FILE = "SHARED_PREFERENCE_FILE";
     public static String KEY_IP_PREFERENCE = "ip_preference";
     public static String KEY_PORT_PREFERENCE = "port_preference";
     public static String KEY_PATH_PREFERENCE = "path_preference";
     public static String KEY_PHONE_NUMBER_PREFERENCE = "phone_number_preference";
-
+    public static final String CERT_PATH = "cert_path";
+    public static final String KEY_PATH = "key_path";
 }
