@@ -34,7 +34,8 @@ public class ContactsActivity extends ListActivity {
         list.toArray(values);
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                R.layout.contactrow, values);
+                R.layout.contactrow, R.id.textView1, values);
+
         setListAdapter(adapter);
     }
 }
