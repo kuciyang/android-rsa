@@ -47,8 +47,20 @@ public class Conexion {
 
     }
 
+    public static Connection getInstance() {
+        if (con != null) {
+            Log.d(TAG, "La conexión ya existe,devolviendo!");
+            return con;
+        }
+        else {
+            throw new RuntimeException("Error, no esta logueado.");
+        }
+    }
+
     public static void disconnect() {
-        con.disconnect();
+        if ((con != null) && (con.isConnected())) {
+            con.disconnect();
+        }
         con = null;
     }
 
