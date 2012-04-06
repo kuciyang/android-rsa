@@ -26,6 +26,7 @@ public class AndroidRsaConstants {
             .getAbsolutePath());
     public static final String SP_KEY_RUN_ONCE = "SP_KEY_RUN_ONCE";
     public static final String FTYPE = ".crt";
+    public static final String ENCODED_IMAGE_NAME = "encondedImage.png";
 
     /**
      * PREFERENCES: Se corresponden con las keys definidas en
