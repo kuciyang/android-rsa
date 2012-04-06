@@ -30,11 +30,15 @@ public class AndroidRsaConstants {
     public static final String FTYPE = ".crt";
     public static final String ENCODED_IMAGE_NAME = "_mobistego";
     public static final String KEY_NAME = "key_";
+    public static final String DECODED_CERT = "decoded_cert";
+    public static final String DECODED_CERT_PATH = EXTERNAL_SD_PATH
+            + File.separator + "decoded_cert.crt";
 
     // Constants for intents
 
     public static final String IMAGE_PATH = "img_path";
     public static final String FILE_PATH = "file_path";
+    public static final String STEGO_IMAGE_PATH = "stego_img_path";
 
     // Constants for preferences
 

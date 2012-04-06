@@ -80,7 +80,7 @@ public class EncodeActivity extends Activity {
             while ((line = r.readLine()) != null) {
                 total.append(line);
             }
-
+            fis.close();
         } catch (FileNotFoundException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
