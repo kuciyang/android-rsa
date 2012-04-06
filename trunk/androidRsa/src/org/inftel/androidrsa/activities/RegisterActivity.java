@@ -10,8 +10,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 import org.inftel.androidrsa.R;
-import org.inftel.androidrsa.steganography.EncodeAndDecode;
-import org.inftel.androidrsa.steganography.TwoReturn;
 import org.inftel.androidrsa.utils.AndroidRsaConstants;
 
 import android.app.Activity;
@@ -197,22 +195,12 @@ public class RegisterActivity extends Activity {
         if (mChosenFile != null && mChosenImage != null) {
             // TODO mezclar imagen con certificado
 
-            // Extracting strings from the file
-
-            /**
-             * Encodes a text message in an image. Writes encoded image to a png
-             * file.
-             * 
-             * @param original Pathway of the file containing the image where
-             *            the text will be hidden.
-             * @param writeTo Pathway of the file where the new image should be
-             *            written to.
-             * @param message Text to be hidden in the image.
-             */
-            TwoReturn encodedImage = EncodeAndDecode.encodeText(mChosenImagePath,
-                    AndroidRsaConstants.EXTERNAL_SD_PATH.getAbsolutePath() + File.separator
-                            + AndroidRsaConstants.ENCODED_IMAGE_NAME,
-                    converToString(mChosenFile));
+            // TwoReturn encodedImage =
+            // EncodeAndDecode.encodeText(mChosenImagePath,
+            // AndroidRsaConstants.EXTERNAL_SD_PATH.getAbsolutePath() +
+            // File.separator
+            // + AndroidRsaConstants.ENCODED_IMAGE_NAME,
+            // converToString(mChosenFile));
 
             Intent i = new Intent(this, LoginActivity.class);
             startActivity(i);
