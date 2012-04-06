@@ -84,7 +84,7 @@ public class LoginActivity extends Activity {
                     userid.getText().toString(),
                     password.getText().toString());
             Log.i(TAG, "Conexión creada correctamente!");
-            Log.d(TAG, "isAuthenticated=" + connection.isAuthenticated());
+            // Log.d(TAG, "isAuthenticated=" + connection.isAuthenticated());
         } catch (Exception e) {
             Log.e(TAG, "ERROR al crear conexión.");
             Toast.makeText(this, "Error al conectar,intentelo de nuevo.", Toast.LENGTH_LONG).show();
@@ -92,11 +92,8 @@ public class LoginActivity extends Activity {
             Conexion.disconnect();
         }
 
-        // Disconnect from the server
-        Conexion.disconnect();
-
-        // Intent i = new Intent(this, ContactsActivity.class);
-        // startActivity(i);
+        Intent i = new Intent(this, ContactsActivity.class);
+        startActivity(i);
     }
 
     public void savePreferences() {
