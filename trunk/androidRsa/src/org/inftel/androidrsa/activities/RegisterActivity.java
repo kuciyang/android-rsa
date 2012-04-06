@@ -1,15 +1,12 @@
 
 package org.inftel.androidrsa.activities;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.InputStreamReader;
 
 import org.inftel.androidrsa.R;
+import org.inftel.androidrsa.steganography.MobiProgressBar;
 import org.inftel.androidrsa.utils.AndroidRsaConstants;
 
 import android.app.Activity;
@@ -26,6 +23,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.view.View;
 import android.view.Window;
@@ -41,6 +39,9 @@ public class RegisterActivity extends Activity {
     private String mChosenFileString;
     private Bitmap mChosenImage;
     private String mChosenImagePath;
+    private MobiProgressBar progressBar;
+    private final Handler handler = new Handler();
+    private Context context;
 
     private static final int DIALOG_LOAD_FILE = 1000;
     private static final int DIALOG_RUN_ONCE = 1001;
@@ -49,6 +50,7 @@ public class RegisterActivity extends Activity {
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        context = this;
         super.onCreate(savedInstanceState);
         // Remove title bar
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -193,41 +195,199 @@ public class RegisterActivity extends Activity {
     public void onClickButtonDone(View view) throws IOException {
 
         if (mChosenFile != null && mChosenImage != null) {
-            // TODO mezclar imagen con certificado
 
-            // TwoReturn encodedImage =
-            // EncodeAndDecode.encodeText(mChosenImagePath,
-            // AndroidRsaConstants.EXTERNAL_SD_PATH.getAbsolutePath() +
-            // File.separator
-            // + AndroidRsaConstants.ENCODED_IMAGE_NAME,
-            // converToString(mChosenFile));
+            // saving the key's path and cert's path
 
-            Intent i = new Intent(this, LoginActivity.class);
+            // progressBar = new MobiProgressBar(RegisterActivity.this);
+            // progressBar.setMax(100);
+            // progressBar.setMessage("Enconding");
+            // progressBar.show();
+            // Thread tt = new Thread(new Runnable() {
+            // public void run() {
+            // encode(converToString(mChosenFile), mChosenImage,
+            // mChosenImagePath);
+            // handler.post(mShowAlert);
+            //
+            // }
+            // });
+            // tt.start();
+            //
+            // Intent i = new Intent(this, LoginActivity.class);
+            // startActivity(i);
+
+            Intent i = new Intent(getApplicationContext(), EncodeActivity.class);
+            i.putExtra(AndroidRsaConstants.FILE_PATH, AndroidRsaConstants.EXTERNAL_SD_PATH
+                    + File.separator + mChosenFileString);
+            i.putExtra(AndroidRsaConstants.IMAGE_PATH, mChosenImagePath);
             startActivity(i);
+
         } else {
             showDialog(DIALOG_NOT_CHOSEN);
         }
 
     }
 
-    private String converToString(File file) {
-        FileInputStream fis;
-        StringBuilder total = new StringBuilder();
-        try {
-            fis = new FileInputStream(file);
-            BufferedReader r = new BufferedReader(new InputStreamReader(fis));
-            String line;
-            while ((line = r.readLine()) != null) {
-                total.append(line);
-            }
-
-        } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        return total.toString();
-    }
+    // private String converToString(File file) {
+    // FileInputStream fis;
+    // StringBuilder total = new StringBuilder();
+    // try {
+    // fis = new FileInputStream(file);
+    // BufferedReader r = new BufferedReader(new InputStreamReader(fis));
+    // String line;
+    // while ((line = r.readLine()) != null) {
+    // total.append(line);
+    // }
+    //
+    // } catch (FileNotFoundException e) {
+    // // TODO Auto-generated catch block
+    // e.printStackTrace();
+    // } catch (IOException e) {
+    // // TODO Auto-generated catch block
+    // e.printStackTrace();
+    // }
+    // return total.toString();
+    // }
+    //
+    // final Runnable mShowAlert = new Runnable() {
+    // public void run() {
+    // progressBar.dismiss();
+    // AlertDialog.Builder builder = new AlertDialog.Builder(
+    // context);
+    // builder.setMessage("Saved")
+    // .setCancelable(false).setPositiveButton(
+    // context.getText(R.string.ok),
+    // new DialogInterface.OnClickListener() {
+    // public void onClick(
+    // DialogInterface dialog,
+    // int id) {
+    // RegisterActivity.this.finish();
+    // }
+    // });
+    //
+    // AlertDialog alert = builder.create();
+    // alert.show();
+    // }
+    // };
+    //
+    // private Uri encode(String s, Bitmap sourceBitmap, String
+    // absoluteFilePathSource) {
+    //
+    // Uri result = null;
+    //
+    // int width = sourceBitmap.getWidth();
+    // int height = sourceBitmap.getHeight();
+    //
+    // int[] oneD = new int[width * height];
+    // sourceBitmap.getPixels(oneD, 0, width, 0, 0, width, height);
+    // int density = sourceBitmap.getDensity();
+    // sourceBitmap.recycle();
+    // byte[] byteImage = LSB2bit.encodeMessage(oneD, width, height, s,
+    // new ProgressHandler() {
+    // private int mysize;
+    // private int actualSize;
+    //
+    // public void increment(final int inc) {
+    // actualSize += inc;
+    // if (actualSize % mysize == 0)
+    // handler.post(mIncrementProgress);
+    // }
+    //
+    // public void setTotal(final int tot) {
+    // mysize = tot / 50;
+    // handler.post(mInitializeProgress);
+    // }
+    //
+    // public void finished() {
+    //
+    // }
+    // });
+    // oneD = null;
+    // sourceBitmap = null;
+    // int[] oneDMod = LSB2bit.byteArrayToIntArray(byteImage);
+    // byteImage = null;
+    // Log.v("Encode", "" + oneDMod[0]);
+    // Log.v("Encode Alpha", "" + (oneDMod[0] >> 24 & 0xFF));
+    // Log.v("Encode Red", "" + (oneDMod[0] >> 16 & 0xFF));
+    // Log.v("Encode Green", "" + (oneDMod[0] >> 8 & 0xFF));
+    // Log.v("Encode Blue", "" + (oneDMod[0] & 0xFF));
+    //
+    // System.gc();
+    // Log.v("Free memory", Runtime.getRuntime().freeMemory() + "");
+    // Log.v("Image mesure", (width * height * 32 / 8) + "");
+    //
+    // Bitmap destBitmap = Bitmap.createBitmap(width, height,
+    // Config.ARGB_8888);
+    //
+    // destBitmap.setDensity(density);
+    // int partialProgr = height * width / 50;
+    // int masterIndex = 0;
+    // for (int j = 0; j < height; j++)
+    // for (int i = 0; i < width; i++) {
+    // // The unique way to write correctly the sourceBitmap, android
+    // // bug!!!
+    // destBitmap.setPixel(i, j, Color.argb(0xFF,
+    // oneDMod[masterIndex] >> 16 & 0xFF,
+    // oneDMod[masterIndex] >> 8 & 0xFF,
+    // oneDMod[masterIndex++] & 0xFF));
+    // if (masterIndex % partialProgr == 0)
+    // handler.post(mIncrementProgress);
+    // }
+    // handler.post(mSetInderminate);
+    // Log.v("Encode", "" + destBitmap.getPixel(0, 0));
+    // Log.v("Encode Alpha", "" + (destBitmap.getPixel(0, 0) >> 24 & 0xFF));
+    // Log.v("Encode Red", "" + (destBitmap.getPixel(0, 0) >> 16 & 0xFF));
+    // Log.v("Encode Green", "" + (destBitmap.getPixel(0, 0) >> 8 & 0xFF));
+    // Log.v("Encode Blue", "" + (destBitmap.getPixel(0, 0) & 0xFF));
+    //
+    // String sdcardState = android.os.Environment.getExternalStorageState();
+    // String destPath = null;
+    // int indexSepar = absoluteFilePathSource.lastIndexOf(File.separator);
+    // int indexPoint = absoluteFilePathSource.lastIndexOf(".");
+    // if (indexPoint <= 1)
+    // indexPoint = absoluteFilePathSource.length();
+    // String fileNameDest = absoluteFilePathSource.substring(indexSepar + 1,
+    // indexPoint);
+    // fileNameDest += AndroidRsaConstants.ENCODED_IMAGE_NAME;
+    // if (sdcardState.contentEquals(android.os.Environment.MEDIA_MOUNTED))
+    // destPath = android.os.Environment.getExternalStorageDirectory()
+    // + File.separator + fileNameDest + ".png";
+    //
+    // OutputStream fout = null;
+    // try {
+    //
+    // Log.v("Path", destPath);
+    // fout = new FileOutputStream(destPath);
+    // destBitmap.compress(Bitmap.CompressFormat.PNG, 100, fout);
+    // // Media.insertImage(getContentResolver(),destPath, fileNameDest,
+    // // "MobiStego Encoded");
+    // result = Uri.parse("file://" + destPath);
+    // sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, result));
+    // fout.flush();
+    // fout.close();
+    //
+    // } catch (IOException e) {
+    // e.printStackTrace();
+    // }
+    // destBitmap.recycle();
+    // return result;
+    // }
+    //
+    // final Runnable mIncrementProgress = new Runnable() {
+    // public void run() {
+    // progressBar.incrementProgressBy(1);
+    // }
+    // };
+    //
+    // final Runnable mInitializeProgress = new Runnable() {
+    // public void run() {
+    // progressBar.setMax(100);
+    // }
+    // };
+    //
+    // final Runnable mSetInderminate = new Runnable() {
+    // public void run() {
+    // progressBar.setMessage("saving");
+    // progressBar.setIndeterminate(true);
+    // }
+    // };
 }
