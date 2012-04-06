@@ -25,6 +25,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
@@ -201,9 +202,14 @@ public class RegisterActivity extends Activity {
     public void onClickButtonDone(View view) throws IOException {
         // TODO comprobar tamaño de la foto
         // TODO comprobar que el certificado esta firmado x nuestra CA
+
+        String mChosenFileStringWithoutExt = mChosenFileString.substring(0,
+                mChosenFileString.indexOf("."));
         String mKeyPath = AndroidRsaConstants.EXTERNAL_SD_PATH
-                + File.separator + AndroidRsaConstants.KEY_NAME + mChosenFileString;
+                + File.separator + AndroidRsaConstants.KEY_NAME + mChosenFileStringWithoutExt
+                + ".pem";
         File mKey = new File(mKeyPath);
+        Log.d(TAG, mKeyPath);
         if (mKey.exists()) {
             if (mChosenFile != null && mChosenImage != null) {
                 String mChosenFilePath = AndroidRsaConstants.EXTERNAL_SD_PATH

@@ -31,5 +31,8 @@
     <string name="encoding">Enconding</string>
     <string name="saved">Saved</string>
     <string name="saving">Saving</string>
+    <string name="decoding">Decoding</string>
+    <string name="error_image_too_large">Error, image too large</string>
+    <string name="no_stego_image">No stego image</string>
 
 </resources>
