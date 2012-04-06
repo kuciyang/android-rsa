@@ -80,17 +80,20 @@ public class LoginActivity extends Activity {
         try {
             connection = Conexion.getInstance(host.getText().toString(),
                     Integer.parseInt(port.getText().toString()),
+                    service.getText().toString(),
                     userid.getText().toString(),
                     password.getText().toString());
             Log.i(TAG, "Conexión creada correctamente!");
+            Log.d(TAG, "isAuthenticated=" + connection.isAuthenticated());
         } catch (Exception e) {
             Log.e(TAG, "ERROR al crear conexión.");
             Toast.makeText(this, "Error al conectar,intentelo de nuevo.", Toast.LENGTH_LONG).show();
             e.printStackTrace();
+            Conexion.disconnect();
         }
 
         // Disconnect from the server
-        // connection.disconnect();
+        Conexion.disconnect();
 
         // Intent i = new Intent(this, ContactsActivity.class);
         // startActivity(i);
