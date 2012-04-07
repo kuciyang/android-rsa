@@ -17,6 +17,9 @@ import org.jivesoftware.smack.packet.Presence;
 import android.app.ListActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -29,6 +32,7 @@ public class ContactsActivity extends ListActivity {
     private Connection connection;
     public static Roster roster;
     private String[] nombres;
+    private boolean showAll = true;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -58,16 +62,23 @@ public class ContactsActivity extends ListActivity {
             }
         });
 
-        pintarUI();
+        pintarUI(true);
 
     }
 
-    private void pintarUI() {
+    private void pintarUI(boolean todos) {
         Collection<RosterEntry> entries = roster.getEntries();
         ArrayList<String> list = new ArrayList<String>();
         for (RosterEntry entry : entries) {
-            if (entry.getName() != null) {
+            if ((todos) && (entry.getName() != null)) {
                 list.add(entry.getName());
+            }
+            else if (((!todos) && (entry.getName() != null))) {
+                int status = Status.getStatusFromPresence(roster.getPresence(entry.getUser()));
+                if ((status == Status.CONTACT_STATUS_AVAILABLE)
+                        || (status == Status.CONTACT_STATUS_AVAILABLE_FOR_CHAT)) {
+                    list.add(entry.getName());
+                }
             }
         }
 
@@ -91,6 +102,46 @@ public class ContactsActivity extends ListActivity {
 
         });
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_contacts, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.MenuAdd:
+                Toast.makeText(this, "pulsado añadir", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.MenuToggle:
+                Toast.makeText(this, "pulsado toogle", Toast.LENGTH_SHORT).show();
+                pintarUI(!showAll);
+                showAll = !showAll;
+                return true;
+            case R.id.MenuChangeState:
+                Toast.makeText(this, "pulsado cambiar estado", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.available:
+                Toast.makeText(this, "cambiado estado a available", Toast.LENGTH_SHORT).show();
+                Presence presence = new Presence(Presence.Type.available);
+                presence.setMode(Presence.Mode.available);
+                presence.setStatus("aqui estamos ya!");
+                connection.sendPacket(presence);
+                return true;
+            case R.id.away:
+                Toast.makeText(this, "cambiado estado a away", Toast.LENGTH_SHORT).show();
+                Presence presence2 = new Presence(Presence.Type.unavailable);
+                presence2.setStatus("De parranda!");
+                presence2.setMode(Presence.Mode.away);
+                connection.sendPacket(presence2);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override
