@@ -1,22 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content" >
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/fondo_verde" >
+
     <ImageView
-        android:id="@+id/icon"
-        android:layout_width="22px"
-        android:layout_height="22px"
-        android:layout_marginLeft="4px"
-        android:layout_marginRight="10px"
-        android:layout_marginTop="4px"
+        android:id="@+id/avatar"
+        android:layout_width="40dip"
+        android:layout_height="40dip"
+        android:layout_centerVertical="true"
+        android:layout_marginBottom="5dip"
+        android:layout_marginLeft="5dip"
+        android:layout_marginRight="5dip"
+        android:layout_marginTop="5dip"
         android:src="@drawable/ic_launcher" >
     </ImageView>
-    
-    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+
+    <TextView
+        xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/nombre"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:text="Nombre" 
-        android:textSize="20sp"        
-        />
-</LinearLayout>
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="10dp"
+        android:layout_toRightOf="@+id/avatar"
+        android:text="Nombre"
+        android:textColor="@color/negro"
+        android:textSize="15dip" />
+
+    <ImageView
+        android:id="@+id/icon"
+        android:layout_width="15dip"
+        android:layout_height="15dip"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="5dp"
+        android:src="@drawable/ic_launcher" />
+
+</RelativeLayout>
