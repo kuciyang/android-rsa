@@ -68,6 +68,9 @@ public class EncodeActivity extends Activity {
 
         Intent i = new Intent(this, LoginActivity.class);
         startActivity(i);
+
+        // Intent i = new Intent(this, DecodeActivity.class);
+        // startActivity(i);
     }
 
     private String converToString(File file) {

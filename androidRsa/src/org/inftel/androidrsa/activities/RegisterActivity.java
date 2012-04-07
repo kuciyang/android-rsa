@@ -6,7 +6,6 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 
 import org.inftel.androidrsa.R;
-import org.inftel.androidrsa.steganography.MobiProgressBar;
 import org.inftel.androidrsa.utils.AndroidRsaConstants;
 
 import android.app.Activity;
@@ -23,7 +22,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
@@ -40,9 +38,6 @@ public class RegisterActivity extends Activity {
     private String mChosenFileString;
     private Bitmap mChosenImage;
     private String mChosenImagePath;
-    private MobiProgressBar progressBar;
-    private final Handler handler = new Handler();
-    private Context context;
 
     private static final int DIALOG_LOAD_FILE = 1000;
     private static final int DIALOG_RUN_ONCE = 1001;
@@ -52,7 +47,6 @@ public class RegisterActivity extends Activity {
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        context = this;
         super.onCreate(savedInstanceState);
         // Remove title bar
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -75,9 +69,10 @@ public class RegisterActivity extends Activity {
     }
 
     public void onClickPickImage(View view) throws IOException {
-        Intent i = new Intent(Intent.ACTION_PICK,
-                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(i, ACTIVITY_SELECT_IMAGE);
+
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("image/*");
+        startActivityForResult(intent, ACTIVITY_SELECT_IMAGE);
     }
 
     // Find *.crt in the sd
@@ -171,6 +166,7 @@ public class RegisterActivity extends Activity {
         showDialog(DIALOG_LOAD_FILE);
     }
 
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
         super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
 
@@ -187,14 +183,15 @@ public class RegisterActivity extends Activity {
                     cursor.moveToFirst();
 
                     int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                    // file path of selected image
                     mChosenImagePath = cursor.getString(columnIndex);
                     cursor.close();
-
+                    // Convert file path into bitmap image using below line.
                     mChosenImage = BitmapFactory.decodeFile(mChosenImagePath);
 
+                    // put bitmapimage in imageview
                     ImageView img = (ImageView) findViewById(R.id.image);
                     img.setImageBitmap(mChosenImage);
-
                 }
         }
     }
@@ -203,15 +200,16 @@ public class RegisterActivity extends Activity {
         // TODO comprobar tamaño de la foto
         // TODO comprobar que el certificado esta firmado x nuestra CA
 
-        String mChosenFileStringWithoutExt = mChosenFileString.substring(0,
-                mChosenFileString.indexOf("."));
-        String mKeyPath = AndroidRsaConstants.EXTERNAL_SD_PATH
-                + File.separator + AndroidRsaConstants.KEY_NAME + mChosenFileStringWithoutExt
-                + ".pem";
-        File mKey = new File(mKeyPath);
-        Log.d(TAG, mKeyPath);
-        if (mKey.exists()) {
-            if (mChosenFile != null && mChosenImage != null) {
+        if (mChosenFile != null && mChosenImage != null) {
+            String mChosenFileStringWithoutExt = mChosenFileString.substring(0,
+                    mChosenFileString.indexOf("."));
+            String mKeyPath = AndroidRsaConstants.EXTERNAL_SD_PATH
+                    + File.separator + AndroidRsaConstants.KEY_NAME + mChosenFileStringWithoutExt
+                    + ".pem";
+            File mKey = new File(mKeyPath);
+            Log.d(TAG, mKeyPath);
+
+            if (mKey.exists()) {
                 String mChosenFilePath = AndroidRsaConstants.EXTERNAL_SD_PATH
                         + File.separator + mChosenFileString;
 
@@ -228,12 +226,12 @@ public class RegisterActivity extends Activity {
                 i.putExtra(AndroidRsaConstants.FILE_PATH, mChosenFilePath);
                 i.putExtra(AndroidRsaConstants.IMAGE_PATH, mChosenImagePath);
                 startActivity(i);
-
             } else {
-                showDialog(DIALOG_NOT_CHOSEN);
+                showDialog(DIALOG_KEY_NOT_FOUND);
             }
+
         } else {
-            showDialog(DIALOG_KEY_NOT_FOUND);
+            showDialog(DIALOG_NOT_CHOSEN);
         }
 
     }
