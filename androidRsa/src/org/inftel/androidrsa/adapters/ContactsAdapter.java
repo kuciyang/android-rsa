@@ -18,6 +18,7 @@ import android.widget.TextView;
 public class ContactsAdapter extends ArrayAdapter<String> {
     private final Context context;
     private final String[] values;
+    private final String TAG = "ContactsAdapter";
 
     public ContactsAdapter(Context context, String[] values) {
         super(context, R.layout.contactrow, values);
@@ -43,11 +44,12 @@ public class ContactsAdapter extends ArrayAdapter<String> {
         for (RosterEntry entry : roster.getEntries()) {
             if ((entry.getName() != null) && (entry.getName().equals(nombre))) {
                 int status = Status.getStatusFromPresence(roster.getPresence(entry.getUser()));
+                // Log.i(TAG,entry.getName()+" : " + status);
                 if ((status == Status.CONTACT_STATUS_AVAILABLE)
                         || (status == Status.CONTACT_STATUS_AVAILABLE_FOR_CHAT)) {
                     iv.setImageResource(R.drawable.status_available);
                 }
-                if ((status == Status.CONTACT_STATUS_AWAY)
+                else if ((status == Status.CONTACT_STATUS_AWAY)
                         || (status == Status.CONTACT_STATUS_BUSY)) {
                     iv.setImageResource(R.drawable.status_idle);
                 }
