@@ -2,12 +2,13 @@
 package org.inftel.androidrsa.activities;
 
 import org.inftel.androidrsa.R;
-import org.inftel.androidrsa.xmpp.Conexion;
+import org.inftel.androidrsa.asynctask.LoginTask;
 import org.jivesoftware.smack.Connection;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -18,12 +19,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.Toast;
 
 public class LoginActivity extends Activity {
     private static final String TAG = "LoginActivity";
     private SharedPreferences prefs;
     private Connection connection;
+    private ProgressDialog pDialog;
 
     /** Called when the activity is first created. */
     @Override
@@ -67,32 +68,19 @@ public class LoginActivity extends Activity {
 
     public void login(View v) {
         savePreferences();
-
         Editor editor = prefs.edit();
-        EditText host = (EditText) findViewById(R.id.host);
-        EditText port = (EditText) findViewById(R.id.port);
-        EditText service = (EditText) findViewById(R.id.service);
-        EditText userid = (EditText) findViewById(R.id.userid);
-        EditText password = (EditText) findViewById(R.id.password);
+        final EditText host = (EditText) findViewById(R.id.host);
+        final EditText port = (EditText) findViewById(R.id.port);
+        final EditText service = (EditText) findViewById(R.id.service);
+        final EditText userid = (EditText) findViewById(R.id.userid);
+        final EditText password = (EditText) findViewById(R.id.password);
 
-        // TODO Comprobar que tenemos salida a internet.
-
-        try {
-            connection = Conexion.getInstance(host.getText().toString(),
-                    Integer.parseInt(port.getText().toString()),
-                    service.getText().toString(),
-                    userid.getText().toString(),
-                    password.getText().toString());
-            Log.i(TAG, "Conexión creada correctamente!");
-
-            Intent i = new Intent(this, ContactsActivity.class);
-            startActivity(i);
-        } catch (Exception e) {
-            Log.e(TAG, "ERROR al crear conexión.");
-            Toast.makeText(this, "Error al conectar,intentelo de nuevo.", Toast.LENGTH_LONG).show();
-            e.printStackTrace();
-            Conexion.disconnect();
-        }
+        LoginTask task = new LoginTask(connection, host.getText().toString(),
+                Integer.parseInt(port.getText().toString()),
+                service.getText().toString(),
+                userid.getText().toString(),
+                password.getText().toString(), this);
+        task.execute();
 
     }
 
