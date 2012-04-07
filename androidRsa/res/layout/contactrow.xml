@@ -26,7 +26,8 @@
         android:layout_toRightOf="@+id/avatar"
         android:text="Nombre"
         android:textColor="@color/negro"
-        android:textSize="15dip" />
+        android:textSize="15dip">
+    </TextView>
 
     <ImageView
         android:id="@+id/icon"
@@ -35,6 +36,7 @@
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:layout_marginRight="5dp"
-        android:src="@drawable/ic_launcher" />
+        android:src="@drawable/ic_launcher">
+    </ImageView>
 
 </RelativeLayout>
