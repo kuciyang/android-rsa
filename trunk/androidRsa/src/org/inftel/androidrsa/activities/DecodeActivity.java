@@ -1,20 +1,3 @@
-/**
- * Copyright (C) 2009  Pasquale Paola
-
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation; either
-version 2.1 of the License, or (at your option) any later version.
-
-This library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, write to the Free Software
-Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
- */
 
 package org.inftel.androidrsa.activities;
 
@@ -22,8 +5,19 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.SignatureException;
+import java.security.spec.InvalidKeySpecException;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.security.cert.CertificateException;
 
 import org.inftel.androidrsa.R;
+import org.inftel.androidrsa.rsa.RSA;
 import org.inftel.androidrsa.steganography.LSB2bit;
 import org.inftel.androidrsa.utils.AndroidRsaConstants;
 
@@ -39,10 +33,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 
-/**
- * @author <a href="mailto:pasquale.paola@gmail.com">Pasquale Paola</a>
- */
 public class DecodeActivity extends Activity implements Runnable {
+    private static final String TAG = "DecodeActivity";
+
+    // DEBUG
+    private static final int ACTIVITY_SELECT_IMAGE = 100;
 
     private String mStegoImagePath;
     private Context context;
@@ -62,8 +57,13 @@ public class DecodeActivity extends Activity implements Runnable {
         context = this;
 
         // Obtaning intent information
-        Bundle bundle = getIntent().getExtras();
-        mStegoImagePath = bundle.getString(AndroidRsaConstants.STEGO_IMAGE_PATH);
+        // Bundle bundle = getIntent().getExtras();
+        // mStegoImagePath =
+        // bundle.getString(AndroidRsaConstants.STEGO_IMAGE_PATH);
+
+        // DEBUG
+        mStegoImagePath = AndroidRsaConstants.EXTERNAL_SD_PATH
+                + File.separator + "Koala_mobistego.png";
 
         handler = new Handler();
         dd = new ProgressDialog(this);
@@ -154,6 +154,57 @@ public class DecodeActivity extends Activity implements Runnable {
 
                 public void run() {
                     convertToFile(vvv);
+
+                    try {
+                        RSA.checkCertificate(AndroidRsaConstants.DECODED_CERT_PATH,
+                                getApplicationContext());
+                        Log.d("CERTIFICADO", "VALIDO");
+
+                        try {
+                            String cifrado = RSA
+                                    .cipherString(
+                                            "hola",
+                                            RSA.getPublicKeyFromCertificate(AndroidRsaConstants.EXTERNAL_SD_PATH
+                                                    + File.separator
+                                                    + "C1.crt"));
+                            Log.d("CIFRADO", cifrado);
+
+                            String descifrado = RSA.decipherString(cifrado,
+                                    RSA.getPrivateKey(getApplicationContext()));
+                            Log.d("DESCIFRADO", descifrado);
+                        } catch (NoSuchPaddingException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        } catch (IllegalBlockSizeException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        } catch (BadPaddingException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        } catch (InvalidKeySpecException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+                    } catch (InvalidKeyException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    } catch (NoSuchAlgorithmException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    } catch (NoSuchProviderException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    } catch (SignatureException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    } catch (CertificateException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+
                 }
             };
             handler.post(runnableSetText);
