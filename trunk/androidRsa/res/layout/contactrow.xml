@@ -26,7 +26,7 @@
         android:layout_toRightOf="@+id/avatar"
         android:text="Nombre"
         android:textColor="@color/negro"
-        android:textSize="15dip">
+        android:textSize="15dip" >
     </TextView>
 
     <ImageView
@@ -35,8 +35,16 @@
         android:layout_height="15dip"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:layout_marginRight="5dp"
-        android:src="@drawable/ic_launcher">
-    </ImageView>
+        android:layout_marginRight="3dp"
+        android:src="@drawable/status_away" />
+
+    <ImageView
+        android:id="@+id/iconsec"
+        android:layout_width="15dip"
+        android:layout_height="15dip"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="3dp"
+        android:layout_toLeftOf="@+id/icon"
+        android:src="@drawable/ic_launcher" />
 
 </RelativeLayout>

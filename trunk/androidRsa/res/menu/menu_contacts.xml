@@ -6,7 +6,7 @@
       android:icon="@drawable/ic_menu_add">
     
 </item>
-<item android:id="@+id/MenuToggle" android:title="Toggle"
+<item android:id="@+id/MenuToggle" android:title="Show/Hide"
       android:icon="@drawable/ic_menu_toggle">
     
 </item>
@@ -19,6 +19,12 @@
               android:title="available" />
 	        <item android:id="@+id/away"
               android:title="away" />
+	        <item android:id="@+id/busy"
+              android:title="busy" />
+	        <item android:id="@+id/disconnect"
+              android:title="disconnect" />
+	        <item android:id="@+id/unavailable"
+              android:title="unavailable" />
     	</group>	       
     </menu>
 </item> 
