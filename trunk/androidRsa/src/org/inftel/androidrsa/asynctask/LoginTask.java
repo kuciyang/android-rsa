@@ -7,6 +7,7 @@ import org.inftel.androidrsa.xmpp.Conexion;
 import org.jivesoftware.smack.Connection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smackx.packet.VCard;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -61,8 +62,19 @@ public class LoginTask extends AsyncTask<Object, Void, Boolean> {
             Presence presence = new Presence(Presence.Type.available);
             presence.setProperty("rsaEnabled", true);
             presence.setMode(Presence.Mode.available);
-            // TODO enviar foto y clave publica
             c.sendPacket(presence);
+            // TODO enviar foto con certificado
+            VCard vCard = new VCard();
+            // try {
+            // ProviderManager.getInstance().addIQProvider("vCard",
+            // "vcard-temp",
+            // new VCardProvider());
+            //
+            //
+            // } catch (XMPPException e) {
+            // e.printStackTrace();
+            // }
+
             return true;
         } catch (XMPPException e) {
             e.printStackTrace();
@@ -74,7 +86,7 @@ public class LoginTask extends AsyncTask<Object, Void, Boolean> {
     @Override
     protected void onPreExecute() {
         this.pDialog = new ProgressDialog(activity);
-        this.pDialog.setMessage(" Loading... ");
+        this.pDialog.setMessage(" Login in... ");
         this.pDialog.show();
     }
 

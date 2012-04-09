@@ -15,6 +15,7 @@ import org.jivesoftware.smack.RosterListener;
 import org.jivesoftware.smack.packet.Presence;
 
 import android.app.ListActivity;
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -43,26 +44,18 @@ public class ContactsActivity extends ListActivity {
         Roster.setDefaultSubscriptionMode(Roster.SubscriptionMode.accept_all);
         roster.setSubscriptionMode(Roster.SubscriptionMode.accept_all);
 
-        pintarUI();
+        final ProgressDialog pd = ProgressDialog.show(this,
+                "",
+                "Loading contacts...",
+                true, false);
 
-        roster.addRosterListener(new RosterListener() {
-            public void entriesDeleted(Collection<String> addresses) {
+        new Thread() {
+            public void run() {
+                pintarUI();
+                pd.dismiss();
             }
-
-            public void entriesUpdated(Collection<String> addresses) {
-            }
-
-            public void presenceChanged(Presence presence) {
-                runOnUiThread(new Runnable() {
-                    public void run() {
-                        adapter.notifyDataSetChanged();
-                    }
-                });
-            }
-
-            public void entriesAdded(Collection<String> arg0) {
-            }
-        });
+        }.start();
+        // pintarUI();
 
     }
 
@@ -85,7 +78,13 @@ public class ContactsActivity extends ListActivity {
         }
 
         adapter = new ContactsAdapter(this, listaNombres);
-        setListAdapter(adapter);
+        runOnUiThread(new Runnable() {
+            public void run() {
+                setListAdapter(adapter);
+            }
+        });
+
+        // setListAdapter(adapter);
         myListView = getListView();
 
         myListView.setOnItemClickListener(new OnItemClickListener() {
@@ -97,6 +96,25 @@ public class ContactsActivity extends ListActivity {
 
             }
 
+        });
+
+        roster.addRosterListener(new RosterListener() {
+            public void entriesDeleted(Collection<String> addresses) {
+            }
+
+            public void entriesUpdated(Collection<String> addresses) {
+            }
+
+            public void presenceChanged(Presence presence) {
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        adapter.notifyDataSetChanged();
+                    }
+                });
+            }
+
+            public void entriesAdded(Collection<String> arg0) {
+            }
         });
 
     }
