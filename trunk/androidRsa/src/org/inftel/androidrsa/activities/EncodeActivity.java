@@ -21,6 +21,8 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
@@ -192,8 +194,15 @@ public class EncodeActivity extends Activity {
         String fileNameDest = absoluteFilePathSource.substring(indexSepar + 1, indexPoint);
         fileNameDest += AndroidRsaConstants.ENCODED_IMAGE_NAME;
         if (sdcardState.contentEquals(android.os.Environment.MEDIA_MOUNTED)) {
+
             destPath = android.os.Environment.getExternalStorageDirectory()
                     + File.separator + fileNameDest + ".png";
+            SharedPreferences prefs = getSharedPreferences(
+                    AndroidRsaConstants.SHARED_PREFERENCE_FILE,
+                    Context.MODE_PRIVATE);
+            Editor prefsEditor = prefs.edit();
+            prefsEditor.putString(AndroidRsaConstants.ENCODED_IMAGE_PATH,
+                    destPath);
 
         }
         OutputStream fout = null;

@@ -51,6 +51,7 @@ public class AndroidRsaConstants {
     public static String KEY_PHONE_NUMBER_PREFERENCE = "phone_number_preference";
     public static final String CERT_PATH = "cert_path";
     public static final String KEY_PATH = "key_path";
+    public static final String ENCODED_IMAGE_PATH = "encoded_image_path";
 
     // Constants for KeyStore
 
