@@ -12,10 +12,8 @@ import java.io.InputStreamReader;
 import java.security.InvalidKeyException;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.security.SignatureException;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
@@ -25,18 +23,18 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+import javax.security.cert.Certificate;
 import javax.security.cert.CertificateException;
 import javax.security.cert.X509Certificate;
 
 import org.inftel.androidrsa.R;
-import org.inftel.androidrsa.utils.AndroidRsaConstants;
 import org.jivesoftware.smack.util.Base64;
 
 import android.content.Context;
 import android.util.Log;
 
 public class RSA {
-    public static PrivateKey getPrivateKey(Context ctx) throws IOException,
+    public static PrivateKey getPrivateKey(File privKeyFile) throws IOException,
             NoSuchAlgorithmException,
             InvalidKeySpecException {
 
@@ -46,10 +44,11 @@ public class RSA {
         // String keyPath = prefs.getString(AndroidRsaConstants.KEY_PATH, "");
 
         // DEBUG
-        String keyPath = AndroidRsaConstants.EXTERNAL_SD_PATH
-                + File.separator + AndroidRsaConstants.KEY_NAME + "C1.pem";
+        // String keyPath = AndroidRsaConstants.EXTERNAL_SD_PATH
+        // + File.separator + AndroidRsaConstants.KEY_NAME + "C1.pem";
+        //
+        // File privKeyFile = new File(keyPath);
 
-        File privKeyFile = new File(keyPath);
         BufferedInputStream bis;
 
         bis = new BufferedInputStream(new FileInputStream(privKeyFile));
@@ -66,7 +65,36 @@ public class RSA {
 
     }
 
-    public static PublicKey getPublicKeyFromCertificate(String path) throws IOException,
+    // public static PublicKey getPublicKeyFromCertificate(String path) throws
+    // IOException,
+    // CertificateException {
+    // BufferedReader in = new BufferedReader(new FileReader(path));
+    // String line = in.readLine();
+    // if (line.contains("-----BEGIN CERTIFICATE-----") == false)
+    // throw new IOException("Couldnt find");
+    // line = line.substring(27);
+    //
+    // String base64 = new String();
+    // boolean trucking = true;
+    // while (trucking) {
+    //
+    // if (line.contains("-----")) {
+    // trucking = false;
+    // base64 += line.substring(0, line.indexOf("-----"));
+    // }
+    // else {
+    // base64 += line;
+    // line = in.readLine();
+    // }
+    // }
+    // Log.d("CERTIFICATE", base64);
+    // in.close();
+    // byte[] certifacteData = Base64.decode(base64);
+    // X509Certificate c = X509Certificate.getInstance(certifacteData);
+    // return c.getPublicKey();
+    // }
+
+    public static Certificate getCertificate(String path) throws IOException,
             CertificateException {
         BufferedReader in = new BufferedReader(new FileReader(path));
         String line = in.readLine();
@@ -90,41 +118,43 @@ public class RSA {
         Log.d("CERTIFICATE", base64);
         in.close();
         byte[] certifacteData = Base64.decode(base64);
+
         X509Certificate c = X509Certificate.getInstance(certifacteData);
-        return c.getPublicKey();
+        return c;
     }
 
-    public static void checkCertificate(String path, Context ctx) throws IOException,
-            CertificateException, InvalidKeyException, NoSuchAlgorithmException,
-            NoSuchProviderException, SignatureException {
-        PublicKey caKey = getCAPublicKey(ctx);
-
-        BufferedReader in = new BufferedReader(new FileReader(path));
-        String line = in.readLine();
-        if (line.contains("-----BEGIN CERTIFICATE-----") == false)
-            throw new IOException("Couldnt find");
-        line = line.substring(27);
-
-        String base64 = new String();
-        boolean trucking = true;
-        while (trucking) {
-
-            if (line.contains("-----")) {
-                trucking = false;
-                base64 += line.substring(0, line.indexOf("-----"));
-            }
-            else {
-                base64 += line;
-                line = in.readLine();
-            }
-        }
-        Log.d("CERTIFICATE", base64);
-        in.close();
-        byte[] certifacteData = Base64.decode(base64);
-        X509Certificate c = X509Certificate.getInstance(certifacteData);
-
-        c.verify(caKey);
-    }
+    // public static void checkCertificate(String path, Context ctx) throws
+    // IOException,
+    // CertificateException, InvalidKeyException, NoSuchAlgorithmException,
+    // NoSuchProviderException, SignatureException {
+    // PublicKey caKey = getCAPublicKey(ctx);
+    //
+    // BufferedReader in = new BufferedReader(new FileReader(path));
+    // String line = in.readLine();
+    // if (line.contains("-----BEGIN CERTIFICATE-----") == false)
+    // throw new IOException("Couldnt find");
+    // line = line.substring(27);
+    //
+    // String base64 = new String();
+    // boolean trucking = true;
+    // while (trucking) {
+    //
+    // if (line.contains("-----")) {
+    // trucking = false;
+    // base64 += line.substring(0, line.indexOf("-----"));
+    // }
+    // else {
+    // base64 += line;
+    // line = in.readLine();
+    // }
+    // }
+    // Log.d("CERTIFICATE", base64);
+    // in.close();
+    // byte[] certifacteData = Base64.decode(base64);
+    // X509Certificate c = X509Certificate.getInstance(certifacteData);
+    //
+    // c.verify(caKey);
+    // }
 
     public static PublicKey getCAPublicKey(Context ctx) throws IOException,
             CertificateException {

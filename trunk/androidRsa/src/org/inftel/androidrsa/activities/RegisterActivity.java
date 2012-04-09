@@ -4,8 +4,14 @@ package org.inftel.androidrsa.activities;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+
+import javax.security.cert.CertificateException;
 
 import org.inftel.androidrsa.R;
+import org.inftel.androidrsa.rsa.KeyStore;
+import org.inftel.androidrsa.rsa.RSA;
 import org.inftel.androidrsa.utils.AndroidRsaConstants;
 
 import android.app.Activity;
@@ -214,12 +220,38 @@ public class RegisterActivity extends Activity {
                         + File.separator + mChosenFileString;
 
                 // Saving the key's path and cert's path in preferences
-                SharedPreferences prefs = getSharedPreferences(
-                        AndroidRsaConstants.SHARED_PREFERENCE_FILE,
-                        Context.MODE_PRIVATE);
-                Editor prefsEditor = prefs.edit();
-                prefsEditor.putString(AndroidRsaConstants.CERT_PATH, mChosenFilePath);
-                prefsEditor.putString(AndroidRsaConstants.KEY_PATH, mKeyPath);
+                // SharedPreferences prefs = getSharedPreferences(
+                // AndroidRsaConstants.SHARED_PREFERENCE_FILE,
+                // Context.MODE_PRIVATE);
+                // Editor prefsEditor = prefs.edit();
+                // prefsEditor.putString(AndroidRsaConstants.CERT_PATH,
+                // mChosenFilePath);
+                // prefsEditor.putString(AndroidRsaConstants.KEY_PATH,
+                // mKeyPath);
+
+                // Stores my own certificate, my own private key and the public
+                // key of the CA
+                try {
+                    KeyStore.getInstance().setCertificate(AndroidRsaConstants.OWN_ALIAS,
+                            RSA.getCertificate(mChosenFilePath));
+                } catch (CertificateException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+
+                try {
+                    KeyStore.getInstance().setPk(RSA.getPrivateKey(mKey));
+                    KeyStore.getInstance().setPb(RSA.getCAPublicKey(getApplicationContext()));
+                } catch (NoSuchAlgorithmException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (InvalidKeySpecException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (CertificateException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
 
                 // Applying steganography
                 Intent i = new Intent(getApplicationContext(), EncodeActivity.class);

@@ -61,16 +61,15 @@ public class EncodeActivity extends Activity {
             public void run() {
                 encode(converToString(mChosenFile), mChosenImage, mChosenImagePath);
                 handler.post(mShowAlert);
+                Intent i = new Intent(context, LoginActivity.class);
+                startActivity(i);
 
+                // Intent i = new Intent(this, DecodeActivity.class);
+                // startActivity(i);
             }
         });
         tt.start();
 
-        Intent i = new Intent(this, LoginActivity.class);
-        startActivity(i);
-
-        // Intent i = new Intent(this, DecodeActivity.class);
-        // startActivity(i);
     }
 
     private String converToString(File file) {
@@ -192,10 +191,11 @@ public class EncodeActivity extends Activity {
             indexPoint = absoluteFilePathSource.length();
         String fileNameDest = absoluteFilePathSource.substring(indexSepar + 1, indexPoint);
         fileNameDest += AndroidRsaConstants.ENCODED_IMAGE_NAME;
-        if (sdcardState.contentEquals(android.os.Environment.MEDIA_MOUNTED))
+        if (sdcardState.contentEquals(android.os.Environment.MEDIA_MOUNTED)) {
             destPath = android.os.Environment.getExternalStorageDirectory()
                     + File.separator + fileNameDest + ".png";
 
+        }
         OutputStream fout = null;
         try {
 

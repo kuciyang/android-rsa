@@ -34,5 +34,15 @@
     <string name="decoding">Decoding</string>
     <string name="error_image_too_large">Error, image too large</string>
     <string name="no_stego_image">No stego image</string>
+    <string name="servers">Servers</string>
+    <string name="info_r_u_sure_permanently">Are your sure?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="button_clean">Clean</string>
+    <string name="button_accept">Accept</string>
+    <string name="host">Host</string>
+    <string name="port">Port</string>
+    <string name="service">Service</string>
+    <string name="info_empty_fields">There are empty fields. Please, fill them.</string>
 
 </resources>

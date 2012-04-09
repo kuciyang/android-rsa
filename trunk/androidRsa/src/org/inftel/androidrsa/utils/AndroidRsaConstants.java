@@ -33,6 +33,8 @@ public class AndroidRsaConstants {
     public static final String DECODED_CERT = "decoded_cert";
     public static final String DECODED_CERT_PATH = EXTERNAL_SD_PATH
             + File.separator + "decoded_cert.crt";
+    public static final String SERVERS_FILE_PATH = EXTERNAL_SD_PATH
+            + File.separator + "androidrsa_servers.srv";
 
     // Constants for intents
 
@@ -49,5 +51,10 @@ public class AndroidRsaConstants {
     public static String KEY_PHONE_NUMBER_PREFERENCE = "phone_number_preference";
     public static final String CERT_PATH = "cert_path";
     public static final String KEY_PATH = "key_path";
+
+    // Constants for KeyStore
+
+    public static String FRIEND_ALIAS = "fr";
+    public static String OWN_ALIAS = "own";
 
 }
