@@ -31,20 +31,22 @@ public class ContactsActivity extends ListActivity {
     private static final String TAG = "ContactsActivity";
     private Connection connection;
     public static Roster roster;
-    private String[] nombres;
+    private ArrayList<String> listaNombres = new ArrayList<String>();
     private boolean showAll = true;
+    private ContactsAdapter adapter;
+    private ListView myListView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         connection = Conexion.getInstance();
         roster = connection.getRoster();
+        Roster.setDefaultSubscriptionMode(Roster.SubscriptionMode.accept_all);
         roster.setSubscriptionMode(Roster.SubscriptionMode.accept_all);
-        roster.setDefaultSubscriptionMode(Roster.SubscriptionMode.accept_all);
+
+        pintarUI();
 
         roster.addRosterListener(new RosterListener() {
-            // Ignored events public void entriesAdded(Collection<String>
-            // addresses) {}
             public void entriesDeleted(Collection<String> addresses) {
             }
 
@@ -55,43 +57,41 @@ public class ContactsActivity extends ListActivity {
                 Log.i(TAG, "Presence changed: "
                         + presence.getFrom() + " "
                         + Status.getStatusFromPresence(presence));
-                // pintarUI();
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        adapter.notifyDataSetChanged();
+                    }
+                });
+
             }
 
             public void entriesAdded(Collection<String> arg0) {
             }
         });
 
-        pintarUI(true);
-
     }
 
-    private void pintarUI(boolean todos) {
+    private void pintarUI() {
         Collection<RosterEntry> entries = roster.getEntries();
-        ArrayList<String> list = new ArrayList<String>();
+        listaNombres.clear();
         for (RosterEntry entry : entries) {
-            if ((todos) && (entry.getName() != null)) {
-                list.add(entry.getName());
+            if ((showAll) && (entry.getName() != null)) {
+                listaNombres.add(entry.getName());
             }
-            else if (((!todos) && (entry.getName() != null))) {
+            else if (((!showAll) && (entry.getName() != null))) {
                 int status = Status.getStatusFromPresence(roster.getPresence(entry.getUser()));
                 if ((status == Status.CONTACT_STATUS_AVAILABLE)
                         || (status == Status.CONTACT_STATUS_AVAILABLE_FOR_CHAT)) {
-                    list.add(entry.getName());
+                    listaNombres.add(entry.getName());
                 }
             }
         }
 
-        nombres = new String[list.size()];
-        list.toArray(nombres);
-
-        ContactsAdapter adapter = new ContactsAdapter(this, nombres);
+        adapter = new ContactsAdapter(this, listaNombres);
         setListAdapter(adapter);
+        myListView = getListView();
 
-        ListView lv = getListView();
-        lv.setTextFilterEnabled(true);
-
-        lv.setOnItemClickListener(new OnItemClickListener() {
+        myListView.setOnItemClickListener(new OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view,
                     int position, long id) {
                 TextView nombre = (TextView) view.findViewById(R.id.nombre);
@@ -119,8 +119,8 @@ public class ContactsActivity extends ListActivity {
                 return true;
             case R.id.MenuToggle:
                 Toast.makeText(this, "pulsado toogle", Toast.LENGTH_SHORT).show();
-                pintarUI(!showAll);
                 showAll = !showAll;
+                pintarUI();
                 return true;
             case R.id.MenuChangeState:
                 Toast.makeText(this, "pulsado cambiar estado", Toast.LENGTH_SHORT).show();

@@ -1,6 +1,8 @@
 
 package org.inftel.androidrsa.adapters;
 
+import java.util.ArrayList;
+
 import org.inftel.androidrsa.R;
 import org.inftel.androidrsa.activities.ContactsActivity;
 import org.inftel.androidrsa.xmpp.Status;
@@ -16,14 +18,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 public class ContactsAdapter extends ArrayAdapter<String> {
-    private final Context context;
-    private final String[] values;
-    private final String TAG = "ContactsAdapter";
+    private Context context;
+    private ArrayList<String> list;
+    private String TAG = "ContactsAdapter";
 
-    public ContactsAdapter(Context context, String[] values) {
-        super(context, R.layout.contactrow, values);
+    public ContactsAdapter(Context context, ArrayList<String> lista) {
+        super(context, R.layout.contactrow, lista);
         this.context = context;
-        this.values = values;
+        this.list = lista;
     }
 
     @Override
@@ -33,8 +35,8 @@ public class ContactsAdapter extends ArrayAdapter<String> {
         View rowView = inflater.inflate(R.layout.contactrow, parent, false);
         TextView textView = (TextView) rowView.findViewById(R.id.nombre);
         ImageView imageView = (ImageView) rowView.findViewById(R.id.icon);
-        textView.setText(values[position]);
-        String s = values[position];
+        textView.setText(list.get(position));
+        String s = list.get(position);
         setStatusImage(imageView, s);
         return rowView;
     }
@@ -59,6 +61,19 @@ public class ContactsAdapter extends ArrayAdapter<String> {
                 break;
             }
         }
-
     }
+
+    public ArrayList<String> getList() {
+        return list;
+    }
+
+    public void setList(ArrayList<String> list) {
+        this.list = list;
+    }
+
+    @Override
+    public void notifyDataSetChanged() {
+        super.notifyDataSetChanged();
+    }
+
 }
