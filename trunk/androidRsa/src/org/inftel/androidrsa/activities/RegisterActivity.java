@@ -49,6 +49,8 @@ public class RegisterActivity extends Activity {
     private static final int DIALOG_RUN_ONCE = 1001;
     private static final int DIALOG_NOT_CHOSEN = 1002;
     private static final int DIALOG_KEY_NOT_FOUND = 1003;
+    private static final int DIALOG_INVALID_CERTIFICATE = 1004;
+    private static final int DIALOG_INVALID_KEY = 1005;
 
     /** Called when the activity is first created. */
     @Override
@@ -162,6 +164,27 @@ public class RegisterActivity extends Activity {
                                     }
                                 });
                 break;
+
+            case DIALOG_INVALID_CERTIFICATE:
+                builder.setMessage(R.string.invalid_certificate)
+                        .setCancelable(false)
+                        .setPositiveButton(getResources().getString(R.string.ok),
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        dialog.dismiss();
+                                    }
+                                });
+                break;
+            case DIALOG_INVALID_KEY:
+                builder.setMessage(R.string.invalid_key)
+                        .setCancelable(false)
+                        .setPositiveButton(getResources().getString(R.string.ok),
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        dialog.dismiss();
+                                    }
+                                });
+                break;
         }
         dialog = builder.show();
         return dialog;
@@ -216,48 +239,39 @@ public class RegisterActivity extends Activity {
             Log.d(TAG, mKeyPath);
 
             if (mKey.exists()) {
+
                 String mChosenFilePath = AndroidRsaConstants.EXTERNAL_SD_PATH
                         + File.separator + mChosenFileString;
 
-                // Saving the key's path and cert's path in preferences
-                // SharedPreferences prefs = getSharedPreferences(
-                // AndroidRsaConstants.SHARED_PREFERENCE_FILE,
-                // Context.MODE_PRIVATE);
-                // Editor prefsEditor = prefs.edit();
-                // prefsEditor.putString(AndroidRsaConstants.CERT_PATH,
-                // mChosenFilePath);
-                // prefsEditor.putString(AndroidRsaConstants.KEY_PATH,
-                // mKeyPath);
-
                 // Stores my own certificate, my own private key and the public
                 // key of the CA
+
                 try {
                     KeyStore.getInstance().setCertificate(AndroidRsaConstants.OWN_ALIAS,
                             RSA.getCertificate(mChosenFilePath));
-                } catch (CertificateException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-
-                try {
                     KeyStore.getInstance().setPk(RSA.getPrivateKey(mKey));
+
+                    Log.d(TAG, KeyStore.getInstance().getPk().toString());
+
                     KeyStore.getInstance().setPb(RSA.getCAPublicKey(getApplicationContext()));
+
+                    // Applying steganography
+                    Intent i = new Intent(getApplicationContext(), EncodeActivity.class);
+                    i.putExtra(AndroidRsaConstants.FILE_PATH, mChosenFilePath);
+                    i.putExtra(AndroidRsaConstants.IMAGE_PATH, mChosenImagePath);
+                    startActivity(i);
+
                 } catch (NoSuchAlgorithmException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 } catch (InvalidKeySpecException e) {
-                    // TODO Auto-generated catch block
+                    showDialog(DIALOG_INVALID_KEY);
                     e.printStackTrace();
                 } catch (CertificateException e) {
-                    // TODO Auto-generated catch block
+                    showDialog(DIALOG_INVALID_CERTIFICATE);
                     e.printStackTrace();
                 }
 
-                // Applying steganography
-                Intent i = new Intent(getApplicationContext(), EncodeActivity.class);
-                i.putExtra(AndroidRsaConstants.FILE_PATH, mChosenFilePath);
-                i.putExtra(AndroidRsaConstants.IMAGE_PATH, mChosenImagePath);
-                startActivity(i);
             } else {
                 showDialog(DIALOG_KEY_NOT_FOUND);
             }

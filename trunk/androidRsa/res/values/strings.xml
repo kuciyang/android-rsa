@@ -44,5 +44,7 @@
     <string name="port">Port</string>
     <string name="service">Service</string>
     <string name="info_empty_fields">There are empty fields. Please, fill them.</string>
+    <string name="invalid_certificate">Invalid certificate file</string>
+    <string name="invalid_key">Invalid Key file</string>
 
 </resources>

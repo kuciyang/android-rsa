@@ -124,11 +124,4 @@ public class LoginActivity extends Activity {
         }
         return true;
     }
-
-    // DEBUG
-    public void test(View v) {
-        // TODO eleminar TEST
-        Intent i = new Intent(this, DecodeActivity.class);
-        startActivity(i);
-    }
 }
