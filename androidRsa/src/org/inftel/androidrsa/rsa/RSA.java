@@ -1,10 +1,8 @@
 
 package org.inftel.androidrsa.rsa;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,7 +12,6 @@ import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.security.interfaces.RSAPrivateKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 import java.security.spec.PKCS8EncodedKeySpec;
@@ -37,32 +34,34 @@ public class RSA {
     public static PrivateKey getPrivateKey(File privKeyFile) throws IOException,
             NoSuchAlgorithmException,
             InvalidKeySpecException {
+        BufferedReader in = new BufferedReader(new FileReader(privKeyFile));
+        String line = in.readLine();
+        if (line.contains("-----BEGIN PRIVATE KEY-----") == false)
+            throw new IOException("Couldnt find");
+        line = line.substring(27);
 
-        // SharedPreferences prefs =
-        // ctx.getSharedPreferences(AndroidRsaConstants.SHARED_PREFERENCE_FILE,
-        // Context.MODE_PRIVATE);
-        // String keyPath = prefs.getString(AndroidRsaConstants.KEY_PATH, "");
+        String base64 = new String();
+        boolean trucking = true;
+        while (trucking) {
 
-        // DEBUG
-        // String keyPath = AndroidRsaConstants.EXTERNAL_SD_PATH
-        // + File.separator + AndroidRsaConstants.KEY_NAME + "C1.pem";
-        //
-        // File privKeyFile = new File(keyPath);
+            if (line.contains("-----")) {
+                trucking = false;
+                base64 += line.substring(0, line.indexOf("-----"));
+            }
+            else {
+                base64 += line;
+                line = in.readLine();
+            }
+        }
+        Log.d("PRIVATE KEY", base64);
+        in.close();
 
-        BufferedInputStream bis;
-
-        bis = new BufferedInputStream(new FileInputStream(privKeyFile));
-
-        byte[] privKeyBytes = new byte[(int) privKeyFile.length()];
-        bis.read(privKeyBytes);
-        bis.close();
-
+        byte[] privKeyBytes = Base64.decode(base64);
         KeyFactory keyFactory = KeyFactory.getInstance("RSA");
         KeySpec ks = new PKCS8EncodedKeySpec(privKeyBytes);
-        RSAPrivateKey privKey = (RSAPrivateKey) keyFactory.generatePrivate(ks);
+        PrivateKey privKey = keyFactory.generatePrivate(ks);
 
         return privKey;
-
     }
 
     // public static PublicKey getPublicKeyFromCertificate(String path) throws
@@ -186,30 +185,31 @@ public class RSA {
         return c.getPublicKey();
     }
 
-    public static String cipherString(String text, PublicKey key) throws NoSuchAlgorithmException,
+    // TO CIPHER A STRING USE: string.getBytes()
+    public static byte[] cipher(byte[] text, PublicKey key) throws NoSuchAlgorithmException,
             NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException,
             BadPaddingException {
 
-        byte[] textByte = android.util.Base64.decode(text, android.util.Base64.DEFAULT);
-
-        Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+        byte[] encryptedBytes;
+        Cipher cipher = Cipher.getInstance("RSA");
         cipher.init(Cipher.ENCRYPT_MODE, key);
-        byte[] cipherData = cipher.doFinal(textByte);
+        encryptedBytes = cipher.doFinal(text);
 
-        return cipherData.toString();
+        return encryptedBytes;
+
     }
 
-    public static String decipherString(String text, PrivateKey key) throws InvalidKeyException,
+    // TO VIEW THE DECIPHER STRING USE: String str = new String (bytes)
+    public static byte[] decipher(byte[] text, PrivateKey key) throws InvalidKeyException,
             NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException,
             BadPaddingException {
 
-        byte[] textByte = android.util.Base64.decode(text, android.util.Base64.DEFAULT);
-
-        Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+        byte[] decryptedBytes;
+        Cipher cipher = Cipher.getInstance("RSA");
         cipher.init(Cipher.DECRYPT_MODE, key);
-        byte[] decipherData = cipher.doFinal(textByte);
+        decryptedBytes = cipher.doFinal(text);
 
-        return decipherData.toString();
+        return decryptedBytes;
     }
 
 }

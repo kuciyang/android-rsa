@@ -5,19 +5,8 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.SignatureException;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import javax.security.cert.CertificateException;
 
 import org.inftel.androidrsa.R;
-import org.inftel.androidrsa.rsa.KeyStore;
-import org.inftel.androidrsa.rsa.RSA;
 import org.inftel.androidrsa.steganography.LSB2bit;
 import org.inftel.androidrsa.utils.AndroidRsaConstants;
 
@@ -154,57 +143,7 @@ public class DecodeActivity extends Activity implements Runnable {
 
                 public void run() {
                     convertToFile(vvv);
-
-                    // DEBUG
-                    try {
-
-                        KeyStore.getInstance().setCertificate(AndroidRsaConstants.FRIEND_ALIAS,
-                                RSA.getCertificate(AndroidRsaConstants.DECODED_CERT_PATH));
-                        KeyStore.getInstance().getCertificate(AndroidRsaConstants.FRIEND_ALIAS)
-                                .verify(RSA.getCAPublicKey(getApplicationContext()));
-
-                        Log.d("CERTIFICADO", "VALIDO");
-
-                        try {
-                            String cifrado = RSA.cipherString("hola",
-                                    KeyStore.getInstance()
-                                            .getCertificate(AndroidRsaConstants.OWN_ALIAS)
-                                            .getPublicKey());
-
-                            Log.d("CIFRADO", cifrado);
-
-                            String descifrado = RSA.decipherString(cifrado,
-                                    KeyStore.getInstance().getPk());
-                            Log.d("DESCIFRADO", descifrado);
-                        } catch (NoSuchPaddingException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        } catch (IllegalBlockSizeException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        } catch (BadPaddingException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        }
-                    } catch (InvalidKeyException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    } catch (NoSuchAlgorithmException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    } catch (NoSuchProviderException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    } catch (SignatureException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    } catch (CertificateException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
+                    // INTENT TO NEXT ACTIVITY
 
                 }
             };
