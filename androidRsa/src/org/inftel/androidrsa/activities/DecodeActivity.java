@@ -9,7 +9,6 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.SignatureException;
-import java.security.spec.InvalidKeySpecException;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -17,6 +16,7 @@ import javax.crypto.NoSuchPaddingException;
 import javax.security.cert.CertificateException;
 
 import org.inftel.androidrsa.R;
+import org.inftel.androidrsa.rsa.KeyStore;
 import org.inftel.androidrsa.rsa.RSA;
 import org.inftel.androidrsa.steganography.LSB2bit;
 import org.inftel.androidrsa.utils.AndroidRsaConstants;
@@ -56,7 +56,7 @@ public class DecodeActivity extends Activity implements Runnable {
         super.onCreate(savedInstanceState);
         context = this;
 
-        // Obtaning intent information
+        // // Obtaning intent information
         // Bundle bundle = getIntent().getExtras();
         // mStegoImagePath =
         // bundle.getString(AndroidRsaConstants.STEGO_IMAGE_PATH);
@@ -155,22 +155,26 @@ public class DecodeActivity extends Activity implements Runnable {
                 public void run() {
                     convertToFile(vvv);
 
+                    // DEBUG
                     try {
-                        RSA.checkCertificate(AndroidRsaConstants.DECODED_CERT_PATH,
-                                getApplicationContext());
+
+                        KeyStore.getInstance().setCertificate(AndroidRsaConstants.FRIEND_ALIAS,
+                                RSA.getCertificate(AndroidRsaConstants.DECODED_CERT_PATH));
+                        KeyStore.getInstance().getCertificate(AndroidRsaConstants.FRIEND_ALIAS)
+                                .verify(RSA.getCAPublicKey(getApplicationContext()));
+
                         Log.d("CERTIFICADO", "VALIDO");
 
                         try {
-                            String cifrado = RSA
-                                    .cipherString(
-                                            "hola",
-                                            RSA.getPublicKeyFromCertificate(AndroidRsaConstants.EXTERNAL_SD_PATH
-                                                    + File.separator
-                                                    + "C1.crt"));
+                            String cifrado = RSA.cipherString("hola",
+                                    KeyStore.getInstance()
+                                            .getCertificate(AndroidRsaConstants.OWN_ALIAS)
+                                            .getPublicKey());
+
                             Log.d("CIFRADO", cifrado);
 
                             String descifrado = RSA.decipherString(cifrado,
-                                    RSA.getPrivateKey(getApplicationContext()));
+                                    KeyStore.getInstance().getPk());
                             Log.d("DESCIFRADO", descifrado);
                         } catch (NoSuchPaddingException e) {
                             // TODO Auto-generated catch block
@@ -179,9 +183,6 @@ public class DecodeActivity extends Activity implements Runnable {
                             // TODO Auto-generated catch block
                             e.printStackTrace();
                         } catch (BadPaddingException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        } catch (InvalidKeySpecException e) {
                             // TODO Auto-generated catch block
                             e.printStackTrace();
                         }
