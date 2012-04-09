@@ -35,13 +35,15 @@ public class ContactsAdapter extends ArrayAdapter<String> {
         View rowView = inflater.inflate(R.layout.contactrow, parent, false);
         TextView textView = (TextView) rowView.findViewById(R.id.nombre);
         ImageView imageView = (ImageView) rowView.findViewById(R.id.icon);
+        ImageView imageViewSec = (ImageView) rowView.findViewById(R.id.iconsec);
+        imageViewSec.setVisibility(View.GONE);
         textView.setText(list.get(position));
-        String s = list.get(position);
-        setStatusImage(imageView, s);
+        String nombre = list.get(position);
+        setImages(imageView, imageViewSec, nombre, rowView);
         return rowView;
     }
 
-    private void setStatusImage(ImageView iv, String nombre) {
+    private void setImages(ImageView iv, ImageView ivSec, String nombre, View rowview) {
         Roster roster = ContactsActivity.roster;
         for (RosterEntry entry : roster.getEntries()) {
             if ((entry.getName() != null) && (entry.getName().equals(nombre))) {
@@ -55,12 +57,21 @@ public class ContactsAdapter extends ArrayAdapter<String> {
                         || (status == Status.CONTACT_STATUS_BUSY)) {
                     iv.setImageResource(R.drawable.status_idle);
                 }
+                // TODO añadir subscription pending y separar seguro de inseguro
                 else {
                     iv.setImageResource(R.drawable.status_away);
                 }
                 break;
             }
+            if ((roster.getPresence(entry.getUser()).getProperty("rsaEnabled")
+                        != null)
+                    && ((Boolean)
+                    roster.getPresence(entry.getUser()).getProperty("rsaEnabled"))) {
+                ivSec.setImageResource(R.drawable.secure);
+                ivSec.setVisibility(View.VISIBLE);
+            }
         }
+
     }
 
     public ArrayList<String> getList() {

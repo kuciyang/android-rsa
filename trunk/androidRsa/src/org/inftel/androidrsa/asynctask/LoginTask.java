@@ -6,6 +6,7 @@ import org.inftel.androidrsa.activities.LoginActivity;
 import org.inftel.androidrsa.xmpp.Conexion;
 import org.jivesoftware.smack.Connection;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.packet.Presence;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -57,6 +58,11 @@ public class LoginTask extends AsyncTask<Object, Void, Boolean> {
     protected Boolean doInBackground(Object... params) {
         try {
             c = Conexion.getInstance(host, port, service, user, password);
+            Presence presence = new Presence(Presence.Type.available);
+            presence.setProperty("rsaEnabled", true);
+            presence.setMode(Presence.Mode.available);
+            // TODO enviar foto y clave publica
+            c.sendPacket(presence);
             return true;
         } catch (XMPPException e) {
             e.printStackTrace();
