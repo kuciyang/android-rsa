@@ -16,7 +16,6 @@ import org.jivesoftware.smack.packet.Presence;
 
 import android.app.ListActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -54,15 +53,11 @@ public class ContactsActivity extends ListActivity {
             }
 
             public void presenceChanged(Presence presence) {
-                Log.i(TAG, "Presence changed: "
-                        + presence.getFrom() + " "
-                        + Status.getStatusFromPresence(presence));
                 runOnUiThread(new Runnable() {
                     public void run() {
                         adapter.notifyDataSetChanged();
                     }
                 });
-
             }
 
             public void entriesAdded(Collection<String> arg0) {
@@ -81,7 +76,9 @@ public class ContactsActivity extends ListActivity {
             else if (((!showAll) && (entry.getName() != null))) {
                 int status = Status.getStatusFromPresence(roster.getPresence(entry.getUser()));
                 if ((status == Status.CONTACT_STATUS_AVAILABLE)
-                        || (status == Status.CONTACT_STATUS_AVAILABLE_FOR_CHAT)) {
+                        || (status == Status.CONTACT_STATUS_AVAILABLE_FOR_CHAT)
+                        || (status == Status.CONTACT_STATUS_AWAY)
+                        || (status == Status.CONTACT_STATUS_BUSY)) {
                     listaNombres.add(entry.getName());
                 }
             }
@@ -116,6 +113,7 @@ public class ContactsActivity extends ListActivity {
         switch (item.getItemId()) {
             case R.id.MenuAdd:
                 Toast.makeText(this, "pulsado añadir", Toast.LENGTH_SHORT).show();
+                // TODO dialogo agregar contacto nuevo al roster
                 return true;
             case R.id.MenuToggle:
                 Toast.makeText(this, "pulsado toogle", Toast.LENGTH_SHORT).show();
@@ -134,10 +132,24 @@ public class ContactsActivity extends ListActivity {
                 return true;
             case R.id.away:
                 Toast.makeText(this, "cambiado estado a away", Toast.LENGTH_SHORT).show();
-                Presence presence2 = new Presence(Presence.Type.unavailable);
+                Presence presence2 = new Presence(Presence.Type.available);
                 presence2.setStatus("De parranda!");
                 presence2.setMode(Presence.Mode.away);
                 connection.sendPacket(presence2);
+                return true;
+            case R.id.busy:
+                Toast.makeText(this, "cambiado estado a busy", Toast.LENGTH_SHORT).show();
+                Presence presence3 = new Presence(Presence.Type.available);
+                presence3.setStatus("Trabajando!");
+                presence3.setMode(Presence.Mode.dnd);
+                connection.sendPacket(presence3);
+                return true;
+            case R.id.unavailable:
+                Toast.makeText(this, "cambiado estado a unavailable", Toast.LENGTH_SHORT).show();
+                Presence presence5 = new Presence(Presence.Type.unavailable);
+                presence5.setStatus("Desconectado!");
+                presence5.setMode(Presence.Mode.away);
+                connection.sendPacket(presence5);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
