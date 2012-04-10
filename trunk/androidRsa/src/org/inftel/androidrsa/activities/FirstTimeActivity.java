@@ -60,6 +60,7 @@ public class FirstTimeActivity extends Activity {
                                         Intent i = new Intent(getApplicationContext(),
                                                 RegisterActivity.class);
                                         startActivity(i);
+                                        finish();
                                         dialog.dismiss();
                                     }
                                 });
@@ -68,4 +69,5 @@ public class FirstTimeActivity extends Activity {
         dialog = builder.show();
         return dialog;
     }
+
 }
