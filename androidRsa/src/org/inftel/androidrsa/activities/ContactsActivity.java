@@ -55,7 +55,6 @@ public class ContactsActivity extends ListActivity {
                 pd.dismiss();
             }
         }.start();
-        // pintarUI();
 
     }
 
@@ -84,7 +83,6 @@ public class ContactsActivity extends ListActivity {
             }
         });
 
-        // setListAdapter(adapter);
         myListView = getListView();
 
         myListView.setOnItemClickListener(new OnItemClickListener() {
@@ -172,12 +170,6 @@ public class ContactsActivity extends ListActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-
-    @Override
-    protected void onDestroy() {
-        Conexion.disconnect();
-        super.onDestroy();
     }
 
 }
