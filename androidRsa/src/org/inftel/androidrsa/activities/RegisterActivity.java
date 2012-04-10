@@ -196,7 +196,7 @@ public class RegisterActivity extends Activity {
     }
 
     public void onClickButtonDone(View view) throws IOException {
-        // TODO comprobar tamaño de la foto
+        // TODO comprobar tamaï¿½o de la foto
         // TODO comprobar que el certificado esta firmado x nuestra CA
 
         if (mChosenFile != null && mChosenImage != null) {
@@ -249,6 +249,7 @@ public class RegisterActivity extends Activity {
         } else {
             showDialog(DIALOG_NOT_CHOSEN);
         }
-
+        
     }
+
 }
