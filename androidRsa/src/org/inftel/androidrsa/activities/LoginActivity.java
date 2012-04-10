@@ -30,7 +30,6 @@ public class LoginActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getIntent().addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         setContentView(R.layout.login);
         prefs = this.getApplicationContext().getSharedPreferences("login", 0);
         loadPreferences();
@@ -96,6 +95,11 @@ public class LoginActivity extends Activity {
         editor.putString("port", host.getText().toString());
         editor.putString("service", host.getText().toString());
         editor.putString("userid", host.getText().toString());
+
+    }
+
+    @Override
+    public void onBackPressed() {
 
     }
 
