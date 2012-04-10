@@ -45,14 +45,14 @@ public class DecodeActivity extends Activity implements Runnable {
         super.onCreate(savedInstanceState);
         context = this;
 
-        // // Obtaning intent information
-        // Bundle bundle = getIntent().getExtras();
-        // mStegoImagePath =
-        // bundle.getString(AndroidRsaConstants.STEGO_IMAGE_PATH);
+        // Obtaning intent information
+        Bundle bundle = getIntent().getExtras();
+        mStegoImagePath =
+                bundle.getString(AndroidRsaConstants.STEGO_IMAGE_PATH);
 
         // DEBUG
-        mStegoImagePath = AndroidRsaConstants.EXTERNAL_SD_PATH
-                + File.separator + "Koala_mobistego.png";
+        // mStegoImagePath = AndroidRsaConstants.EXTERNAL_SD_PATH
+        // + File.separator + "Koala_mobistego.png";
 
         handler = new Handler();
         dd = new ProgressDialog(this);

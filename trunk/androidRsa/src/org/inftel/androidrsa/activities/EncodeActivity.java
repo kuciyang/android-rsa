@@ -203,6 +203,7 @@ public class EncodeActivity extends Activity {
             Editor prefsEditor = prefs.edit();
             prefsEditor.putString(AndroidRsaConstants.ENCODED_IMAGE_PATH,
                     destPath);
+            prefsEditor.apply();
 
         }
         OutputStream fout = null;
