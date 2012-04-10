@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/balloon_left"
+    android:layout_marginLeft="10dp" >
+
+    <ImageView
+        android:id="@+id/avatar"
+        android:layout_width="40dip"
+        android:layout_height="40dip"
+        android:layout_centerVertical="true"
+        android:layout_marginBottom="5dip"
+        android:layout_marginLeft="5dip"
+        android:layout_marginRight="5dip"
+        android:layout_marginTop="5dip"
+        android:src="@drawable/ic_launcher" >
+    </ImageView>
+
+    <TextView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/nombre"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_toRightOf="@+id/avatar"
+        android:text="Nombre asdfasdfasdfasdfasdfasdlfjasñldkgjñldsfkjgñlsdkfjgñlsdkjfgñlsdkjfgñlskdjfgñlsdkjfgñlsdkfjgñsldkfjgñlsdkfjgñlsdfkgj"
+        android:textColor="@color/negro"
+        android:textSize="15dip" >
+
+    </TextView>
+
+</RelativeLayout>

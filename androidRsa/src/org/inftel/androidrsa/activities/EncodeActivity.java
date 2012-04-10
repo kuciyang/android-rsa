@@ -63,9 +63,10 @@ public class EncodeActivity extends Activity {
             public void run() {
                 encode(converToString(mChosenFile), mChosenImage, mChosenImagePath);
                 handler.post(mShowAlert);
+
                 Intent i = new Intent(context, LoginActivity.class);
                 startActivity(i);
-
+                // DEBUG
                 // Intent i = new Intent(this, DecodeActivity.class);
                 // startActivity(i);
             }
