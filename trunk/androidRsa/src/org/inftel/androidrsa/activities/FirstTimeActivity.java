@@ -12,7 +12,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.view.Window;
 
@@ -33,14 +32,13 @@ public class FirstTimeActivity extends Activity {
         // Editor.
         SharedPreferences prefs = getSharedPreferences(AndroidRsaConstants.SHARED_PREFERENCE_FILE,
                 Context.MODE_PRIVATE);
-        Editor prefsEditor = prefs.edit();
 
         // Save that we've been run once.
-        if (prefs.getBoolean(AndroidRsaConstants.SP_KEY_RUN_ONCE, false)) {
+        boolean runOnce = prefs.getBoolean(AndroidRsaConstants.SP_KEY_RUN_ONCE, false);
+        if (runOnce) {
             Intent i = new Intent(this, LoginActivity.class);
             startActivity(i);
         } else {
-            prefsEditor.putBoolean(AndroidRsaConstants.SP_KEY_RUN_ONCE, true);
             showDialog(DIALOG_RUN_ONCE);
         }
     }

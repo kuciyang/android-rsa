@@ -64,6 +64,14 @@ public class EncodeActivity extends Activity {
                 encode(converToString(mChosenFile), mChosenImage, mChosenImagePath);
                 handler.post(mShowAlert);
 
+                // Saving in prefs when run once
+                SharedPreferences prefs = getSharedPreferences(
+                        AndroidRsaConstants.SHARED_PREFERENCE_FILE,
+                        Context.MODE_PRIVATE);
+                Editor prefsEditor = prefs.edit();
+                prefsEditor.putBoolean(AndroidRsaConstants.SP_KEY_RUN_ONCE, true);
+                prefsEditor.apply();
+
                 Intent i = new Intent(context, LoginActivity.class);
                 startActivity(i);
                 // DEBUG
