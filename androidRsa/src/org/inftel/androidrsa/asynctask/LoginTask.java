@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import org.inftel.androidrsa.activities.ContactsActivity;
-import org.inftel.androidrsa.activities.DecodeActivity;
 import org.inftel.androidrsa.activities.LoginActivity;
 import org.inftel.androidrsa.utils.AndroidRsaConstants;
 import org.inftel.androidrsa.utils.ReadFileAsByteArray;
@@ -57,6 +56,7 @@ public class LoginTask extends AsyncTask<Object, Void, Boolean> {
         }
         if (success) {
             Log.i(TAG, "Conexión creada correctamente!");
+            Log.i(TAG, "Conectado como " + con.getUser());
             Intent i = new Intent(activity, ContactsActivity.class);
             activity.startActivity(i);
         }
@@ -86,14 +86,6 @@ public class LoginTask extends AsyncTask<Object, Void, Boolean> {
             vCard.setAvatar(bytes);
             Thread.sleep(10000);
             vCard.save(con);
-            vCard.load(con);
-            byte[] avatar = vCard.getAvatar();
-            Bitmap bm = obtainBitmap(avatar);
-            writeFile(avatar, "/mnt/sdcard/prueba.jpg");
-            Intent i = new Intent(activity.getApplicationContext(), DecodeActivity.class);
-            i.putExtra(AndroidRsaConstants.STEGO_IMAGE_PATH, "/mnt/sdcard/prueba.jpg");
-            activity.startActivity(i);
-
             return true;
         } catch (XMPPException e) {
             e.printStackTrace();

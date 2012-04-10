@@ -11,9 +11,11 @@ import org.inftel.androidrsa.xmpp.Status;
 import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.RosterEntry;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.util.StringUtils;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +29,13 @@ public class ContactsAdapter extends ArrayAdapter<String> {
     private String TAG = "ContactsAdapter";
     private HashMap<String, Bitmap> avatarMap;
 
+    static class ViewHolder {
+        public TextView textView;
+        public ImageView imageView;
+        public ImageView imageViewSec;
+        public ImageView imageViewAvatar;
+    }
+
     public ContactsAdapter(Context context, ArrayList<String> lista) {
         super(context, R.layout.contactrow, lista);
         this.context = context;
@@ -38,20 +47,29 @@ public class ContactsAdapter extends ArrayAdapter<String> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        LayoutInflater inflater = (LayoutInflater) context
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View rowView = inflater.inflate(R.layout.contactrow, parent, false);
-        TextView textView = (TextView) rowView.findViewById(R.id.nombre);
-        ImageView imageView = (ImageView) rowView.findViewById(R.id.icon);
-        ImageView imageViewSec = (ImageView) rowView.findViewById(R.id.iconsec);
-        ImageView imageViewAvatar = (ImageView) rowView.findViewById(R.id.avatar);
-        imageViewSec.setVisibility(View.GONE);
-        textView.setText(list.get(position));
+        View rowView = convertView;
+        if (rowView == null) {
+            LayoutInflater inflater = (LayoutInflater) context
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            rowView = inflater.inflate(R.layout.contactrow, parent, false);
+            ViewHolder viewHolder = new ViewHolder();
+            viewHolder.textView = (TextView) rowView.findViewById(R.id.nombre);
+            viewHolder.imageView = (ImageView) rowView.findViewById(R.id.icon);
+            viewHolder.imageViewSec = (ImageView) rowView.findViewById(R.id.iconsec);
+            viewHolder.imageViewAvatar = (ImageView) rowView.findViewById(R.id.avatar);
+            rowView.setTag(viewHolder);
+        }
+
+        ViewHolder holder = (ViewHolder) rowView.getTag();
+        holder.imageViewSec.setVisibility(View.GONE);
+        holder.textView.setText(list.get(position));
         String nombre = list.get(position);
-        setIcons(imageView, imageViewSec, nombre, rowView);
-        Bitmap avatarBitMap = avatarMap.get(nombre);
-        if (avatarBitMap != null) {
-            imageViewAvatar.setImageBitmap(avatarMap.get(nombre));
+        setIcons(holder.imageView, holder.imageViewSec, nombre, rowView);
+        if (avatarMap.containsKey(nombre)) {
+            holder.imageViewAvatar.setImageBitmap(avatarMap.get(nombre));
+        }
+        else {
+            holder.imageViewAvatar.setImageResource(R.drawable.ic_launcher);
         }
         return rowView;
     }
@@ -78,10 +96,8 @@ public class ContactsAdapter extends ArrayAdapter<String> {
                 }
                 break;
             }
-            if ((roster.getPresence(entry.getUser()).getProperty("rsaEnabled")
-                        != null)
-                    && ((Boolean)
-                    roster.getPresence(entry.getUser()).getProperty("rsaEnabled"))) {
+            Log.d(TAG, entry.getUser() + " " + StringUtils.parseResource(entry.getUser()));
+            if (StringUtils.parseResource(entry.getUser()).equals("androidRSA")) {
                 ivSec.setImageResource(R.drawable.secure);
                 ivSec.setVisibility(View.VISIBLE);
             }
