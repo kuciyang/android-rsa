@@ -15,7 +15,6 @@ import org.jivesoftware.smack.RosterListener;
 import org.jivesoftware.smack.packet.Presence;
 
 import android.app.ListActivity;
-import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -44,21 +43,11 @@ public class ContactsActivity extends ListActivity {
         Roster.setDefaultSubscriptionMode(Roster.SubscriptionMode.accept_all);
         roster.setSubscriptionMode(Roster.SubscriptionMode.accept_all);
 
-        final ProgressDialog pd = ProgressDialog.show(this,
-                "",
-                "Loading contacts...",
-                true, false);
-
-        new Thread() {
-            public void run() {
-                pintarUI();
-                pd.dismiss();
-            }
-        }.start();
+        pintarUI();
 
     }
 
-    private void pintarUI() {
+    private void loadContacts() {
         Collection<RosterEntry> entries = roster.getEntries();
         listaNombres.clear();
         for (RosterEntry entry : entries) {
@@ -75,23 +64,22 @@ public class ContactsActivity extends ListActivity {
                 }
             }
         }
+    }
+
+    private void pintarUI() {
+        loadContacts();
 
         adapter = new ContactsAdapter(this, listaNombres);
-        runOnUiThread(new Runnable() {
-            public void run() {
-                setListAdapter(adapter);
-            }
-        });
+        setListAdapter(adapter);
 
         myListView = getListView();
-
         myListView.setOnItemClickListener(new OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view,
                     int position, long id) {
                 TextView nombre = (TextView) view.findViewById(R.id.nombre);
                 Toast.makeText(getApplicationContext(), "pulsado " + nombre.getText(),
                         Toast.LENGTH_SHORT).show();
-
+                // TODO crear chat
             }
 
         });
@@ -104,11 +92,7 @@ public class ContactsActivity extends ListActivity {
             }
 
             public void presenceChanged(Presence presence) {
-                runOnUiThread(new Runnable() {
-                    public void run() {
-                        adapter.notifyDataSetChanged();
-                    }
-                });
+                refreshAdapter();
             }
 
             public void entriesAdded(Collection<String> arg0) {
@@ -127,41 +111,32 @@ public class ContactsActivity extends ListActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.MenuAdd:
-                Toast.makeText(this, "pulsado añadir", Toast.LENGTH_SHORT).show();
-                // TODO dialogo agregar contacto nuevo al roster
-                return true;
             case R.id.MenuToggle:
-                Toast.makeText(this, "pulsado toogle", Toast.LENGTH_SHORT).show();
                 showAll = !showAll;
-                pintarUI();
+                loadContacts();
+                refreshAdapter();
                 return true;
             case R.id.MenuChangeState:
-                Toast.makeText(this, "pulsado cambiar estado", Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.available:
-                Toast.makeText(this, "cambiado estado a available", Toast.LENGTH_SHORT).show();
                 Presence presence = new Presence(Presence.Type.available);
                 presence.setMode(Presence.Mode.available);
                 presence.setStatus("aqui estamos ya!");
                 connection.sendPacket(presence);
                 return true;
             case R.id.away:
-                Toast.makeText(this, "cambiado estado a away", Toast.LENGTH_SHORT).show();
                 Presence presence2 = new Presence(Presence.Type.available);
                 presence2.setStatus("De parranda!");
                 presence2.setMode(Presence.Mode.away);
                 connection.sendPacket(presence2);
                 return true;
             case R.id.busy:
-                Toast.makeText(this, "cambiado estado a busy", Toast.LENGTH_SHORT).show();
                 Presence presence3 = new Presence(Presence.Type.available);
                 presence3.setStatus("Trabajando!");
                 presence3.setMode(Presence.Mode.dnd);
                 connection.sendPacket(presence3);
                 return true;
             case R.id.unavailable:
-                Toast.makeText(this, "cambiado estado a unavailable", Toast.LENGTH_SHORT).show();
                 Presence presence5 = new Presence(Presence.Type.unavailable);
                 presence5.setStatus("Desconectado!");
                 presence5.setMode(Presence.Mode.away);
@@ -170,6 +145,14 @@ public class ContactsActivity extends ListActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void refreshAdapter() {
+        runOnUiThread(new Runnable() {
+            public void run() {
+                adapter.notifyDataSetChanged();
+            }
+        });
     }
 
 }
