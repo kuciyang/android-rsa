@@ -25,19 +25,18 @@
             android:label="@string/app_name" >            
         </activity>
         <activity 
-            android:name="org.inftel.androidrsa.activities.FirstTimeActivity"
-            >
+            android:name="org.inftel.androidrsa.activities.FirstTimeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity android:name="org.inftel.androidrsa.activities.RegisterActivity"></activity>
-        <activity android:name="org.inftel.androidrsa.activities.EncodeActivity"></activity>
-        <activity android:name="org.inftel.androidrsa.activities.DecodeActivity"></activity>
-        <activity android:name="org.inftel.androidrsa.activities.ServersActivity"></activity>
-        <activity android:name="org.inftel.androidrsa.activities.ServersAddActivity"></activity>
-        <activity android:name="org.inftel.androidrsa.activities.ServersInfoActivity"></activity>
+        <activity android:name="org.inftel.androidrsa.activities.EncodeActivity" android:noHistory="true"></activity>
+        <activity android:name="org.inftel.androidrsa.activities.DecodeActivity" android:noHistory="true"></activity>
+        <activity android:name="org.inftel.androidrsa.activities.ServersActivity" android:noHistory="true"></activity>
+        <activity android:name="org.inftel.androidrsa.activities.ServersAddActivity" android:noHistory="true"></activity>
+        <activity android:name="org.inftel.androidrsa.activities.ServersInfoActivity" android:noHistory="true"></activity>
     </application>
 
 </manifest>
