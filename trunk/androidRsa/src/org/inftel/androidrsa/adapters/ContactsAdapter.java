@@ -15,7 +15,6 @@ import org.jivesoftware.smack.util.StringUtils;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -68,9 +67,9 @@ public class ContactsAdapter extends ArrayAdapter<String> {
         if (avatarMap.containsKey(nombre)) {
             holder.imageViewAvatar.setImageBitmap(avatarMap.get(nombre));
         }
-        else {
-            holder.imageViewAvatar.setImageResource(R.drawable.ic_launcher);
-        }
+        // else {
+        // holder.imageViewAvatar.setImageResource(R.drawable.ic_launcher);
+        // }
         return rowView;
     }
 
@@ -79,6 +78,7 @@ public class ContactsAdapter extends ArrayAdapter<String> {
         Roster roster = ContactsActivity.roster;
         for (RosterEntry entry : roster.getEntries()) {
             if ((entry.getName() != null) && (entry.getName().equals(nombre))) {
+                // icono estado
                 int status = Status.getStatusFromPresence(roster.getPresence(entry.getUser()));
                 if (roster.getPresence(entry.getUser()).equals(Presence.Type.unsubscribed)) {
                     iv.setImageResource(R.drawable.status_unsubscribed);
@@ -94,13 +94,18 @@ public class ContactsAdapter extends ArrayAdapter<String> {
                 else {
                     iv.setImageResource(R.drawable.status_away);
                 }
-                break;
+
+                // icono RSA
+                if (StringUtils.parseResource(roster.getPresence(entry.getUser()).getFrom())
+                        .startsWith("androidRSA")) {
+                    ivSec.setImageResource(R.drawable.secure);
+                    ivSec.setVisibility(View.VISIBLE);
+                }
+                else {
+                    ivSec.setVisibility(View.GONE);
+                }
             }
-            Log.d(TAG, entry.getUser() + " " + StringUtils.parseResource(entry.getUser()));
-            if (StringUtils.parseResource(entry.getUser()).equals("androidRSA")) {
-                ivSec.setImageResource(R.drawable.secure);
-                ivSec.setVisibility(View.VISIBLE);
-            }
+
         }
 
     }
