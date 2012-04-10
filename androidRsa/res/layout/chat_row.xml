@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/balloon_left"
+    android:background="@drawable/balloon_right"
     android:layout_marginLeft="10dp" >
 
     <ImageView
@@ -24,7 +24,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
         android:layout_toRightOf="@+id/avatar"
-        android:text="Nombre asdfasdfasdfasdfasdfasdlfjasñldkgjñldsfkjgñlsdkfjgñlsdkjfgñlsdkjfgñlskdjfgñlsdkjfgñlsdkfjgñsldkfjgñlsdkfjgñlsdfkgj"
+        android:text="Nomjlhgljhfvljhvl.jhvyljhgkjgfvkjhfgkjhgfvkjhfkjgfvkjhfgkjhgkjhgkjhgkjhg as c asc a c as cascasc  as c as cbre"
         android:textColor="@color/negro"
         android:textSize="15dip" >
 

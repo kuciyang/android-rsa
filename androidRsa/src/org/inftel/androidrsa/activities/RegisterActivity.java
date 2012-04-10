@@ -4,7 +4,10 @@ package org.inftel.androidrsa.activities;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.SignatureException;
 import java.security.spec.InvalidKeySpecException;
 
 import javax.security.cert.CertificateException;
@@ -47,6 +50,9 @@ public class RegisterActivity extends Activity {
     private static final int DIALOG_KEY_NOT_FOUND = 1003;
     private static final int DIALOG_INVALID_CERTIFICATE = 1004;
     private static final int DIALOG_INVALID_KEY = 1005;
+    private static final int DIALOG_INVALID_SIGN_CERTIFICATE = 1006;
+    private static final int DIALOG_IMAGE_TOO_LARGE = 1007;
+    private static final int DIALOG_IMAGE_SIZE_FAIL = 1008;
 
     /** Called when the activity is first created. */
     @Override
@@ -61,6 +67,7 @@ public class RegisterActivity extends Activity {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("image/*");
         startActivityForResult(intent, ACTIVITY_SELECT_IMAGE);
+
     }
 
     // Find *.crt in the sd
@@ -155,6 +162,36 @@ public class RegisterActivity extends Activity {
                                     }
                                 });
                 break;
+            case DIALOG_INVALID_SIGN_CERTIFICATE:
+                builder.setMessage(R.string.invalid_sign_certificate)
+                        .setCancelable(false)
+                        .setPositiveButton(getResources().getString(R.string.ok),
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        dialog.dismiss();
+                                    }
+                                });
+                break;
+            case DIALOG_IMAGE_TOO_LARGE:
+                builder.setMessage(R.string.image_too_large)
+                        .setCancelable(false)
+                        .setPositiveButton(getResources().getString(R.string.ok),
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        dialog.dismiss();
+                                    }
+                                });
+                break;
+            case DIALOG_IMAGE_SIZE_FAIL:
+                builder.setMessage(R.string.image_size_fail)
+                        .setCancelable(false)
+                        .setPositiveButton(getResources().getString(R.string.ok),
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        dialog.dismiss();
+                                    }
+                                });
+                break;
         }
         dialog = builder.show();
         return dialog;
@@ -191,13 +228,22 @@ public class RegisterActivity extends Activity {
                     // put bitmapimage in imageview
                     ImageView img = (ImageView) findViewById(R.id.image);
                     img.setImageBitmap(mChosenImage);
+
+                    File file = new File(mChosenImagePath);
+                    Log.d(TAG, String.valueOf(file.length()));
+                    if (file.length() > 500000) {
+                        showDialog(DIALOG_IMAGE_TOO_LARGE);
+                    } else {
+                        if (mChosenImage.getHeight() != mChosenImage.getHeight()) {
+                            showDialog(DIALOG_IMAGE_SIZE_FAIL);
+                        }
+                    }
                 }
         }
     }
 
     public void onClickButtonDone(View view) throws IOException {
         // TODO comprobar tama�o de la foto
-        // TODO comprobar que el certificado esta firmado x nuestra CA
 
         if (mChosenFile != null && mChosenImage != null) {
             String mChosenFileStringWithoutExt = mChosenFileString.substring(0,
@@ -221,9 +267,10 @@ public class RegisterActivity extends Activity {
                             RSA.getCertificate(mChosenFilePath));
                     KeyStore.getInstance().setPk(RSA.getPrivateKey(mKey));
 
-                    Log.d(TAG, KeyStore.getInstance().getPk().toString());
-
                     KeyStore.getInstance().setPb(RSA.getCAPublicKey(getApplicationContext()));
+
+                    KeyStore.getInstance().getCertificate(AndroidRsaConstants.OWN_ALIAS)
+                            .verify(KeyStore.getInstance().getPb());
 
                     // Applying steganography
                     Intent i = new Intent(getApplicationContext(), EncodeActivity.class);
@@ -240,6 +287,15 @@ public class RegisterActivity extends Activity {
                 } catch (CertificateException e) {
                     showDialog(DIALOG_INVALID_CERTIFICATE);
                     e.printStackTrace();
+                } catch (InvalidKeyException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (NoSuchProviderException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (SignatureException e) {
+                    showDialog(DIALOG_INVALID_SIGN_CERTIFICATE);
+                    e.printStackTrace();
                 }
 
             } else {
@@ -249,7 +305,7 @@ public class RegisterActivity extends Activity {
         } else {
             showDialog(DIALOG_NOT_CHOSEN);
         }
-        
+
     }
 
 }
