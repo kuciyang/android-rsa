@@ -46,8 +46,16 @@
     <string name="info_empty_fields">There are empty fields. Please, fill them.</string>
     <string name="invalid_certificate">Invalid certificate file</string>
     <string name="invalid_key">Invalid Key file</string>
-    <string name="invalid_sign_certificate">Sign of certificate invalid !!</string>
-    <string name="image_too_large">Image is too large. Please, choose other.</string>
-    <string name="image_size_fail">The height and weight are differents !!!</string>
+    <string-array name="services_array">
+        <item>Gmail</item>
+        <item>Facebook</item>
+        <item>Jabber</item>
+        <item>Windows Live</item>
+    </string-array>
+    <string name="invalid_sign_certificate">Invalid sign of certificate</string>
+    <string name="image_too_large">The image is too large</string>
+    <string name="image_size_fail">The size of the image is too large.</string>
+    <string name="connection_error">Connection error. Pleas, try again.</string>
+    
 
 </resources>

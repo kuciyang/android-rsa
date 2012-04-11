@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.inftel.androidrsa.R;
 import org.inftel.androidrsa.activities.ContactsActivity;
 import org.inftel.androidrsa.activities.LoginActivity;
 import org.inftel.androidrsa.utils.AndroidRsaConstants;
@@ -30,20 +31,18 @@ import android.widget.Toast;
 public class LoginTask extends AsyncTask<Object, Void, Boolean> {
     private static final String TAG = "LoginTask";
     private Connection con;
-    private String host;
-    private int port;
     private String service;
     private String user;
     private String password;
     private LoginActivity activity;
     private ProgressDialog pDialog;
+    private Context ctx;
 
-    public LoginTask(Connection c, String host, int port, String service, String user,
+    public LoginTask(Context ctx, Connection c, String service, String user,
             String password, LoginActivity activity) {
         super();
+        this.ctx = ctx;
         this.con = c;
-        this.host = host;
-        this.port = port;
         this.service = service;
         this.user = user;
         this.password = password;
@@ -65,7 +64,8 @@ public class LoginTask extends AsyncTask<Object, Void, Boolean> {
                 pDialog.dismiss();
             }
             Log.e(TAG, "ERROR al crear conexión.");
-            Toast.makeText(activity, "Error al conectar,intentelo de nuevo.", Toast.LENGTH_LONG)
+            Toast.makeText(activity, ctx.getResources().getString(R.string.connection_error),
+                    Toast.LENGTH_LONG)
                     .show();
             Conexion.disconnect();
         }
@@ -74,7 +74,7 @@ public class LoginTask extends AsyncTask<Object, Void, Boolean> {
     @Override
     protected Boolean doInBackground(Object... params) {
         try {
-            con = Conexion.getInstance(host, port, service, user, password);
+            con = Conexion.getInstance(service, user, password);
             VCard vCard = new VCard();
             SharedPreferences prefs = activity.getSharedPreferences(
                     AndroidRsaConstants.SHARED_PREFERENCE_FILE,

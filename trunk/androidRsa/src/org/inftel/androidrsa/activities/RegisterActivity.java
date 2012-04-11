@@ -10,6 +10,10 @@ import java.security.NoSuchProviderException;
 import java.security.SignatureException;
 import java.security.spec.InvalidKeySpecException;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.ShortBufferException;
 import javax.security.cert.CertificateException;
 
 import org.inftel.androidrsa.R;
@@ -21,8 +25,10 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -46,6 +52,7 @@ public class RegisterActivity extends Activity {
     private String mChosenImagePath;
 
     private static final int DIALOG_LOAD_FILE = 1000;
+
     private static final int DIALOG_NOT_CHOSEN = 1002;
     private static final int DIALOG_KEY_NOT_FOUND = 1003;
     private static final int DIALOG_INVALID_CERTIFICATE = 1004;
@@ -120,7 +127,6 @@ public class RegisterActivity extends Activity {
                             });
                 }
                 break;
-
             case DIALOG_NOT_CHOSEN:
                 builder.setMessage(R.string.not_chosen)
                         .setCancelable(false)
@@ -263,9 +269,21 @@ public class RegisterActivity extends Activity {
                 // key of the CA
 
                 try {
+
                     KeyStore.getInstance().setCertificate(AndroidRsaConstants.OWN_ALIAS,
                             RSA.getCertificate(mChosenFilePath));
-                    KeyStore.getInstance().setPk(RSA.getPrivateKey(mKey));
+                    // Getting the passphrase to encrypt the private Key
+                    SharedPreferences prefs = getSharedPreferences(
+                            AndroidRsaConstants.SHARED_PREFERENCE_FILE,
+                            Context.MODE_PRIVATE);
+                    String passphrase = prefs.getString(AndroidRsaConstants.PASSWORD_TO_ENCRYPT,
+                            "thisisapassphrasedefault");
+
+                    // KeyStore.getInstance().setPk(RSA.getPrivateKey(mKey));
+
+                    // storing the private key
+                    KeyStore.getInstance().setPk(
+                            RSA.getPrivateKeyEncrytedBytes(mKey, passphrase));
 
                     KeyStore.getInstance().setPb(RSA.getCAPublicKey(getApplicationContext()));
 
@@ -281,20 +299,32 @@ public class RegisterActivity extends Activity {
                 } catch (NoSuchAlgorithmException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
-                } catch (InvalidKeySpecException e) {
-                    showDialog(DIALOG_INVALID_KEY);
-                    e.printStackTrace();
                 } catch (CertificateException e) {
                     showDialog(DIALOG_INVALID_CERTIFICATE);
                     e.printStackTrace();
                 } catch (InvalidKeyException e) {
-                    // TODO Auto-generated catch block
+                    showDialog(DIALOG_INVALID_KEY);
                     e.printStackTrace();
                 } catch (NoSuchProviderException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 } catch (SignatureException e) {
                     showDialog(DIALOG_INVALID_SIGN_CERTIFICATE);
+                    e.printStackTrace();
+                } catch (InvalidKeySpecException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (NoSuchPaddingException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (ShortBufferException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (IllegalBlockSizeException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (BadPaddingException e) {
+                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
 
@@ -307,5 +337,4 @@ public class RegisterActivity extends Activity {
         }
 
     }
-
 }

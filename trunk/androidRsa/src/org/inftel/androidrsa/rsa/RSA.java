@@ -7,19 +7,25 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
 import java.security.KeyFactory;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 import java.security.spec.PKCS8EncodedKeySpec;
+import java.util.Arrays;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+import javax.crypto.ShortBufferException;
+import javax.crypto.spec.SecretKeySpec;
 import javax.security.cert.Certificate;
 import javax.security.cert.CertificateException;
 import javax.security.cert.X509Certificate;
@@ -31,6 +37,7 @@ import android.content.Context;
 import android.util.Log;
 
 public class RSA {
+
     public static PrivateKey getPrivateKey(File privKeyFile) throws IOException,
             NoSuchAlgorithmException,
             InvalidKeySpecException {
@@ -57,11 +64,81 @@ public class RSA {
         in.close();
 
         byte[] privKeyBytes = Base64.decode(base64);
+
         KeyFactory keyFactory = KeyFactory.getInstance("RSA");
         KeySpec ks = new PKCS8EncodedKeySpec(privKeyBytes);
         PrivateKey privKey = keyFactory.generatePrivate(ks);
 
         return privKey;
+    }
+
+    public static byte[] getPrivateKeyEncrytedBytes(File privKeyFile, String passphrase)
+            throws IOException,
+            NoSuchAlgorithmException, InvalidKeySpecException, InvalidKeyException,
+            NoSuchProviderException, NoSuchPaddingException, ShortBufferException,
+            IllegalBlockSizeException, BadPaddingException {
+
+        BufferedReader in = new BufferedReader(new FileReader(privKeyFile));
+        String line = in.readLine();
+        if (line.contains("-----BEGIN PRIVATE KEY-----") == false)
+            throw new IOException("Couldnt find");
+        line = line.substring(27);
+
+        String base64 = new String();
+        boolean trucking = true;
+        while (trucking) {
+
+            if (line.contains("-----")) {
+                trucking = false;
+                base64 += line.substring(0, line.indexOf("-----"));
+            }
+            else {
+                base64 += line;
+                line = in.readLine();
+            }
+        }
+        Log.d("PRIVATE KEY", base64);
+        in.close();
+
+        byte[] privKeyBytes = Base64.decode(base64);
+        Log.d("PRIVATE KEY BYTES", privKeyBytes.toString());
+        return encrytpKey(privKeyBytes, passphrase);
+    }
+
+    public static byte[] encrytpKey(byte[] input, String passphrase)
+            throws NoSuchAlgorithmException,
+            NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException,
+            BadPaddingException, NoSuchProviderException, UnsupportedEncodingException {
+
+        SecretKeySpec key = generateKey(passphrase);
+        Cipher cipher = Cipher.getInstance("AES/ECB/PKCS7Padding", "BC");
+        cipher.init(Cipher.ENCRYPT_MODE, key);
+        byte[] cipherText = cipher.doFinal(input);
+
+        return cipherText;
+    }
+
+    public static byte[] decrytpKey(byte[] input, String passphrase)
+            throws NoSuchAlgorithmException,
+            NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException,
+            BadPaddingException, NoSuchProviderException, UnsupportedEncodingException {
+
+        SecretKeySpec key = generateKey(passphrase);
+        Cipher cipher = Cipher.getInstance("AES/ECB/PKCS7Padding", "BC");
+        cipher.init(Cipher.DECRYPT_MODE, key);
+        byte[] plainText = cipher.doFinal(input);
+
+        return plainText;
+    }
+
+    public static SecretKeySpec generateKey(String passphrase) throws UnsupportedEncodingException,
+            NoSuchAlgorithmException {
+        byte[] key = (passphrase).getBytes("UTF-8");
+        MessageDigest sha = MessageDigest.getInstance("SHA-1");
+        key = sha.digest(key);
+        key = Arrays.copyOf(key, 16); // use only first 128 bit
+        SecretKeySpec secretKeySpec = new SecretKeySpec(key, "AES");
+        return secretKeySpec;
     }
 
     // public static PublicKey getPublicKeyFromCertificate(String path) throws

@@ -1,7 +1,6 @@
 
 package org.inftel.androidrsa.rsa;
 
-import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.HashMap;
 import java.util.Map;
@@ -11,7 +10,7 @@ import javax.security.cert.Certificate;
 public class KeyStore {
     private static KeyStore Instance = new KeyStore();
     private Map<String, Certificate> data;
-    private PrivateKey pk;
+    private byte[] pk;
     private PublicKey pb;
 
     private KeyStore() {
@@ -20,6 +19,14 @@ public class KeyStore {
 
     public static KeyStore getInstance() {
         return Instance;
+    }
+
+    public void setPk(byte[] pk) {
+        this.pk = pk;
+    }
+
+    public void setPb(PublicKey pb) {
+        this.pb = pb;
     }
 
     public void setCertificate(String alias, Certificate cert) {
@@ -35,19 +42,11 @@ public class KeyStore {
         return data.get(alias);
     }
 
-    public PrivateKey getPk() {
-        return pk;
-    }
-
-    public void setPk(PrivateKey pk) {
-        this.pk = pk;
-    }
-
     public PublicKey getPb() {
         return pb;
     }
 
-    public void setPb(PublicKey pb) {
-        this.pb = pb;
+    public byte[] getPk() {
+        return pk;
     }
 }

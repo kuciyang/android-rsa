@@ -52,10 +52,15 @@ public class AndroidRsaConstants {
     public static final String CERT_PATH = "cert_path";
     public static final String KEY_PATH = "key_path";
     public static final String ENCODED_IMAGE_PATH = "encoded_image_path";
+    public static final String PASSWORD_TO_ENCRYPT = "pass_to_encrypt";
 
     // Constants for KeyStore
 
     public static String FRIEND_ALIAS = "fr";
     public static String OWN_ALIAS = "own";
 
+    // Services
+    public static String GMAIL_HOST = "talk.google.com";
+    public static int GMAIL_PORT = 5222;
+    public static String GMAIL_SERVICE = "gmail.com";
 }

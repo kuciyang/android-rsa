@@ -42,9 +42,7 @@ public class ContactsActivity extends ListActivity {
         roster = connection.getRoster();
         Roster.setDefaultSubscriptionMode(Roster.SubscriptionMode.accept_all);
         roster.setSubscriptionMode(Roster.SubscriptionMode.accept_all);
-
         pintarUI();
-
     }
 
     private void loadContacts() {

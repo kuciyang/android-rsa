@@ -3,7 +3,7 @@
               android:orientation="vertical"
               android:layout_width="fill_parent"
               android:layout_height="fill_parent"
-              android:background="@drawable/template_android"
+              android:background="@drawable/android_chat"
               android:gravity="center_vertical"
         >
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -11,6 +11,32 @@
                   android:layout_width="fill_parent"
                   android:layout_height="wrap_content"
             >
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Host/Port:"
+                android:minWidth="70dp"
+                />
+        <EditText android:id="@+id/host"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:singleLine="true"
+                  android:textSize="16sp"
+                  android:autoText="false"
+                  android:capitalize="none"
+                  android:minWidth="150dp"
+                  android:scrollHorizontally="true"
+                  android:text="@string/default_host"/>
+        <EditText android:id="@+id/port"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:singleLine="true"
+                  android:textSize="16sp"
+                  android:autoText="false"
+                  android:minWidth="80dp"
+                  android:capitalize="none"
+                  android:scrollHorizontally="true"
+                  android:text="@string/default_port"/>
     </LinearLayout>
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                   android:orientation="horizontal"
@@ -23,13 +49,16 @@
                 android:text="Service:"
                 android:minWidth="70dp"
                 />
-
-        <Spinner
-            android:id="@+id/spinner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
-
+        <EditText android:id="@+id/service"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:singleLine="true"
+                  android:textSize="16sp"
+                  android:autoText="false"
+                  android:minWidth="250dp"
+                  android:capitalize="none"
+                  android:scrollHorizontally="true"
+                  android:text="@string/default_service"/>
     </LinearLayout>
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                   android:orientation="horizontal"
