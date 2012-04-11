@@ -29,38 +29,49 @@ public class Conexion {
         String host;
         int port;
         String serv;
-        if (con != null) {
-            Log.d(TAG, "La conexión ya existe,devolviendo!");
-            return con;
-        }
-        else {
-            if (service.equals("Gmail")) {
-                host = AndroidRsaConstants.GMAIL_HOST;
-                port = AndroidRsaConstants.GMAIL_PORT;
-                serv = AndroidRsaConstants.GMAIL_SERVICE;
-                SmackConfiguration.setPacketReplyTimeout(60000);
-                Log.d(TAG, "Creando una conexión con " + host + ":" + port);
-                // Create the configuration for this new connection
-                ConnectionConfiguration config = new ConnectionConfiguration(host, port, serv);
-                config.setDebuggerEnabled(true);
-                XMPPConnection.DEBUG_ENABLED = true;
-                SASLAuthentication.supportSASLMechanism("PLAIN", 0);
-                config.setSASLAuthenticationEnabled(true);
+        con = null;
 
-                con = new XMPPConnection(config);
-                // Connect to the server
-                con.connect();
-                // Log into the server
-                con.login(userid, password, "androidRSA");
-                return con;
-            } else if (service.equals("Facebook")) {
-                return null;
-            } else if (service.equals("Jabber")) {
-                return null;
-            } else {
-                // windows live
-                return null;
-            }
+        if (service.equals("Gmail")) {
+            host = AndroidRsaConstants.GMAIL_HOST;
+            port = AndroidRsaConstants.GMAIL_PORT;
+            serv = AndroidRsaConstants.GMAIL_SERVICE;
+            SmackConfiguration.setPacketReplyTimeout(60000);
+            Log.d(TAG, "Creando una conexión con " + host + ":" + port);
+            // Create the configuration for this new connection
+            ConnectionConfiguration config = new ConnectionConfiguration(host, port, serv);
+            config.setDebuggerEnabled(true);
+            XMPPConnection.DEBUG_ENABLED = true;
+            SASLAuthentication.supportSASLMechanism("PLAIN", 0);
+            config.setSASLAuthenticationEnabled(true);
+
+            con = new XMPPConnection(config);
+            // Connect to the server
+            con.connect();
+            // Log into the server
+            con.login(userid, password, "androidRSA");
+            return con;
+        } else if (service.equals("Facebook")) {
+            ConnectionConfiguration config = new ConnectionConfiguration("chat.facebook.com",
+                    5222);
+            config.setSASLAuthenticationEnabled(true);
+
+            SmackConfiguration.setPacketReplyTimeout(15000);
+            XMPPConnection.DEBUG_ENABLED = true;
+            SASLAuthentication.registerSASLMechanism("X-FACEBOOK-PLATFORM",
+                    SASLXFacebookPlatformMechanism.class);
+            SASLAuthentication.supportSASLMechanism("X-FACEBOOK-PLATFORM", 0);
+            con = new XMPPConnection(config);
+            con.connect();
+            String apiKey = "3290292390239";
+            String accessToken = "ADSJDSJKDKSJKSJD0-43DKJSDJKSDKJSD094JJSDKJSDKJDSNDSKJNSDLkljdkjs";
+            con.login(apiKey, accessToken);
+
+            return con;
+        } else if (service.equals("Jabber")) {
+            return null;
+        } else {
+            // windows live
+            return null;
         }
 
     }
