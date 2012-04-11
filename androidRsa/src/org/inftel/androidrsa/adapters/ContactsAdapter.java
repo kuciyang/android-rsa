@@ -7,6 +7,7 @@ import java.util.HashMap;
 import org.inftel.androidrsa.R;
 import org.inftel.androidrsa.activities.ContactsActivity;
 import org.inftel.androidrsa.xmpp.AvatarsCache;
+import org.inftel.androidrsa.xmpp.RosterManager;
 import org.inftel.androidrsa.xmpp.Status;
 import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.RosterEntry;
@@ -61,50 +62,56 @@ public class ContactsAdapter extends ArrayAdapter<String> {
 
         ViewHolder holder = (ViewHolder) rowView.getTag();
         holder.imageViewSec.setVisibility(View.GONE);
-        holder.textView.setText(list.get(position));
-        String nombre = list.get(position);
-        setIcons(holder.imageView, holder.imageViewSec, nombre, rowView);
-        if (avatarMap.containsKey(nombre)) {
-            holder.imageViewAvatar.setImageBitmap(avatarMap.get(nombre));
+        RosterEntry entry = RosterManager.findByJid(list.get(position));
+        String name = null;
+        if (entry != null) {
+            name = entry.getName();
         }
-        // else {
-        // holder.imageViewAvatar.setImageResource(R.drawable.ic_launcher);
-        // }
+        if (name != null) {
+            holder.textView.setText(name);
+        }
+        String jid = list.get(position);
+        setIcons(holder.imageView, holder.imageViewSec, jid, rowView);
+        if (avatarMap.containsKey(jid)) {
+            holder.imageViewAvatar.setImageBitmap(avatarMap.get(jid));
+        }
+        else {
+            holder.imageViewAvatar.setImageResource(R.drawable.ic_launcher);
+        }
         return rowView;
     }
 
-    private void setIcons(ImageView iv, ImageView ivSec, String nombre,
+    private void setIcons(ImageView iv, ImageView ivSec, String jid,
             View rowview) {
         Roster roster = ContactsActivity.roster;
-        for (RosterEntry entry : roster.getEntries()) {
-            if ((entry.getName() != null) && (entry.getName().equals(nombre))) {
-                // icono estado
-                int status = Status.getStatusFromPresence(roster.getPresence(entry.getUser()));
-                if (roster.getPresence(entry.getUser()).equals(Presence.Type.unsubscribed)) {
-                    iv.setImageResource(R.drawable.status_unsubscribed);
-                }
-                else if ((status == Status.CONTACT_STATUS_AVAILABLE)
-                        || (status == Status.CONTACT_STATUS_AVAILABLE_FOR_CHAT)) {
-                    iv.setImageResource(R.drawable.status_available);
-                }
-                else if ((status == Status.CONTACT_STATUS_AWAY)
-                        || (status == Status.CONTACT_STATUS_BUSY)) {
-                    iv.setImageResource(R.drawable.status_idle);
-                }
-                else {
-                    iv.setImageResource(R.drawable.status_away);
-                }
 
-                // icono RSA
-                if (StringUtils.parseResource(roster.getPresence(entry.getUser()).getFrom())
-                        .startsWith("androidRSA")) {
-                    ivSec.setImageResource(R.drawable.secure);
-                    ivSec.setVisibility(View.VISIBLE);
-                }
-                else {
-                    ivSec.setVisibility(View.GONE);
-                }
-                break;
+        RosterEntry entry = RosterManager.findByJid(jid);
+        if ((entry != null) && (entry.getName() != null)) {
+            // icono estado
+            int status = Status.getStatusFromPresence(roster.getPresence(entry.getUser()));
+            if (roster.getPresence(entry.getUser()).equals(Presence.Type.unsubscribed)) {
+                iv.setImageResource(R.drawable.status_unsubscribed);
+            }
+            else if ((status == Status.CONTACT_STATUS_AVAILABLE)
+                    || (status == Status.CONTACT_STATUS_AVAILABLE_FOR_CHAT)) {
+                iv.setImageResource(R.drawable.status_available);
+            }
+            else if ((status == Status.CONTACT_STATUS_AWAY)
+                    || (status == Status.CONTACT_STATUS_BUSY)) {
+                iv.setImageResource(R.drawable.status_idle);
+            }
+            else {
+                iv.setImageResource(R.drawable.status_away);
+            }
+
+            // icono RSA
+            if (StringUtils.parseResource(roster.getPresence(jid).getFrom()).startsWith(
+                    "androidRSA")) {
+                ivSec.setImageResource(R.drawable.secure);
+                ivSec.setVisibility(View.VISIBLE);
+            }
+            else {
+                ivSec.setVisibility(View.GONE);
             }
 
         }
