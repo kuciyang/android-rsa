@@ -15,6 +15,7 @@ import org.jivesoftware.smack.RosterListener;
 import org.jivesoftware.smack.packet.Presence;
 
 import android.app.ListActivity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -24,7 +25,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class ContactsActivity extends ListActivity {
     private static final String TAG = "ContactsActivity";
@@ -77,9 +77,9 @@ public class ContactsActivity extends ListActivity {
             public void onItemClick(AdapterView<?> parent, View view,
                     int position, long id) {
                 TextView nombre = (TextView) view.findViewById(R.id.nombre);
-                Toast.makeText(getApplicationContext(), "pulsado " + nombre.getText(),
-                        Toast.LENGTH_SHORT).show();
-                // TODO crear chat
+                Intent i = new Intent(getApplicationContext(), ChatActivity.class);
+                i.putExtra("destName", nombre.getText().toString());
+                startActivity(i);
             }
 
         });
@@ -153,6 +153,12 @@ public class ContactsActivity extends ListActivity {
                 adapter.notifyDataSetChanged();
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        Conexion.disconnect();
+        super.onBackPressed();
     }
 
 }

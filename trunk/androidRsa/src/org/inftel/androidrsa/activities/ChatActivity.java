@@ -1,66 +1,68 @@
 
 package org.inftel.androidrsa.activities;
 
-import java.util.ArrayList;
-
-import org.inftel.androidrsa.adapters.ContactsAdapter;
+import org.inftel.androidrsa.R;
+import org.inftel.androidrsa.xmpp.Conexion;
+import org.jivesoftware.smack.Chat;
+import org.jivesoftware.smack.ChatManager;
+import org.jivesoftware.smack.Connection;
+import org.jivesoftware.smack.MessageListener;
+import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.packet.Message;
 
 import android.app.ListActivity;
 import android.os.Bundle;
-import android.widget.ListView;
+import android.util.Log;
+import android.view.View;
+import android.widget.EditText;
 
 public class ChatActivity extends ListActivity {
     private static final String TAG = "ChatActivity";
-    private ArrayList<String> listaNombres = new ArrayList<String>();
-    private boolean showAll = true;
-    private ContactsAdapter adapter;
-    private ListView myListView;
+    private Connection connection;
+    private Chat chat;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        connection = Conexion.getInstance();
         super.onCreate(savedInstanceState);
-        pintarUI();
+        setContentView(R.layout.chat);
 
+        createChat();
     }
 
     private void pintarUI() {
-        // listaNombres.clear();
-        // for (RosterEntry entry : entries) {
-        // if ((showAll) && (entry.getName() != null)) {
-        // listaNombres.add(entry.getName());
-        // }
-        // else if (((!showAll) && (entry.getName() != null))) {
-        // int status =
-        // Status.getStatusFromPresence(roster.getPresence(entry.getUser()));
-        // if ((status == Status.CONTACT_STATUS_AVAILABLE)
-        // || (status == Status.CONTACT_STATUS_AVAILABLE_FOR_CHAT)
-        // || (status == Status.CONTACT_STATUS_AWAY)
-        // || (status == Status.CONTACT_STATUS_BUSY)) {
-        // listaNombres.add(entry.getName());
-        // }
-        // }
-        // }
-        //
-        // adapter = new ContactsAdapter(this, listaNombres);
-        // runOnUiThread(new Runnable() {
-        // public void run() {
-        // setListAdapter(adapter);
-        // }
-        // });
-        //
-        // myListView = getListView();
-        //
-        // myListView.setOnItemClickListener(new OnItemClickListener() {
-        // public void onItemClick(AdapterView<?> parent, View view,
-        // int position, long id) {
-        // TextView nombre = (TextView) view.findViewById(R.id.nombre);
-        // Toast.makeText(getApplicationContext(), "pulsado " +
-        // nombre.getText(),
-        // Toast.LENGTH_SHORT).show();
-        //
-        // }
-        //
-        // });
 
+    }
+
+    private void createChat() {
+        ChatManager chatmanager = connection.getChatManager();
+        MessageListener messageListener = new MessageListener() {
+            public void processMessage(Chat chat, Message message) {
+                Log.i(TAG, "Recibido mensaje: " + message.getBody());
+            }
+        };
+        chat = chatmanager.createChat("miwe08@gmail.com", messageListener);
+
+    }
+
+    public void send(View view) {
+        try {
+            Log.d(TAG, "Leyendo editText:");
+            EditText m = (EditText) findViewById(R.id.textInput);
+
+            Message message = new Message("miwe08@gmail.com");
+            message.setFrom(connection.getUser());
+            message.setBody(m.getText().toString());
+
+            Log.d(TAG, "From: " + connection.getUser());
+            Log.d(TAG, "To: " + message.getTo());
+            Log.d(TAG, "Body: " + m.getText());
+
+            chat.sendMessage(m.getText().toString());
+            m.setText("");
+
+        } catch (XMPPException e) {
+            Log.d(TAG, "ERROR al enviar mensaje");
+        }
     }
 }
