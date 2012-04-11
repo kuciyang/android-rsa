@@ -50,13 +50,13 @@ public class AvatarsCache {
         }
     }
 
-    private static Bitmap getAvatar(String user) {
+    private static Bitmap getAvatar(String jid) {
         VCard vCard = new VCard();
         try {
             ProviderManager.getInstance().addIQProvider("vCard",
                     "vcard-temp",
                     new VCardProvider());
-            vCard.load(Conexion.getInstance(), user);
+            vCard.load(Conexion.getInstance(), jid);
             if (vCard.getAvatar() != null) {
                 Log.d(TAG, "No es NULL");
                 byte[] avatarRaw = vCard.getAvatar();
@@ -75,7 +75,8 @@ public class AvatarsCache {
 
     public static void populateFromRoster(Roster roster) {
         for (RosterEntry entry : roster.getEntries()) {
-            avatarMap.put(entry.getName(), getAvatar(entry.getUser()));
+            avatarMap
+                    .put(roster.getPresence(entry.getUser()).getFrom(), getAvatar(entry.getUser()));
         }
     }
 

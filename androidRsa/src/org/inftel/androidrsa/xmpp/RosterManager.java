@@ -17,10 +17,20 @@ public class RosterManager {
         }
     }
 
-    public static String findByName(String name) {
+    public static RosterEntry findByName(String name) {
         for (RosterEntry entry : roster.getEntries()) {
             if ((entry.getName() != null) && (entry.getName().equals(name))) {
-                return roster.getPresence(entry.getUser()).getFrom();
+                return entry;
+            }
+        }
+        return null;
+    }
+
+    public static RosterEntry findByJid(String jid) {
+        for (RosterEntry entry : roster.getEntries()) {
+            if ((entry.getName() != null)
+                    && (roster.getPresence(entry.getUser()).getFrom().equals(jid))) {
+                return entry;
             }
         }
         return null;
