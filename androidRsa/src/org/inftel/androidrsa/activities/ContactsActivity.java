@@ -8,6 +8,7 @@ import org.inftel.androidrsa.R;
 import org.inftel.androidrsa.adapters.ContactsAdapter;
 import org.inftel.androidrsa.xmpp.ChatMan;
 import org.inftel.androidrsa.xmpp.Conexion;
+import org.inftel.androidrsa.xmpp.RosterManager;
 import org.inftel.androidrsa.xmpp.Status;
 import org.jivesoftware.smack.Connection;
 import org.jivesoftware.smack.Roster;
@@ -31,7 +32,7 @@ public class ContactsActivity extends ListActivity {
     private static final String TAG = "ContactsActivity";
     private Connection connection;
     public static Roster roster;
-    private ArrayList<String> listaNombres = new ArrayList<String>();
+    private ArrayList<String> listaJid = new ArrayList<String>();
     private boolean showAll = true;
     private ContactsAdapter adapter;
     private ListView myListView;
@@ -41,7 +42,7 @@ public class ContactsActivity extends ListActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         connection = Conexion.getInstance();
-        roster = connection.getRoster();
+        roster = RosterManager.getRosterInstance();
         Roster.setDefaultSubscriptionMode(Roster.SubscriptionMode.accept_all);
         roster.setSubscriptionMode(Roster.SubscriptionMode.accept_all);
 
@@ -53,10 +54,10 @@ public class ContactsActivity extends ListActivity {
 
     private void loadContacts() {
         Collection<RosterEntry> entries = roster.getEntries();
-        listaNombres.clear();
+        listaJid.clear();
         for (RosterEntry entry : entries) {
             if ((showAll) && (entry.getName() != null)) {
-                listaNombres.add(entry.getName());
+                listaJid.add(roster.getPresence(entry.getUser()).getFrom());
             }
             else if (((!showAll) && (entry.getName() != null))) {
                 int status = Status.getStatusFromPresence(roster.getPresence(entry.getUser()));
@@ -64,7 +65,7 @@ public class ContactsActivity extends ListActivity {
                         || (status == Status.CONTACT_STATUS_AVAILABLE_FOR_CHAT)
                         || (status == Status.CONTACT_STATUS_AWAY)
                         || (status == Status.CONTACT_STATUS_BUSY)) {
-                    listaNombres.add(entry.getName());
+                    listaJid.add(roster.getPresence(entry.getUser()).getFrom());
                 }
             }
         }
@@ -73,7 +74,7 @@ public class ContactsActivity extends ListActivity {
     private void pintarUI() {
         loadContacts();
 
-        adapter = new ContactsAdapter(this, listaNombres);
+        adapter = new ContactsAdapter(this, listaJid);
         setListAdapter(adapter);
 
         myListView = getListView();
@@ -82,7 +83,8 @@ public class ContactsActivity extends ListActivity {
                     int position, long id) {
                 TextView nombre = (TextView) view.findViewById(R.id.nombre);
                 Intent i = new Intent(getApplicationContext(), ChatActivity.class);
-                i.putExtra("destName", nombre.getText().toString());
+                i.putExtra("destJid", RosterManager.findByName(nombre.getText().toString())
+                        .getUser());
                 startActivity(i);
             }
 
@@ -162,8 +164,7 @@ public class ContactsActivity extends ListActivity {
     @Override
     public void onBackPressed() {
         Conexion.disconnect();
-        Intent i = new Intent(this, LoginActivity.class);
-        startActivity(i);
+        super.onBackPressed();
     }
 
 }
