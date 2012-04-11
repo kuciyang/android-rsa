@@ -52,7 +52,8 @@ public class AndroidRsaConstants {
     public static final String CERT_PATH = "cert_path";
     public static final String KEY_PATH = "key_path";
     public static final String ENCODED_IMAGE_PATH = "encoded_image_path";
-    public static final String PASSWORD_TO_ENCRYPT = "pass_to_encrypt";
+    public static final String USERID = "pass_to_encrypt";
+    public static final String SERVICE = "service";
 
     // Constants for KeyStore
 

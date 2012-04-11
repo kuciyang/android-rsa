@@ -20,9 +20,6 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -36,13 +33,16 @@ public class LoginActivity extends Activity {
     private Connection connection;
     private ProgressDialog pDialog;
     private String selectedItem;
+    private String userid;
+    private String password;
+    private LoginTask task;
     private static final int DIALOG_RUN_ONCE = 1001;
+    private static final int DIALOG_RUN_OTHER = 1010;
 
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.login);
         prefs = getSharedPreferences(AndroidRsaConstants.SHARED_PREFERENCE_FILE,
                 Context.MODE_PRIVATE);
@@ -65,11 +65,11 @@ public class LoginActivity extends Activity {
 
     // Carga los campos de la última ejecución
     private void loadPreferences() {
-        if (!prefs.getString("userid", "default").equals("default")) {
+        if (!prefs.getString(AndroidRsaConstants.USERID, "default").equals("default")) {
             EditText e = (EditText) findViewById(R.id.userid);
             e.setText(prefs.getString("userid", "default"));
         }
-        String service = prefs.getString("service", "default");
+        String service = prefs.getString(AndroidRsaConstants.SERVICE, "default");
         if (!service.equals("default")) {
             Spinner spinner = (Spinner) findViewById(R.id.spinner);
             if (service.equals("Gmail"))
@@ -95,29 +95,25 @@ public class LoginActivity extends Activity {
     }
 
     public void login(View v) {
-        String userid = ((EditText) findViewById(R.id.userid)).getText().toString();
-        String password = ((EditText) findViewById(R.id.password)).getText().toString();
+        userid = ((EditText) findViewById(R.id.userid)).getText().toString();
+        password = ((EditText) findViewById(R.id.password)).getText().toString();
         if (userid != null && !userid.isEmpty() && password != null && !password.isEmpty()) {
+            // Saving passphrase
+            Editor editor = prefs.edit();
+            editor.putString(AndroidRsaConstants.SERVICE, selectedItem);
+            editor.putString(AndroidRsaConstants.USERID, userid);
+            editor.apply();
+
             // Check we've been run once.
             boolean runOnce = prefs.getBoolean(AndroidRsaConstants.SP_KEY_RUN_ONCE, false);
             if (!runOnce) {
-                Editor editor = prefs.edit();
-                editor.putString(AndroidRsaConstants.PASSWORD_TO_ENCRYPT, password);
-                editor.apply();
                 showDialog(DIALOG_RUN_ONCE);
                 Intent i = new Intent(this, RegisterActivity.class);
                 startActivity(i);
             } else {
-                // saving preferences
-                Editor editor = prefs.edit();
-                editor.putString("service", selectedItem);
-                editor.putString("userid", userid);
-                editor.apply();
-
-                // launching task
-                LoginTask task = new LoginTask(this, connection, selectedItem,
-                        userid, password, this);
-                task.execute();
+                task = new LoginTask(this, connection,
+                        selectedItem, userid, password, this);
+                showDialog(DIALOG_RUN_OTHER);
             }
         } else {
             Toast.makeText(this, getResources().getString(R.string.info_empty_fields),
@@ -127,36 +123,32 @@ public class LoginActivity extends Activity {
 
     }
 
-    public void savePreferences(String userid) {
-
-    }
-
-    /** llamado cuando se pulsa el boton menu. */
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_login, menu);
-        return true;
-    }
-
-    /** llamado cuando un elemento del menu es seleccionado. */
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        Intent i;
-        switch (item.getItemId()) {
-            case R.id.button_register:
-                i = new Intent(this, RegisterActivity.class);
-                startActivity(i);
-                break;
-        // TODO cambiar contrase�a
-        // case R.id.button_change_password:
-        // i = new Intent(this, ChangePassword.class);
-        // startActivity(i);
-        // break;
-
-        }
-        return true;
-    }
+    // /** llamado cuando se pulsa el boton menu. */
+    // @Override
+    // public boolean onCreateOptionsMenu(Menu menu) {
+    // MenuInflater inflater = getMenuInflater();
+    // inflater.inflate(R.menu.menu_login, menu);
+    // return true;
+    // }
+    //
+    // /** llamado cuando un elemento del menu es seleccionado. */
+    // @Override
+    // public boolean onOptionsItemSelected(MenuItem item) {
+    // Intent i;
+    // switch (item.getItemId()) {
+    // case R.id.button_register:
+    // i = new Intent(this, RegisterActivity.class);
+    // startActivity(i);
+    // break;
+    // // TODO cambiar contrase�a
+    // // case R.id.button_change_password:
+    // // i = new Intent(this, ChangePassword.class);
+    // // startActivity(i);
+    // // break;
+    //
+    // }
+    // return true;
+    // }
 
     // Dialogs
     protected Dialog onCreateDialog(int id) {
@@ -172,6 +164,26 @@ public class LoginActivity extends Activity {
                                         Intent i = new Intent(getApplicationContext(),
                                                 RegisterActivity.class);
                                         startActivity(i);
+                                        dialog.dismiss();
+                                    }
+                                });
+                break;
+            case DIALOG_RUN_OTHER:
+                builder.setMessage(R.string.run_configuration_question)
+                        .setCancelable(false)
+                        .setPositiveButton(getResources().getString(R.string.yes),
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        Intent i = new Intent(getApplicationContext(),
+                                                RegisterActivity.class);
+                                        startActivity(i);
+                                        dialog.dismiss();
+                                    }
+                                })
+                        .setNegativeButton(getResources().getString(R.string.no),
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        task.execute();
                                         dialog.dismiss();
                                     }
                                 });

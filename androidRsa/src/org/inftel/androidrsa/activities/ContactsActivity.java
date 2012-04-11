@@ -162,7 +162,8 @@ public class ContactsActivity extends ListActivity {
     @Override
     public void onBackPressed() {
         Conexion.disconnect();
-        super.onBackPressed();
+        Intent i = new Intent(this, LoginActivity.class);
+        startActivity(i);
     }
 
 }
