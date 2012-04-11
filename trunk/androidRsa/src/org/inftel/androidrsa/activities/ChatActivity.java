@@ -8,7 +8,6 @@ import org.inftel.androidrsa.xmpp.RosterManager;
 import org.jivesoftware.smack.Connection;
 import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.packet.Message;
 
 import android.app.ListActivity;
 import android.os.Bundle;
@@ -30,10 +29,11 @@ public class ChatActivity extends ListActivity {
         chatMan = ContactsActivity.chatMan;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.chat);
-        String destName = getIntent().getStringExtra("destName");
-        String jidDest = RosterManager.findByName(destName);
+        String destJid = getIntent().getStringExtra("destJid");
         // Crear chat o no crear...
-        chatMan.createChat(jidDest);
+        if (ChatMan.chat == null) {
+            chatMan.createChat(destJid);
+        }
     }
 
     private void pintarUI() {
@@ -44,12 +44,9 @@ public class ChatActivity extends ListActivity {
         if (!cipher) {
             try {
                 EditText m = (EditText) findViewById(R.id.textInput);
-                Message message = new Message("miwe08@gmail.com");
-                message.setFrom(connection.getUser());
-                message.setBody(m.getText().toString());
                 chatMan.getChat().sendMessage(m.getText().toString());
+                Log.d(TAG, "Enviado: " + m.getText().toString());
                 m.setText("");
-                Log.d(TAG, "Enviado: " + message.getBody());
             } catch (XMPPException e) {
                 Log.d(TAG, "ERROR al enviar mensaje");
             }
@@ -58,4 +55,11 @@ public class ChatActivity extends ListActivity {
             // TODO obtener clave publica del destino y mandar mensaje cifrado
         }
     }
+
+    @Override
+    public void onBackPressed() {
+        ChatMan.chat = null;
+        super.onBackPressed();
+    }
+
 }
