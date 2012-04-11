@@ -39,12 +39,12 @@ public class ChatMan {
         ChatManagerListener chatManagerListener = new ChatManagerListener() {
             public void chatCreated(Chat chat, boolean createdLocally)
             {
-                if (!createdLocally)
-                    // TODO startActivity y asignar a field
+                if (!createdLocally) {
                     ChatMan.chat = chat;
-                chat.addMessageListener(messageListener);
-                Intent i = new Intent(activity, ChatActivity.class);
-                activity.startActivity(i);
+                    chat.addMessageListener(messageListener);
+                    Intent i = new Intent(activity, ChatActivity.class);
+                    activity.startActivity(i);
+                }
             }
         };
 
@@ -73,6 +73,14 @@ public class ChatMan {
 
     public void setChat(Chat chat) {
         this.chat = chat;
+    }
+
+    public boolean isCipher() {
+        return cipher;
+    }
+
+    public void setCipher(boolean cipher) {
+        this.cipher = cipher;
     }
 
 }
