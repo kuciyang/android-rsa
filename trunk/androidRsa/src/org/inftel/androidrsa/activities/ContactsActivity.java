@@ -6,6 +6,7 @@ import java.util.Collection;
 
 import org.inftel.androidrsa.R;
 import org.inftel.androidrsa.adapters.ContactsAdapter;
+import org.inftel.androidrsa.xmpp.ChatMan;
 import org.inftel.androidrsa.xmpp.Conexion;
 import org.inftel.androidrsa.xmpp.Status;
 import org.jivesoftware.smack.Connection;
@@ -34,6 +35,7 @@ public class ContactsActivity extends ListActivity {
     private boolean showAll = true;
     private ContactsAdapter adapter;
     private ListView myListView;
+    public static ChatMan chatMan;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -42,7 +44,11 @@ public class ContactsActivity extends ListActivity {
         roster = connection.getRoster();
         Roster.setDefaultSubscriptionMode(Roster.SubscriptionMode.accept_all);
         roster.setSubscriptionMode(Roster.SubscriptionMode.accept_all);
+
         pintarUI();
+        chatMan = new ChatMan(this);
+        chatMan.initListener();
+
     }
 
     private void loadContacts() {
