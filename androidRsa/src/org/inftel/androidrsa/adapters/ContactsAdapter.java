@@ -104,6 +104,7 @@ public class ContactsAdapter extends ArrayAdapter<String> {
                 else {
                     ivSec.setVisibility(View.GONE);
                 }
+                break;
             }
 
         }
