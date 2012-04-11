@@ -68,9 +68,12 @@ public class EncodeActivity extends Activity {
                 SharedPreferences prefs = getSharedPreferences(
                         AndroidRsaConstants.SHARED_PREFERENCE_FILE,
                         Context.MODE_PRIVATE);
-                Editor prefsEditor = prefs.edit();
-                prefsEditor.putBoolean(AndroidRsaConstants.SP_KEY_RUN_ONCE, true);
-                prefsEditor.apply();
+                boolean runOnce = prefs.getBoolean(AndroidRsaConstants.SP_KEY_RUN_ONCE, false);
+                if (!runOnce) {
+                    Editor prefsEditor = prefs.edit();
+                    prefsEditor.putBoolean(AndroidRsaConstants.SP_KEY_RUN_ONCE, true);
+                    prefsEditor.apply();
+                }
 
                 Intent i = new Intent(context, LoginActivity.class);
                 startActivity(i);
