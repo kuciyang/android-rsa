@@ -14,7 +14,7 @@ import android.util.Log;
 public class ChatMan {
     private final static String TAG = "ChatActivity";
     private Connection connection;
-    private Chat chat;
+    public static Chat chat = null;
     private boolean cipher;
     private ContactsActivity activity;
 
@@ -40,7 +40,8 @@ public class ChatMan {
             {
                 if (!createdLocally)
                     // TODO startActivity y asignar a field
-                    chat.addMessageListener(messageListener);
+                    ChatMan.chat = chat;
+                chat.addMessageListener(messageListener);
             }
         };
 
