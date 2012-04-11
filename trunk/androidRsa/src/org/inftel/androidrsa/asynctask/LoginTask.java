@@ -51,16 +51,19 @@ public class LoginTask extends AsyncTask<Object, Void, Boolean> {
     }
 
     public void onPostExecute(Boolean success) {
-        if (pDialog.isShowing()) {
-            pDialog.dismiss();
-        }
         if (success) {
             Log.i(TAG, "Conexión creada correctamente!");
             Log.i(TAG, "Conectado como " + con.getUser());
             Intent i = new Intent(activity, ContactsActivity.class);
             activity.startActivity(i);
+            if (pDialog.isShowing()) {
+                pDialog.dismiss();
+            }
         }
         else {
+            if (pDialog.isShowing()) {
+                pDialog.dismiss();
+            }
             Log.e(TAG, "ERROR al crear conexión.");
             Toast.makeText(activity, "Error al conectar,intentelo de nuevo.", Toast.LENGTH_LONG)
                     .show();
