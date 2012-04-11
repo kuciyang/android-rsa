@@ -1,6 +1,7 @@
 
 package org.inftel.androidrsa.xmpp;
 
+import org.inftel.androidrsa.activities.ChatActivity;
 import org.inftel.androidrsa.activities.ContactsActivity;
 import org.jivesoftware.smack.Chat;
 import org.jivesoftware.smack.ChatManager;
@@ -9,6 +10,7 @@ import org.jivesoftware.smack.Connection;
 import org.jivesoftware.smack.MessageListener;
 import org.jivesoftware.smack.packet.Message;
 
+import android.content.Intent;
 import android.util.Log;
 
 public class ChatMan {
@@ -27,7 +29,6 @@ public class ChatMan {
     };
 
     public ChatMan(ContactsActivity cActivity) {
-        super();
         this.activity = cActivity;
         this.connection = Conexion.getInstance();
     }
@@ -42,6 +43,8 @@ public class ChatMan {
                     // TODO startActivity y asignar a field
                     ChatMan.chat = chat;
                 chat.addMessageListener(messageListener);
+                Intent i = new Intent(activity, ChatActivity.class);
+                activity.startActivity(i);
             }
         };
 
