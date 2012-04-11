@@ -276,7 +276,7 @@ public class RegisterActivity extends Activity {
                     SharedPreferences prefs = getSharedPreferences(
                             AndroidRsaConstants.SHARED_PREFERENCE_FILE,
                             Context.MODE_PRIVATE);
-                    String passphrase = prefs.getString(AndroidRsaConstants.PASSWORD_TO_ENCRYPT,
+                    String passphrase = prefs.getString(AndroidRsaConstants.USERID,
                             "thisisapassphrasedefault");
 
                     // KeyStore.getInstance().setPk(RSA.getPrivateKey(mKey));

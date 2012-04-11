@@ -38,37 +38,49 @@ import android.util.Log;
 
 public class RSA {
 
-    public static PrivateKey getPrivateKey(File privKeyFile) throws IOException,
-            NoSuchAlgorithmException,
-            InvalidKeySpecException {
-        BufferedReader in = new BufferedReader(new FileReader(privKeyFile));
-        String line = in.readLine();
-        if (line.contains("-----BEGIN PRIVATE KEY-----") == false)
-            throw new IOException("Couldnt find");
-        line = line.substring(27);
+    // public static PrivateKey getPrivateKey(File privKeyFile) throws
+    // IOException,
+    // NoSuchAlgorithmException,
+    // InvalidKeySpecException {
+    // BufferedReader in = new BufferedReader(new FileReader(privKeyFile));
+    // String line = in.readLine();
+    // if (line.contains("-----BEGIN PRIVATE KEY-----") == false)
+    // throw new IOException("Couldnt find");
+    // line = line.substring(27);
+    //
+    // String base64 = new String();
+    // boolean trucking = true;
+    // while (trucking) {
+    //
+    // if (line.contains("-----")) {
+    // trucking = false;
+    // base64 += line.substring(0, line.indexOf("-----"));
+    // }
+    // else {
+    // base64 += line;
+    // line = in.readLine();
+    // }
+    // }
+    // Log.d("PRIVATE KEY", base64);
+    // in.close();
+    //
+    // byte[] privKeyBytes = Base64.decode(base64);
+    //
+    // KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+    // KeySpec ks = new PKCS8EncodedKeySpec(privKeyBytes);
+    // PrivateKey privKey = keyFactory.generatePrivate(ks);
+    //
+    // return privKey;
+    // }
 
-        String base64 = new String();
-        boolean trucking = true;
-        while (trucking) {
-
-            if (line.contains("-----")) {
-                trucking = false;
-                base64 += line.substring(0, line.indexOf("-----"));
-            }
-            else {
-                base64 += line;
-                line = in.readLine();
-            }
-        }
-        Log.d("PRIVATE KEY", base64);
-        in.close();
-
-        byte[] privKeyBytes = Base64.decode(base64);
-
+    public static PrivateKey getPrivateKeyDecryted(byte[] pk, String passphrase)
+            throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
+            IllegalBlockSizeException, BadPaddingException, NoSuchProviderException,
+            UnsupportedEncodingException, InvalidKeySpecException {
+        byte[] privKeyDecrypted = decrytpKey(pk, passphrase);
         KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-        KeySpec ks = new PKCS8EncodedKeySpec(privKeyBytes);
+        KeySpec ks = new PKCS8EncodedKeySpec(privKeyDecrypted);
         PrivateKey privKey = keyFactory.generatePrivate(ks);
-
         return privKey;
     }
 
