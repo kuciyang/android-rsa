@@ -58,7 +58,7 @@ public class ChatActivity extends ListActivity {
 
     @Override
     public void onBackPressed() {
-        ChatMan.chat = null;
+        chatMan.chat = null;
         super.onBackPressed();
     }
 
