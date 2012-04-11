@@ -39,6 +39,7 @@
         <activity android:name="org.inftel.androidrsa.activities.ServersActivity" android:noHistory="true"></activity>
         <activity android:name="org.inftel.androidrsa.activities.ServersAddActivity" android:noHistory="true"></activity>
         <activity android:name="org.inftel.androidrsa.activities.ServersInfoActivity" android:noHistory="true"></activity>
+        <activity android:name="org.inftel.androidrsa.activities.ChatActivity" android:noHistory="true"></activity>
     </application>
 
 </manifest>
