@@ -50,7 +50,7 @@ public class AvatarsCache {
         }
     }
 
-    private static Bitmap getAvatar(String jid) {
+    public static Bitmap getAvatar(String jid) {
         VCard vCard = new VCard();
         try {
             ProviderManager.getInstance().addIQProvider("vCard",
