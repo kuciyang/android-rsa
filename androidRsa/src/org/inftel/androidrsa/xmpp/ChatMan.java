@@ -43,6 +43,12 @@ public class ChatMan {
     }
 
     public void createChat(String jidDest, MessageListener messageListener) {
+        if (RosterManager.isSecure(jidDest)) {
+            cipher = true;
+        }
+        else {
+            cipher = false;
+        }
         Log.d(TAG, "Creando chat con: " + jidDest + " cifrado=" + cipher);
         ChatManager chatmanager = connection.getChatManager();
 
@@ -51,12 +57,6 @@ public class ChatMan {
         // Creo el chat
         chat = chatmanager.createChat(jidDest, messageListener);
 
-        if (RosterManager.isSecure(jidDest)) {
-            cipher = true;
-        }
-        else {
-            cipher = false;
-        }
     }
 
     public Chat getChat() {
