@@ -34,7 +34,8 @@ import android.widget.ListView;
 public class ChatActivity extends ListActivity {
     private static final String TAG = "ChatActivity";
     private Connection connection;
-    private ChatMan chatMan;
+    public ChatMan chatMan;
+    private Chat chat = null;
     private Roster roster;
     private static ArrayList<Message> listMessages = new ArrayList<Message>();
     private ChatAdapter adapter;
@@ -46,7 +47,8 @@ public class ChatActivity extends ListActivity {
     public void onCreate(Bundle savedInstanceState) {
         this.connection = Conexion.getInstance();
         this.roster = RosterManager.getRosterInstance();
-        Chat chat = ChatMan.chat;
+        chatMan = ContactsActivity.chatMan;
+        chat = chatMan.chat;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.chat);
         destJid = getIntent().getStringExtra("destJid");
@@ -54,7 +56,7 @@ public class ChatActivity extends ListActivity {
 
         if (chat == null) {
             chatMan.createChat(destJid, messageListener);
-            chat = ChatMan.chat;
+            chat = chatMan.chat;
         }
 
         adapter = new ChatAdapter(this, listMessages);
