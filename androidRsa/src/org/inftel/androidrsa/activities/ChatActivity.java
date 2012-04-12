@@ -57,18 +57,9 @@ public class ChatActivity extends ListActivity {
 
         if (chat == null) {
             chatMan.createChat(destJid, messageListener);
-            chat = chatMan.chat;
+            chat = chatMan.getChat();
         } else {
-            destJid = chat.getParticipant();
-            if (RosterManager.isSecure(destJid)) {
-                ChatMan.cipher = true;
-            }
-            else {
-                ChatMan.cipher = false;
-            }
-            chatMan.createChat(destJid, messageListener);
-            chat = chatMan.chat;
-
+            chat.addMessageListener(messageListener);
         }
 
         adapter = new ChatAdapter(this, listMessages);
@@ -160,7 +151,7 @@ public class ChatActivity extends ListActivity {
                         String decodedMessage = RSA.decipher(message.getBody(),
                                 RSA.getPrivateKeyDecryted(KeyStore.getInstance().getPk(),
                                         passphrase));
-                        Log.i("SEGUIMIENTO", "Recibido mensaje: " + decodedMessage);
+                        Log.i("SEGUIMIENTO", "Recibido mensaje cifrado: " + decodedMessage);
 
                         message.setBody(decodedMessage);
                         listMessages.add(message);
