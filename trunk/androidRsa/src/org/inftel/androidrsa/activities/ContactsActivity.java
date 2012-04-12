@@ -99,6 +99,7 @@ public class ContactsActivity extends ListActivity {
             }
 
             public void entriesUpdated(Collection<String> addresses) {
+                Log.d(TAG, "EntriesUpdated: " + addresses.toString());
                 loadContacts();
                 refreshAdapter();
             }
