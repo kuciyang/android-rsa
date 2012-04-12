@@ -8,7 +8,6 @@ import org.jivesoftware.smack.ChatManager;
 import org.jivesoftware.smack.ChatManagerListener;
 import org.jivesoftware.smack.Connection;
 import org.jivesoftware.smack.MessageListener;
-import org.jivesoftware.smack.packet.Message;
 
 import android.content.Intent;
 import android.util.Log;
@@ -17,16 +16,8 @@ public class ChatMan {
     private final static String TAG = "ChatActivity";
     private Connection connection;
     public static Chat chat = null;
-    private boolean cipher;
+    private boolean cipher = false;
     private ContactsActivity activity;
-
-    private final static MessageListener messageListener = new MessageListener() {
-        public void processMessage(Chat chat, Message message) {
-            // FIXME comprobar messages con body null
-            Log.i(TAG, "Recibido mensaje: " + message.getBody());
-            // TODO descifrar el mensaje si es un chat cifrado
-        }
-    };
 
     public ChatMan(ContactsActivity cActivity) {
         this.activity = cActivity;
@@ -41,7 +32,6 @@ public class ChatMan {
             {
                 if (!createdLocally) {
                     ChatMan.chat = chat;
-                    chat.addMessageListener(messageListener);
                     Intent i = new Intent(activity, ChatActivity.class);
                     activity.startActivity(i);
                 }
@@ -51,7 +41,7 @@ public class ChatMan {
         chatmanager.addChatListener(chatManagerListener);
     }
 
-    public void createChat(String jidDest) {
+    public void createChat(String jidDest, MessageListener messageListener) {
         Log.d(TAG, "Creando chat con: " + jidDest);
         ChatManager chatmanager = connection.getChatManager();
 
