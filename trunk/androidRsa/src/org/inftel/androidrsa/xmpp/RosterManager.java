@@ -32,6 +32,7 @@ public class RosterManager {
     }
 
     public static boolean isSecure(String jid) {
-        return StringUtils.parseResource(jid).startsWith("androidRSA");
+        return StringUtils.parseResource(roster.getPresence(jid).getFrom()).startsWith(
+                "androidRSA");
     }
 }
