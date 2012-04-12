@@ -83,7 +83,7 @@ public class ContactsAdapter extends ArrayAdapter<String> {
 
     private void setIcons(ImageView iv, ImageView ivSec, String jid,
             View rowview) {
-        Roster roster = ContactsActivity.roster;
+        Roster roster = RosterManager.getRosterInstance();
 
         RosterEntry entry = RosterManager.findByJid(jid);
         if ((entry != null) && (entry.getName() != null)) {
