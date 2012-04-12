@@ -9,12 +9,7 @@ public class RosterManager {
     private static Roster roster = Conexion.getInstance().getRoster();
 
     public static Roster getRosterInstance() {
-        if (roster != null) {
-            return roster;
-        }
-        else {
-            return Conexion.getInstance().getRoster();
-        }
+        return Conexion.getInstance().getRoster();
     }
 
     public static RosterEntry findByName(String name) {
