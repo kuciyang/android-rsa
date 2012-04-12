@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/chatrow_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/balloon_right"
     android:layout_marginLeft="10dp" >
 
     <ImageView
-        android:id="@+id/avatar"
+        android:id="@+id/chatAvatar"
         android:layout_width="40dip"
         android:layout_height="40dip"
         android:layout_centerVertical="true"
@@ -19,13 +20,14 @@
 
     <TextView
         xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/nombre"
+        android:id="@+id/body"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
+        android:layout_marginLeft="50dip"
         android:layout_toRightOf="@+id/avatar"
-        android:text="Nomjlhgljhfvljhvl.jhvyljhgkjgfvkjhfgkjhgfvkjhfkjgfvkjhfgkjhgkjhgkjhgkjhg as c asc a c as cascasc  as c as cbre"
+        android:text=""
         android:textColor="@color/negro"
+        android:textStyle="bold"
         android:textSize="15dip" >
 
     </TextView>
