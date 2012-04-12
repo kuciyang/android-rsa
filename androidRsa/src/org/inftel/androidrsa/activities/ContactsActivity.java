@@ -93,17 +93,18 @@ public class ContactsActivity extends ListActivity {
 
         roster.addRosterListener(new RosterListener() {
             public void entriesDeleted(Collection<String> addresses) {
-                roster = RosterManager.getRosterInstance();
+                loadContacts();
                 refreshAdapter();
             }
 
             public void entriesUpdated(Collection<String> addresses) {
-                roster = RosterManager.getRosterInstance();
+                loadContacts();
+
                 refreshAdapter();
             }
 
             public void presenceChanged(Presence presence) {
-                roster = RosterManager.getRosterInstance();
+                loadContacts();
                 refreshAdapter();
             }
 
@@ -136,7 +137,6 @@ public class ContactsActivity extends ListActivity {
                 Presence presence = new Presence(Presence.Type.available);
                 presence.setMode(Presence.Mode.available);
                 presence.setStatus("aqui estamos ya!");
-                presence.setPriority(24);
                 connection.sendPacket(presence);
                 roster = RosterManager.getRosterInstance();
                 return true;
@@ -144,7 +144,6 @@ public class ContactsActivity extends ListActivity {
                 Presence presence2 = new Presence(Presence.Type.available);
                 presence2.setStatus("De parranda!");
                 presence2.setMode(Presence.Mode.away);
-                presence2.setPriority(24);
                 connection.sendPacket(presence2);
                 roster = RosterManager.getRosterInstance();
                 return true;
@@ -152,7 +151,6 @@ public class ContactsActivity extends ListActivity {
                 Presence presence3 = new Presence(Presence.Type.available);
                 presence3.setStatus("Trabajando!");
                 presence3.setMode(Presence.Mode.dnd);
-                presence3.setPriority(24);
                 connection.sendPacket(presence3);
                 roster = RosterManager.getRosterInstance();
                 return true;
@@ -160,7 +158,6 @@ public class ContactsActivity extends ListActivity {
                 Presence presence5 = new Presence(Presence.Type.unavailable);
                 presence5.setStatus("Desconectado!");
                 presence5.setMode(Presence.Mode.away);
-                presence5.setPriority(24);
                 connection.sendPacket(presence5);
                 return true;
             default:
