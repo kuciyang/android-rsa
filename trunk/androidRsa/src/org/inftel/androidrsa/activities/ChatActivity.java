@@ -68,11 +68,11 @@ public class ChatActivity extends ListActivity {
     public void send(View view) {
         Message message = new Message(destJid);
         EditText editText = (EditText) findViewById(R.id.textInput);
+        message.setBody(editText.getText().toString());
+        message.setFrom(myJid);
+        message.setTo(destJid);
         if (!chatMan.isCipher()) {
             try {
-                message.setBody(editText.getText().toString());
-                message.setFrom(myJid);
-                message.setTo(destJid);
                 chatMan.getChat().sendMessage(message);
                 Log.d(TAG, "Enviando: " + message.getBody());
                 editText.setText("");
@@ -86,6 +86,10 @@ public class ChatActivity extends ListActivity {
         else {
             // TODO obtener clave publica del destino y mandar mensaje cifrado
             Bitmap bm = adapter.getAvatarMap().get(destJid);
+            Log.d(TAG, "estoy aki");
+
+            Log.d(TAG, " " + (bm == null));
+            Log.d(TAG, String.valueOf(bm.getWidth()) + "   " + chatMan.isCipher());
             try {
                 Certificate cert = Decode.decode(bm);
                 String encodedMessage = RSA.cipher(message.getBody(),
