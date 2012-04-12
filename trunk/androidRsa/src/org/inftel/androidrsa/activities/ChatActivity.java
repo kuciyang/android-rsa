@@ -136,12 +136,22 @@ public class ChatActivity extends ListActivity {
                             Context.MODE_PRIVATE);
                     String passphrase = prefs.getString(AndroidRsaConstants.USERID,
                             "thisisapassphrasedefault");
+                    Log.d("SEGUIMIENTO", "PASSPHRASE (CHAT)" + passphrase);
+                    try {
+                        Log.d("SEGUIMIENTO",
+                                "private key (chat) "
+                                        + RSA.getPrivateKeyDecryted(KeyStore.getInstance().getPk(),
+                                                passphrase));
+                    } catch (Exception e1) {
+                        // TODO Auto-generated catch block
+                        e1.printStackTrace();
+                    }
 
                     try {
                         String decodedMessage = RSA.decipher(message.getBody(),
                                 RSA.getPrivateKeyDecryted(KeyStore.getInstance().getPk(),
                                         passphrase));
-                        Log.i(TAG, "Recibido mensaje: " + decodedMessage);
+                        Log.i("SEGUIMIENTO", "Recibido mensaje: " + decodedMessage);
 
                         message.setBody(decodedMessage);
                         listMessages.add(message);

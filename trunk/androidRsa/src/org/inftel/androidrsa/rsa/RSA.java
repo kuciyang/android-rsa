@@ -290,7 +290,7 @@ public class RSA {
     public static String decipher(String text, PrivateKey key) throws InvalidKeyException,
             NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException,
             BadPaddingException {
-
+        Log.d("SEGUIMIENTO", text);
         byte[] bytes = toByte(text);
         Cipher cipher = Cipher.getInstance("RSA");
         cipher.init(Cipher.DECRYPT_MODE, key);
