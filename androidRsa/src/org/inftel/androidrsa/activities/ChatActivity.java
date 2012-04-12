@@ -11,6 +11,7 @@ import org.inftel.androidrsa.rsa.KeyStore;
 import org.inftel.androidrsa.rsa.RSA;
 import org.inftel.androidrsa.steganography.Decode;
 import org.inftel.androidrsa.utils.AndroidRsaConstants;
+import org.inftel.androidrsa.xmpp.AvatarsCache;
 import org.inftel.androidrsa.xmpp.ChatMan;
 import org.inftel.androidrsa.xmpp.Conexion;
 import org.inftel.androidrsa.xmpp.RosterManager;
@@ -87,7 +88,7 @@ public class ChatActivity extends ListActivity {
         }
         else {
             // TODO obtener clave publica del destino y mandar mensaje cifrado
-            Bitmap bm = adapter.getAvatarMap().get(destJid);
+            Bitmap bm = AvatarsCache.getAvatar(destJid);
             Log.d(TAG, "estoy aki");
 
             Log.d(TAG, " " + (bm == null));
