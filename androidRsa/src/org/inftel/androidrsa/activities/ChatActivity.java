@@ -112,7 +112,7 @@ public class ChatActivity extends ListActivity {
         public void processMessage(Chat chat, Message message) {
             if (!chatMan.isCipher()) {
                 if (message.getBody() != null) {
-                    // Log.i(TAG, "Recibido mensaje: " + message.getBody());
+                    Log.i(TAG, "Recibido mensaje: " + message.getBody());
                     listMessages.add(message);
                     refreshAdapter();
                     myListView.smoothScrollToPosition(adapter.getCount() - 1);
