@@ -137,24 +137,28 @@ public class ContactsActivity extends ListActivity {
                 presence.setMode(Presence.Mode.available);
                 presence.setStatus("aqui estamos ya!");
                 connection.sendPacket(presence);
+                roster = RosterManager.getRosterInstance();
                 return true;
             case R.id.away:
                 Presence presence2 = new Presence(Presence.Type.available);
                 presence2.setStatus("De parranda!");
                 presence2.setMode(Presence.Mode.away);
                 connection.sendPacket(presence2);
+                roster = RosterManager.getRosterInstance();
                 return true;
             case R.id.busy:
                 Presence presence3 = new Presence(Presence.Type.available);
                 presence3.setStatus("Trabajando!");
                 presence3.setMode(Presence.Mode.dnd);
                 connection.sendPacket(presence3);
+                roster = RosterManager.getRosterInstance();
                 return true;
             case R.id.unavailable:
                 Presence presence5 = new Presence(Presence.Type.unavailable);
                 presence5.setStatus("Desconectado!");
                 presence5.setMode(Presence.Mode.away);
                 connection.sendPacket(presence5);
+                roster = RosterManager.getRosterInstance();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
