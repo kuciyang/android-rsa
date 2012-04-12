@@ -1,8 +1,12 @@
 
 package org.inftel.androidrsa.activities;
 
+import java.io.File;
+
 import org.inftel.androidrsa.R;
 import org.inftel.androidrsa.asynctask.LoginTask;
+import org.inftel.androidrsa.rsa.KeyStore;
+import org.inftel.androidrsa.rsa.RSA;
 import org.inftel.androidrsa.utils.AndroidRsaConstants;
 import org.jivesoftware.smack.Connection;
 
@@ -58,6 +62,38 @@ public class LoginActivity extends Activity {
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
+
+        SharedPreferences prefs = getSharedPreferences(
+                AndroidRsaConstants.SHARED_PREFERENCE_FILE,
+                Context.MODE_PRIVATE);
+
+        Log.d("SEGUIMIENTO",
+                "login passprhase " + prefs.getString(AndroidRsaConstants.USERID, "default"));
+        Log.d("SEGUIMIENTO",
+                "login path key" + prefs.getString(AndroidRsaConstants.KEY_PATH, "default"));
+
+        if (prefs.getBoolean(AndroidRsaConstants.REGISTERED, false)) {
+            try {
+                KeyStore.getInstance().setPk(
+                        RSA.getPrivateKeyEncrytedBytes(
+                                new File(prefs.getString(AndroidRsaConstants.KEY_PATH, "")),
+                                prefs.getString(AndroidRsaConstants.USERID, "default")
+                                ));
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+            try {
+                Log.d("SEGUIMIENTO",
+                        " login private key "
+                                + RSA.getPrivateKeyDecryted(KeyStore.getInstance().getPk(),
+                                        prefs.getString(AndroidRsaConstants.USERID, "default")));
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
 
     }
 

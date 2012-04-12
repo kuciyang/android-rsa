@@ -29,6 +29,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -279,6 +280,8 @@ public class RegisterActivity extends Activity {
                     String passphrase = prefs.getString(AndroidRsaConstants.USERID,
                             "thisisapassphrasedefault");
 
+                    Log.d("SEGUIMIENTO", "PASSPHRASE " + passphrase);
+
                     // storing the private key
                     KeyStore.getInstance().setPk(
                             RSA.getPrivateKeyEncrytedBytes(mKey, passphrase));
@@ -287,20 +290,18 @@ public class RegisterActivity extends Activity {
 
                     KeyStore.getInstance().getCertificate(AndroidRsaConstants.OWN_ALIAS)
                             .verify(KeyStore.getInstance().getPb());
-
-                    // // DEBUG
-                    String str = RSA.cipher("hola",
-                            KeyStore.getInstance().getCertificate(AndroidRsaConstants.OWN_ALIAS)
-                                    .getPublicKey());
-                    Log.d("PRUEBA",
-
-                            RSA.decipher(str,
-                                    RSA.getPrivateKeyDecryted(KeyStore.getInstance().getPk(),
-                                            passphrase))
-
-                            );
-                    //
-                    // // END DEBUG
+                    // DEBUG
+                    Log.d("SEGUIMIENTO",
+                            "private key (REGISTER) "
+                                    + RSA.getPrivateKeyDecryted(KeyStore.getInstance().getPk(),
+                                            passphrase).toString());
+                    // user have been registered
+                    Editor prefsEditor = prefs.edit();
+                    prefsEditor.putBoolean(AndroidRsaConstants.REGISTERED,
+                            true);
+                    prefsEditor.putString(AndroidRsaConstants.KEY_PATH,
+                            mKeyPath);
+                    prefsEditor.apply();
 
                     // Applying steganography
                     Intent i = new Intent(getApplicationContext(), EncodeActivity.class);
