@@ -16,7 +16,7 @@ public class ChatMan {
     private final static String TAG = "ChatActivity";
     private Connection connection;
     public static Chat chat = null;
-    private boolean cipher = false;
+    public static boolean cipher = false;
     private ContactsActivity activity;
 
     public ChatMan(ContactsActivity cActivity) {
@@ -34,6 +34,7 @@ public class ChatMan {
                     Log.d(TAG, "Chat Creado localmente por " + chat.getParticipant());
                     ChatMan.chat = chat;
                     Log.d(TAG, "Listeners: " + chat.getListeners().toString());
+
                     Intent i = new Intent(activity, ChatActivity.class);
                     activity.startActivity(i);
                 }

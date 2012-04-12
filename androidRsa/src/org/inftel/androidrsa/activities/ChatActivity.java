@@ -60,6 +60,12 @@ public class ChatActivity extends ListActivity {
             chat = chatMan.chat;
         } else {
             destJid = chat.getParticipant();
+            if (RosterManager.isSecure(destJid)) {
+                ChatMan.cipher = true;
+            }
+            else {
+                ChatMan.cipher = false;
+            }
         }
 
         adapter = new ChatAdapter(this, listMessages);
