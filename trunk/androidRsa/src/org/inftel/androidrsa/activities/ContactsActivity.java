@@ -111,7 +111,7 @@ public class ContactsActivity extends ListActivity {
             }
 
             public void entriesAdded(Collection<String> arg0) {
-                roster = RosterManager.getRosterInstance();
+                loadContacts();
                 refreshAdapter();
             }
         });
@@ -154,9 +154,9 @@ public class ContactsActivity extends ListActivity {
                 connection.sendPacket(presence3);
                 return true;
             case R.id.unavailable:
-                Presence presence5 = new Presence(Presence.Type.unavailable);
-                presence5.setStatus("Invisible!");
-                connection.sendPacket(presence5);
+                Presence presence4 = new Presence(Presence.Type.unavailable);
+                presence4.setStatus("Invisible!");
+                connection.sendPacket(presence4);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
