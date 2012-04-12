@@ -31,9 +31,10 @@ public class ChatMan {
             public void chatCreated(Chat chat, boolean createdLocally)
             {
                 if (!createdLocally) {
+                    Log.d(TAG, "Chat Creado localmente por " + chat.getParticipant());
                     ChatMan.chat = chat;
+                    Log.d(TAG, "Listeners: " + chat.getListeners().toString());
                     Intent i = new Intent(activity, ChatActivity.class);
-                    Log.d(TAG, chat.getParticipant());
                     activity.startActivity(i);
                 }
             }
