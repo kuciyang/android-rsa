@@ -72,7 +72,7 @@ public class ContactsAdapter extends ArrayAdapter<String> {
         }
         String jid = list.get(position);
         setIcons(holder.imageView, holder.imageViewSec, jid, rowView);
-        if (avatarMap.containsKey(jid)) {
+        if (avatarMap.containsKey(jid) && (avatarMap.get(jid)) != null) {
             holder.imageViewAvatar.setImageBitmap(avatarMap.get(jid));
         }
         else {

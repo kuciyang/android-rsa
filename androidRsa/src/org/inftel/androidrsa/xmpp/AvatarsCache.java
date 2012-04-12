@@ -27,7 +27,7 @@ public class AvatarsCache {
         }
     }
 
-    private static Bitmap getMyAvatar() {
+    public static Bitmap getMyAvatar() {
         VCard vCard = new VCard();
         try {
             ProviderManager.getInstance().addIQProvider("vCard",
@@ -60,8 +60,13 @@ public class AvatarsCache {
             if (vCard.getAvatar() != null) {
                 Log.d(TAG, "No es NULL");
                 byte[] avatarRaw = vCard.getAvatar();
-                Bitmap bm = BitmapFactory.decodeByteArray(avatarRaw, 0, avatarRaw.length);
-                return bm;
+                if (avatarRaw.length != 0) {
+                    Bitmap bm = BitmapFactory.decodeByteArray(avatarRaw, 0, avatarRaw.length);
+                    return bm;
+                }
+                else {
+                    return null;
+                }
             }
             else {
                 Log.d(TAG, "Si es NULL");
