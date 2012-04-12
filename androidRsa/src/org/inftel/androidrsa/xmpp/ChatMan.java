@@ -36,6 +36,7 @@ public class ChatMan {
                     activity.startActivity(i);
                 }
             }
+
         };
 
         chatmanager.addChatListener(chatManagerListener);
@@ -49,6 +50,7 @@ public class ChatMan {
 
         // Creo el chat
         chat = chatmanager.createChat(jidDest, messageListener);
+
         if (RosterManager.isSecure(jidDest)) {
             cipher = true;
         }
