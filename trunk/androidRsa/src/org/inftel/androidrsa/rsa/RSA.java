@@ -283,15 +283,15 @@ public class RSA {
         Cipher cipher = Cipher.getInstance("RSA");
         cipher.init(Cipher.ENCRYPT_MODE, key);
         byte[] encryptedBytes = cipher.doFinal(bytes);
-        return toHex(encryptedBytes);
+        return new String(encryptedBytes);
     }
 
     // TO VIEW THE DECIPHER STRING USE: String str = new String (bytes)
     public static String decipher(String text, PrivateKey key) throws InvalidKeyException,
             NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException,
-            BadPaddingException {
-        Log.d("SEGUIMIENTO", text);
-        byte[] bytes = toByte(text);
+            BadPaddingException, UnsupportedEncodingException {
+
+        byte[] bytes = text.getBytes("UTF-8");
         Cipher cipher = Cipher.getInstance("RSA");
         cipher.init(Cipher.DECRYPT_MODE, key);
         byte[] decryptedBytes = cipher.doFinal(bytes);
