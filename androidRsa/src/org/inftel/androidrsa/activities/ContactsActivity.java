@@ -19,6 +19,7 @@ import org.jivesoftware.smack.packet.Presence;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -99,11 +100,11 @@ public class ContactsActivity extends ListActivity {
 
             public void entriesUpdated(Collection<String> addresses) {
                 loadContacts();
-
                 refreshAdapter();
             }
 
             public void presenceChanged(Presence presence) {
+                Log.d(TAG, "Presence changed: " + presence.getFrom() + " " + presence.getMode());
                 loadContacts();
                 refreshAdapter();
             }
@@ -138,26 +139,22 @@ public class ContactsActivity extends ListActivity {
                 presence.setMode(Presence.Mode.available);
                 presence.setStatus("aqui estamos ya!");
                 connection.sendPacket(presence);
-                roster = RosterManager.getRosterInstance();
                 return true;
             case R.id.away:
                 Presence presence2 = new Presence(Presence.Type.available);
                 presence2.setStatus("De parranda!");
                 presence2.setMode(Presence.Mode.away);
                 connection.sendPacket(presence2);
-                roster = RosterManager.getRosterInstance();
                 return true;
             case R.id.busy:
                 Presence presence3 = new Presence(Presence.Type.available);
                 presence3.setStatus("Trabajando!");
                 presence3.setMode(Presence.Mode.dnd);
                 connection.sendPacket(presence3);
-                roster = RosterManager.getRosterInstance();
                 return true;
             case R.id.unavailable:
                 Presence presence5 = new Presence(Presence.Type.unavailable);
-                presence5.setStatus("Desconectado!");
-                presence5.setMode(Presence.Mode.away);
+                presence5.setStatus("Invisible!");
                 connection.sendPacket(presence5);
                 return true;
             default:
