@@ -102,7 +102,7 @@ public class ChatActivity extends ListActivity {
                 message.setFrom(myJid);
                 message.setTo(destJid);
                 chatMan.getChat().sendMessage(message);
-                Log.d(TAG, "Enviando: " + message.getBody());
+                Log.d(TAG, "Enviando cifrado: " + plainText);
                 editText.setText("");
                 message.setBody(plainText);
                 listMessages.add(message);
