@@ -32,6 +32,7 @@ import javax.security.cert.X509Certificate;
 
 import org.inftel.androidrsa.R;
 import org.jivesoftware.smack.util.Base64;
+import org.jivesoftware.smack.util.StringUtils;
 
 import android.content.Context;
 import android.util.Log;
@@ -279,11 +280,11 @@ public class RSA {
             NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException,
             BadPaddingException, UnsupportedEncodingException {
 
-        byte[] bytes = text.getBytes("UTF-8");
+        byte[] bytes = StringUtils.encodeBase64(text).getBytes();
         Cipher cipher = Cipher.getInstance("RSA");
         cipher.init(Cipher.ENCRYPT_MODE, key);
         byte[] encryptedBytes = cipher.doFinal(bytes);
-        return new String(encryptedBytes);
+        return new String(StringUtils.decodeBase64(new String(encryptedBytes)));
     }
 
     // TO VIEW THE DECIPHER STRING USE: String str = new String (bytes)
@@ -291,12 +292,12 @@ public class RSA {
             NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException,
             BadPaddingException, UnsupportedEncodingException {
 
-        byte[] bytes = text.getBytes("UTF-8");
+        byte[] bytes = StringUtils.encodeBase64(text).getBytes();
         Cipher cipher = Cipher.getInstance("RSA");
         cipher.init(Cipher.DECRYPT_MODE, key);
         byte[] decryptedBytes = cipher.doFinal(bytes);
 
-        return new String(decryptedBytes);
+        return new String(StringUtils.decodeBase64(new String(decryptedBytes)));
     }
 
     // USE TO CIPHER AND DECIPHER
