@@ -78,4 +78,12 @@ public class ChatAdapter extends ArrayAdapter<Message> {
         return this.list.size();
     }
 
+    public HashMap<String, Bitmap> getAvatarMap() {
+        return avatarMap;
+    }
+
+    public void setAvatarMap(HashMap<String, Bitmap> avatarMap) {
+        this.avatarMap = avatarMap;
+    }
+
 }

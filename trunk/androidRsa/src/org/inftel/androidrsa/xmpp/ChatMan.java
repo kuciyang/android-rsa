@@ -42,7 +42,7 @@ public class ChatMan {
     }
 
     public void createChat(String jidDest, MessageListener messageListener) {
-        Log.d(TAG, "Creando chat con: " + jidDest);
+        Log.d(TAG, "Creando chat con: " + jidDest + " cifrado=" + cipher);
         ChatManager chatmanager = connection.getChatManager();
 
         // Listener para recibir mensajes
