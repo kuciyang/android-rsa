@@ -55,7 +55,7 @@ public class ChatActivity extends ListActivity {
         setContentView(R.layout.chat);
         destJid = getIntent().getStringExtra("destJid");
         myJid = this.connection.getUser();
-        cipher = RosterManager.isSecure(myJid);
+        cipher = RosterManager.isSecure(destJid);
 
         if (chat == null) {
             chatMan.createChat(destJid, messageListener);
