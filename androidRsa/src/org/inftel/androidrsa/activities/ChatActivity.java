@@ -43,6 +43,7 @@ public class ChatActivity extends ListActivity {
     private static ListView myListView;
     private String destJid;
     private String myJid;
+    private boolean cipher;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -54,6 +55,7 @@ public class ChatActivity extends ListActivity {
         setContentView(R.layout.chat);
         destJid = getIntent().getStringExtra("destJid");
         myJid = this.connection.getUser();
+        cipher = RosterManager.isSecure(myJid);
 
         if (chat == null) {
             chatMan.createChat(destJid, messageListener);
@@ -75,7 +77,7 @@ public class ChatActivity extends ListActivity {
         message.setBody(editText.getText().toString());
         message.setFrom(myJid);
         message.setTo(destJid);
-        if (!chatMan.isCipher()) {
+        if (!cipher) {
             try {
                 chatMan.getChat().sendMessage(message);
                 Log.d(TAG, "Enviando: " + message.getBody());
@@ -92,7 +94,7 @@ public class ChatActivity extends ListActivity {
             Bitmap bm = AvatarsCache.getAvatar(destJid);
             Log.d(TAG, "estoy aki");
             Log.d(TAG, " " + (bm == null));
-            Log.d(TAG, String.valueOf(bm.getWidth()) + "   " + chatMan.isCipher());
+            Log.d(TAG, String.valueOf(bm.getWidth()) + "   " + cipher);
             try {
 
                 Certificate cert = Decode.decode(bm);
@@ -119,9 +121,9 @@ public class ChatActivity extends ListActivity {
 
     private MessageListener messageListener = new MessageListener() {
         public void processMessage(Chat chat, Message message) {
-            if (!chatMan.isCipher()) {
+            if (!cipher) {
                 if (message.getBody() != null) {
-                    Log.i(TAG, "Recibido mensaje: " + message.getBody());
+                    Log.i(TAG, "Recibido mensaje plano: " + message.getBody());
                     listMessages.add(message);
                     refreshAdapter();
                     myListView.smoothScrollToPosition(adapter.getCount() - 1);
@@ -136,7 +138,7 @@ public class ChatActivity extends ListActivity {
                             Context.MODE_PRIVATE);
                     String passphrase = prefs.getString(AndroidRsaConstants.USERID,
                             "thisisapassphrasedefault");
-                    Log.d("SEGUIMIENTO", "PASSPHRASE (CHAT)" + passphrase);
+                    Log.d(TAG, "PASSPHRASE (CHAT)" + passphrase);
                     try {
                         Log.d("SEGUIMIENTO",
                                 "private key (chat) "
@@ -151,7 +153,7 @@ public class ChatActivity extends ListActivity {
                         String decodedMessage = RSA.decipher(message.getBody(),
                                 RSA.getPrivateKeyDecryted(KeyStore.getInstance().getPk(),
                                         passphrase));
-                        Log.i("SEGUIMIENTO", "Recibido mensaje cifrado: " + decodedMessage);
+                        Log.i(TAG, "Recibido mensaje cifrado: " + decodedMessage);
 
                         message.setBody(decodedMessage);
                         listMessages.add(message);
