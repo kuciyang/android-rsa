@@ -279,8 +279,6 @@ public class RegisterActivity extends Activity {
                     String passphrase = prefs.getString(AndroidRsaConstants.USERID,
                             "thisisapassphrasedefault");
 
-                    // KeyStore.getInstance().setPk(RSA.getPrivateKey(mKey));
-
                     // storing the private key
                     KeyStore.getInstance().setPk(
                             RSA.getPrivateKeyEncrytedBytes(mKey, passphrase));
@@ -289,6 +287,20 @@ public class RegisterActivity extends Activity {
 
                     KeyStore.getInstance().getCertificate(AndroidRsaConstants.OWN_ALIAS)
                             .verify(KeyStore.getInstance().getPb());
+
+                    // // DEBUG
+                    String str = RSA.cipher("hola",
+                            KeyStore.getInstance().getCertificate(AndroidRsaConstants.OWN_ALIAS)
+                                    .getPublicKey());
+                    Log.d("PRUEBA",
+
+                            RSA.decipher(str,
+                                    RSA.getPrivateKeyDecryted(KeyStore.getInstance().getPk(),
+                                            passphrase))
+
+                            );
+                    //
+                    // // END DEBUG
 
                     // Applying steganography
                     Intent i = new Intent(getApplicationContext(), EncodeActivity.class);
