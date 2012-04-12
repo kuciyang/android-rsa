@@ -94,6 +94,7 @@ public class ContactsActivity extends ListActivity {
 
         roster.addRosterListener(new RosterListener() {
             public void entriesDeleted(Collection<String> addresses) {
+                Log.d(TAG, "EntriesDeleted: " + addresses.toString());
                 loadContacts();
                 refreshAdapter();
             }
@@ -110,7 +111,8 @@ public class ContactsActivity extends ListActivity {
                 refreshAdapter();
             }
 
-            public void entriesAdded(Collection<String> arg0) {
+            public void entriesAdded(Collection<String> addresses) {
+                Log.d(TAG, "EntriesAdded: " + addresses.toString());
                 loadContacts();
                 refreshAdapter();
             }
