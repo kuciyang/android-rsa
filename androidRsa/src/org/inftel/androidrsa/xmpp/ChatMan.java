@@ -33,6 +33,7 @@ public class ChatMan {
                 if (!createdLocally) {
                     ChatMan.chat = chat;
                     Intent i = new Intent(activity, ChatActivity.class);
+                    Log.d(TAG, chat.getParticipant());
                     activity.startActivity(i);
                 }
             }

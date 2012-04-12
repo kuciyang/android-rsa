@@ -57,6 +57,8 @@ public class ChatActivity extends ListActivity {
         if (chat == null) {
             chatMan.createChat(destJid, messageListener);
             chat = chatMan.chat;
+        } else {
+            destJid = chat.getParticipant();
         }
 
         adapter = new ChatAdapter(this, listMessages);
