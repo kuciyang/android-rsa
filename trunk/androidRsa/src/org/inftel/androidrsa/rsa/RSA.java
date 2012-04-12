@@ -275,30 +275,57 @@ public class RSA {
     }
 
     // TO CIPHER A STRING USE: string.getBytes()
-    public static byte[] cipher(byte[] text, PublicKey key) throws NoSuchAlgorithmException,
+    public static String cipher(String text, PublicKey key) throws NoSuchAlgorithmException,
             NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException,
-            BadPaddingException {
+            BadPaddingException, UnsupportedEncodingException {
 
-        byte[] encryptedBytes;
+        byte[] bytes = text.getBytes("UTF-8");
         Cipher cipher = Cipher.getInstance("RSA");
         cipher.init(Cipher.ENCRYPT_MODE, key);
-        encryptedBytes = cipher.doFinal(text);
-
-        return encryptedBytes;
-
+        byte[] encryptedBytes = cipher.doFinal(bytes);
+        return toHex(encryptedBytes);
     }
 
     // TO VIEW THE DECIPHER STRING USE: String str = new String (bytes)
-    public static byte[] decipher(byte[] text, PrivateKey key) throws InvalidKeyException,
+    public static String decipher(String text, PrivateKey key) throws InvalidKeyException,
             NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException,
             BadPaddingException {
 
-        byte[] decryptedBytes;
+        byte[] bytes = toByte(text);
         Cipher cipher = Cipher.getInstance("RSA");
         cipher.init(Cipher.DECRYPT_MODE, key);
-        decryptedBytes = cipher.doFinal(text);
+        byte[] decryptedBytes = cipher.doFinal(bytes);
 
-        return decryptedBytes;
+        return new String(decryptedBytes);
+    }
+
+    // USE TO CIPHER AND DECIPHER
+    private static byte[] toByte(String hexString) {
+        int len = hexString.length() / 2;
+        byte[] result = new byte[len];
+        for (int i = 0; i < len; i++)
+            result[i] = Integer.valueOf(hexString.substring(2 * i, 2 * i + 2), 16).byteValue();
+        return result;
+    }
+
+    private static String toHex(byte[] buf) {
+        if (buf == null)
+            return "";
+        StringBuffer result = new StringBuffer(2 * buf.length);
+        for (int i = 0; i < buf.length; i++) {
+            appendHex(result, buf[i]);
+        }
+        return result.toString();
+    }
+
+    private final static String HEX = "0123456789ABCDEF";
+
+    private static void appendHex(StringBuffer sb, byte b) {
+        sb.append(HEX.charAt((b >> 4) & 0x0f)).append(HEX.charAt(b & 0x0f));
+    }
+
+    public static String fromHex(String hex) {
+        return new String(toByte(hex));
     }
 
 }
