@@ -36,6 +36,7 @@ public class ChatMan {
                     Log.d(TAG, "Listeners: " + chat.getListeners().toString());
 
                     Intent i = new Intent(activity, ChatActivity.class);
+                    i.putExtra("destJid", chat.getParticipant());
                     activity.startActivity(i);
                 }
             }
