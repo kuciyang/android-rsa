@@ -15,6 +15,8 @@ import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.RosterEntry;
 import org.jivesoftware.smack.RosterListener;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.packet.Presence.Mode;
+import org.jivesoftware.smack.packet.Presence.Type;
 
 import android.app.ListActivity;
 import android.content.Intent;
@@ -125,28 +127,32 @@ public class ContactsActivity extends ListActivity {
             case R.id.MenuChangeState:
                 return true;
             case R.id.available:
-                Presence presence = new Presence(Presence.Type.available);
-                presence.setMode(Presence.Mode.available);
-                presence.setStatus("aqui estamos ya!");
-                connection.sendPacket(presence);
+                // Presence presence = new Presence(Presence.Type.available);
+                roster.getPresence(connection.getUser()).setMode(Mode.available);
+                // presence.setMode(Presence.Mode.available);
+                // presence.setStatus("aqui estamos ya!");
+                // connection.sendPacket(presence);
                 return true;
             case R.id.away:
-                Presence presence2 = new Presence(Presence.Type.available);
-                presence2.setStatus("De parranda!");
-                presence2.setMode(Presence.Mode.away);
-                connection.sendPacket(presence2);
+                roster.getPresence(connection.getUser()).setMode(Mode.away);
+                // Presence presence2 = new Presence(Presence.Type.available);
+                // presence2.setStatus("De parranda!");
+                // presence2.setMode(Presence.Mode.away);
+                // connection.sendPacket(presence2);
                 return true;
             case R.id.busy:
-                Presence presence3 = new Presence(Presence.Type.available);
-                presence3.setStatus("Trabajando!");
-                presence3.setMode(Presence.Mode.dnd);
-                connection.sendPacket(presence3);
+                roster.getPresence(connection.getUser()).setMode(Mode.dnd);
+                // Presence presence3 = new Presence(Presence.Type.available);
+                // presence3.setStatus("Trabajando!");
+                // presence3.setMode(Presence.Mode.dnd);
+                // connection.sendPacket(presence3);
                 return true;
             case R.id.unavailable:
-                Presence presence5 = new Presence(Presence.Type.unavailable);
-                presence5.setStatus("Desconectado!");
-                presence5.setMode(Presence.Mode.away);
-                connection.sendPacket(presence5);
+                roster.getPresence(connection.getUser()).setType(Type.unavailable);
+                // Presence presence5 = new Presence(Presence.Type.unavailable);
+                // presence5.setStatus("Desconectado!");
+                // presence5.setMode(Presence.Mode.away);
+                // connection.sendPacket(presence5);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -165,6 +171,7 @@ public class ContactsActivity extends ListActivity {
     public void onBackPressed() {
         Conexion.disconnect();
         super.onBackPressed();
+        super.finish();
     }
 
 }
