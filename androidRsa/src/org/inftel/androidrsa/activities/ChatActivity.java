@@ -46,14 +46,15 @@ public class ChatActivity extends ListActivity {
     public void onCreate(Bundle savedInstanceState) {
         this.connection = Conexion.getInstance();
         this.roster = RosterManager.getRosterInstance();
-        chatMan = ContactsActivity.chatMan;
+        Chat chat = ChatMan.chat;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.chat);
         destJid = getIntent().getStringExtra("destJid");
         myJid = this.connection.getUser();
 
-        if (ChatMan.chat == null) {
+        if (chat == null) {
             chatMan.createChat(destJid, messageListener);
+            chat = ChatMan.chat;
         }
 
         adapter = new ChatAdapter(this, listMessages);
