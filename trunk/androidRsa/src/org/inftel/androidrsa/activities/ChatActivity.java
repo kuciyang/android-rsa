@@ -66,6 +66,9 @@ public class ChatActivity extends ListActivity {
             else {
                 ChatMan.cipher = false;
             }
+            chatMan.createChat(destJid, messageListener);
+            chat = chatMan.chat;
+
         }
 
         adapter = new ChatAdapter(this, listMessages);
@@ -185,6 +188,7 @@ public class ChatActivity extends ListActivity {
     @Override
     public void onBackPressed() {
         chatMan.chat = null;
+        chat = null;
         super.onBackPressed();
     }
 
