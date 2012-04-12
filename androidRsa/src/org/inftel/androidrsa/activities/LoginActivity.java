@@ -12,7 +12,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -31,7 +30,6 @@ public class LoginActivity extends Activity {
     private static final String TAG = "LoginActivity";
     private SharedPreferences prefs;
     private Connection connection;
-    private ProgressDialog pDialog;
     private String selectedItem;
     private String userid;
     private String password;
@@ -67,7 +65,18 @@ public class LoginActivity extends Activity {
     private void loadPreferences() {
         if (!prefs.getString(AndroidRsaConstants.USERID, "default").equals("default")) {
             EditText e = (EditText) findViewById(R.id.userid);
-            e.setText(prefs.getString("userid", "default"));
+            e.setText(prefs.getString(AndroidRsaConstants.USERID, "default"));
+        }
+        // Cuenta gmail de accounts manager
+        else if (prefs.getString("userid", "default").equals("default")) {
+            String userid = "";
+            EditText e = (EditText) findViewById(R.id.userid);
+            Account[] accounts = AccountManager.get(this).getAccountsByType("com.google");
+            for (Account account : accounts) {
+                userid = account.name;
+            }
+            Log.i(TAG, "Encontrado user por defecto: " + userid);
+            e.setText(userid);
         }
         String service = prefs.getString(AndroidRsaConstants.SERVICE, "default");
         if (!service.equals("default")) {
@@ -80,17 +89,6 @@ public class LoginActivity extends Activity {
                 spinner.setSelection(2);
             else
                 spinner.setSelection(3);
-        }
-        // Cuenta gmail de accounts manager
-        else if (prefs.getString("userid", "default").equals("default")) {
-            String userid = "";
-            EditText e = (EditText) findViewById(R.id.userid);
-            Account[] accounts = AccountManager.get(this).getAccountsByType("com.google");
-            for (Account account : accounts) {
-                userid = account.name;
-            }
-            Log.i(TAG, "Encontrado user por defecto: " + userid);
-            e.setText(userid);
         }
     }
 
