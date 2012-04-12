@@ -37,7 +37,6 @@ public class ChatAdapter extends ArrayAdapter<Message> {
         this.context = context;
         this.list = listMessages;
         myJid = Conexion.getInstance().getUser();
-        AvatarsCache.populateFromRoster(Conexion.getInstance().getRoster());
         this.avatarMap = AvatarsCache.getInstance();
         this.avatarMap.put(myJid, AvatarsCache.getMyAvatar());
     }
