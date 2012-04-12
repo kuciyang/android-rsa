@@ -53,6 +53,7 @@ public class ContactsActivity extends ListActivity {
     }
 
     private void loadContacts() {
+        roster = RosterManager.getRosterInstance();
         Collection<RosterEntry> entries = roster.getEntries();
         listaJid.clear();
         for (RosterEntry entry : entries) {
@@ -92,18 +93,22 @@ public class ContactsActivity extends ListActivity {
 
         roster.addRosterListener(new RosterListener() {
             public void entriesDeleted(Collection<String> addresses) {
+                roster = RosterManager.getRosterInstance();
                 refreshAdapter();
             }
 
             public void entriesUpdated(Collection<String> addresses) {
+                roster = RosterManager.getRosterInstance();
                 refreshAdapter();
             }
 
             public void presenceChanged(Presence presence) {
+                roster = RosterManager.getRosterInstance();
                 refreshAdapter();
             }
 
             public void entriesAdded(Collection<String> arg0) {
+                roster = RosterManager.getRosterInstance();
                 refreshAdapter();
             }
         });
