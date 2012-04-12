@@ -108,9 +108,9 @@ public class ContactsActivity extends ListActivity {
 
             public void presenceChanged(Presence presence) {
                 Log.d(TAG, "Presence changed: " + presence.getFrom() + " " + presence.getMode());
-                loadContacts();
                 AvatarsCache.getInstance().put(presence.getFrom(),
                         AvatarsCache.getAvatar(presence.getFrom()));
+                loadContacts();
                 refreshAdapter();
             }
 
