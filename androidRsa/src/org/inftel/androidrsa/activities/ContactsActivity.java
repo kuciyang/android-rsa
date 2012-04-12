@@ -158,7 +158,6 @@ public class ContactsActivity extends ListActivity {
                 presence5.setStatus("Desconectado!");
                 presence5.setMode(Presence.Mode.away);
                 connection.sendPacket(presence5);
-                roster = RosterManager.getRosterInstance();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
