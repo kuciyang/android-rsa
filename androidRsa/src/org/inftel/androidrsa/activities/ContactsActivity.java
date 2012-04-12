@@ -92,9 +92,11 @@ public class ContactsActivity extends ListActivity {
 
         roster.addRosterListener(new RosterListener() {
             public void entriesDeleted(Collection<String> addresses) {
+                refreshAdapter();
             }
 
             public void entriesUpdated(Collection<String> addresses) {
+                refreshAdapter();
             }
 
             public void presenceChanged(Presence presence) {
@@ -102,6 +104,7 @@ public class ContactsActivity extends ListActivity {
             }
 
             public void entriesAdded(Collection<String> arg0) {
+                refreshAdapter();
             }
         });
 
