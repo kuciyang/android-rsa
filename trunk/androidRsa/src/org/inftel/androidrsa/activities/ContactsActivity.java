@@ -1,12 +1,15 @@
 
 package org.inftel.androidrsa.activities;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 
 import org.inftel.androidrsa.R;
 import org.inftel.androidrsa.adapters.ContactsAdapter;
 import org.inftel.androidrsa.utils.AndroidRsaConstants;
+import org.inftel.androidrsa.utils.ReadFileAsByteArray;
 import org.inftel.androidrsa.xmpp.AvatarsCache;
 import org.inftel.androidrsa.xmpp.ChatMan;
 import org.inftel.androidrsa.xmpp.Conexion;
@@ -16,10 +19,16 @@ import org.jivesoftware.smack.Connection;
 import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.RosterEntry;
 import org.jivesoftware.smack.RosterListener;
+import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.provider.ProviderManager;
+import org.jivesoftware.smackx.packet.VCard;
+import org.jivesoftware.smackx.provider.VCardProvider;
 
 import android.app.ListActivity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -46,9 +55,40 @@ public class ContactsActivity extends ListActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         connection = Conexion.getInstance();
+
+        VCard vCard = new VCard();
+        SharedPreferences prefs = getSharedPreferences(
+                AndroidRsaConstants.SHARED_PREFERENCE_FILE,
+                Context.MODE_PRIVATE);
+        String avatarPath = prefs.getString(AndroidRsaConstants.ENCODED_IMAGE_PATH,
+                "default");
+        ProviderManager.getInstance().addIQProvider("vCard",
+                "vcard-temp",
+                new VCardProvider());
+        try {
+            vCard.load(connection);
+
+            if (!avatarPath.equals("default")) {
+                byte[] bytes = ReadFileAsByteArray.getBytesFromFile(new File(avatarPath));
+                vCard.setAvatar(bytes);
+                Thread.sleep(10000);
+                vCard.save(connection);
+            }
+
+        } catch (XMPPException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         roster = RosterManager.getRosterInstance();
         Roster.setDefaultSubscriptionMode(Roster.SubscriptionMode.accept_all);
         roster.setSubscriptionMode(Roster.SubscriptionMode.accept_all);
+
         Bundle bundle = getIntent().getExtras();
         passPhrase = bundle.getString(AndroidRsaConstants.PASSPHRASE);
 

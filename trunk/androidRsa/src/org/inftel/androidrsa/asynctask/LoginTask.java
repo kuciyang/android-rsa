@@ -1,7 +1,6 @@
 
 package org.inftel.androidrsa.asynctask;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -12,13 +11,9 @@ import org.inftel.androidrsa.activities.LoginActivity;
 import org.inftel.androidrsa.activities.RegisterActivity;
 import org.inftel.androidrsa.rsa.RSA;
 import org.inftel.androidrsa.utils.AndroidRsaConstants;
-import org.inftel.androidrsa.utils.ReadFileAsByteArray;
 import org.inftel.androidrsa.xmpp.Conexion;
 import org.jivesoftware.smack.Connection;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.provider.ProviderManager;
-import org.jivesoftware.smackx.packet.VCard;
-import org.jivesoftware.smackx.provider.VCardProvider;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -143,33 +138,11 @@ public class LoginTask extends AsyncTask<Object, Void, Boolean> {
     protected Boolean doInBackground(Object... params) {
         try {
             con = Conexion.getInstance(service, user, password);
-            VCard vCard = new VCard();
-            SharedPreferences prefs = activity.getSharedPreferences(
-                    AndroidRsaConstants.SHARED_PREFERENCE_FILE,
-                    Context.MODE_PRIVATE);
-            String avatarPath = prefs.getString(AndroidRsaConstants.ENCODED_IMAGE_PATH,
-                    "default");
-            ProviderManager.getInstance().addIQProvider("vCard",
-                    "vcard-temp",
-                    new VCardProvider());
-            vCard.load(con);
-            if (!avatarPath.equals("default")) {
-                byte[] bytes = ReadFileAsByteArray.getBytesFromFile(new File(avatarPath));
-                vCard.setAvatar(bytes);
-                Thread.sleep(10000);
-                vCard.save(con);
-            }
             return true;
         } catch (XMPPException e) {
             e.printStackTrace();
             Log.d(TAG, "Excepcion XMPP");
             con = null;
-            return false;
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            return false;
-        } catch (IOException e) {
-            e.printStackTrace();
             return false;
         }
     }
