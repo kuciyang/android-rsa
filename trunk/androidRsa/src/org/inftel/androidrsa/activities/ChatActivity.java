@@ -1,9 +1,11 @@
 
 package org.inftel.androidrsa.activities;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.security.cert.Certificate;
+import javax.security.cert.CertificateException;
 
 import org.inftel.androidrsa.R;
 import org.inftel.androidrsa.adapters.ChatAdapter;
@@ -44,6 +46,8 @@ public class ChatActivity extends ListActivity {
     private String destJid;
     private String myJid;
     private boolean cipher;
+    private Certificate cert;
+    private String passphrase;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -60,6 +64,9 @@ public class ChatActivity extends ListActivity {
         if (chat == null) {
             chatMan.createChat(destJid, messageListener);
             chat = chatMan.getChat();
+            if (cipher) {
+                Message m = new Message();
+            }
         } else {
             chat.addMessageListener(messageListener);
         }
@@ -67,6 +74,34 @@ public class ChatActivity extends ListActivity {
         adapter = new ChatAdapter(this, listMessages);
         setListAdapter(adapter);
         myListView = getListView();
+
+        if (cipher) {
+            Bitmap bm = AvatarsCache.getAvatar(destJid);
+            try {
+                cert = Decode.decode(bm);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (CertificateException e) {
+                e.printStackTrace();
+            }
+
+            // Getting the passphrase to encrypt the private Key
+            SharedPreferences prefs = getSharedPreferences(
+                    AndroidRsaConstants.SHARED_PREFERENCE_FILE,
+                    Context.MODE_PRIVATE);
+            passphrase = prefs.getString(AndroidRsaConstants.USERID,
+                    "thisisapassphrasedefault");
+            Log.d(TAG, "PASSPHRASE (CHAT)" + passphrase);
+            try {
+                Log.d("SEGUIMIENTO",
+                        "private key (chat) "
+                                + RSA.getPrivateKeyDecryted(KeyStore.getInstance().getPk(),
+                                        passphrase));
+            } catch (Exception e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+            }
+        }
 
     }
 
@@ -90,15 +125,9 @@ public class ChatActivity extends ListActivity {
             }
         }
         else {
-            // TODO obtener clave publica del destino y mandar mensaje cifrado
-            Bitmap bm = AvatarsCache.getAvatar(destJid);
-            Log.d(TAG, "estoy aki");
-            Log.d(TAG, " " + (bm == null));
-            Log.d(TAG, String.valueOf(bm.getWidth()) + "   " + cipher);
+            String encodedMessage = "";
             try {
-
-                Certificate cert = Decode.decode(bm);
-                String encodedMessage = RSA.cipher(message.getBody(),
+                encodedMessage = RSA.cipher(message.getBody(),
                         cert.getPublicKey());
                 message.setBody(encodedMessage);
                 message.setFrom(myJid);
@@ -109,13 +138,10 @@ public class ChatActivity extends ListActivity {
                 message.setBody(plainText);
                 listMessages.add(message);
                 myListView.setSelection(myListView.getAdapter().getCount() - 1);
-                // KeyStore.getInstance().setCertificate(AndroidRsaConstants.FRIEND_ALIAS
-                // + RosterManager.findByJid(destJid), Decode.decode(bm)) ;
 
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
         }
     }
 
@@ -132,22 +158,6 @@ public class ChatActivity extends ListActivity {
             }
             else {
                 if (message.getBody() != null) {
-                    // Getting the passphrase to encrypt the private Key
-                    SharedPreferences prefs = getSharedPreferences(
-                            AndroidRsaConstants.SHARED_PREFERENCE_FILE,
-                            Context.MODE_PRIVATE);
-                    String passphrase = prefs.getString(AndroidRsaConstants.USERID,
-                            "thisisapassphrasedefault");
-                    Log.d(TAG, "PASSPHRASE (CHAT)" + passphrase);
-                    try {
-                        Log.d("SEGUIMIENTO",
-                                "private key (chat) "
-                                        + RSA.getPrivateKeyDecryted(KeyStore.getInstance().getPk(),
-                                                passphrase));
-                    } catch (Exception e1) {
-                        // TODO Auto-generated catch block
-                        e1.printStackTrace();
-                    }
 
                     try {
                         String decodedMessage = RSA.decipher(message.getBody(),
