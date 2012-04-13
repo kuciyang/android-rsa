@@ -114,7 +114,12 @@ public class ChatActivity extends ListActivity {
 
         message.setFrom(myJid);
         message.setTo(destJid);
-        listMessages.add(message);
+
+        Message m = new Message();
+        m.setFrom(myJid);
+        m.setBody(plainText);
+        listMessages.add(m);
+
         refreshAdapter();
         myListView.smoothScrollToPosition(adapter.getCount() - 1);
 
@@ -122,20 +127,19 @@ public class ChatActivity extends ListActivity {
             try {
                 message.setBody(plainText);
                 chatMan.getChat().sendMessage(message);
-                Log.d(TAG, "Enviando: " + plainText);
+                Log.d(TAG, "Enviando: " + message.getBody());
 
             } catch (XMPPException e) {
                 Log.d(TAG, "ERROR al enviar mensaje");
             }
         }
         else {
-            String encodedMessage = "";
             try {
-                encodedMessage = RSA.cipher(plainText,
+                String encodedMessage = RSA.cipher(plainText,
                         cert.getPublicKey());
                 message.setBody(encodedMessage);
                 chatMan.getChat().sendMessage(message);
-                Log.d(TAG, "Enviando cifrado: " + plainText);
+                Log.d(TAG, "Enviando cifrado: " + message.getBody() + " " + plainText);
 
             } catch (Exception e) {
                 Log.d(TAG, "PETO ENVIANDO CIFRADOOOO");
@@ -160,12 +164,13 @@ public class ChatActivity extends ListActivity {
                     try {
                         PrivateKey pk = RSA.getPrivateKeyDecryted(KeyStore.getInstance().getPk(),
                                 passphrase);
-                        Log.d(TAG, "PRIVATE KEY " + pk.toString());
                         String decodedMessage = RSA.decipher(message.getBody(), pk);
                         Log.i(TAG, "Recibido mensaje cifrado: " + decodedMessage);
 
-                        message.setBody(decodedMessage);
-                        listMessages.add(message);
+                        Message m = new Message(message.getTo());
+
+                        m.setBody(decodedMessage);
+                        listMessages.add(m);
                         refreshAdapter();
                         myListView.smoothScrollToPosition(adapter.getCount() - 1);
 
