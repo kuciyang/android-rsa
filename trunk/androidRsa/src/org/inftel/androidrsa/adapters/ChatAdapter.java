@@ -66,6 +66,9 @@ public class ChatAdapter extends ArrayAdapter<Message> {
         if ((m.getSubject() != null) && (m.getSubject() != "")) {
             holder.time.setText(m.getSubject());
         }
+        else {
+            holder.time.setVisibility(View.GONE);
+        }
         if (m.getFrom().equals(myJid)) {
             holder.layout.setBackgroundResource(R.drawable.balloon_left);
             holder.avatar.setImageBitmap(avatarMap.get(myJid));
