@@ -6,6 +6,7 @@ import java.util.Collection;
 
 import org.inftel.androidrsa.R;
 import org.inftel.androidrsa.adapters.ContactsAdapter;
+import org.inftel.androidrsa.utils.AndroidRsaConstants;
 import org.inftel.androidrsa.xmpp.AvatarsCache;
 import org.inftel.androidrsa.xmpp.ChatMan;
 import org.inftel.androidrsa.xmpp.Conexion;
@@ -39,6 +40,7 @@ public class ContactsActivity extends ListActivity {
     private ContactsAdapter adapter;
     private ListView myListView;
     public static ChatMan chatMan;
+    public static String passPhrase;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -47,6 +49,8 @@ public class ContactsActivity extends ListActivity {
         roster = RosterManager.getRosterInstance();
         Roster.setDefaultSubscriptionMode(Roster.SubscriptionMode.accept_all);
         roster.setSubscriptionMode(Roster.SubscriptionMode.accept_all);
+        Bundle bundle = getIntent().getExtras();
+        passPhrase = bundle.getString(AndroidRsaConstants.PASSPHRASE);
 
         pintarUI();
         chatMan = new ChatMan(this);
@@ -89,6 +93,7 @@ public class ContactsActivity extends ListActivity {
                 Intent i = new Intent(getApplicationContext(), ChatActivity.class);
                 i.putExtra("destJid", RosterManager.findByName(nombre.getText().toString())
                         .getUser());
+                i.putExtra(AndroidRsaConstants.PASSPHRASE, passPhrase);
                 startActivity(i);
             }
 

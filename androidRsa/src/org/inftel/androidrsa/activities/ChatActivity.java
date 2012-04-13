@@ -28,12 +28,12 @@ import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
 
 import android.app.ListActivity;
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.EditText;
 import android.widget.ListView;
 
@@ -50,7 +50,7 @@ public class ChatActivity extends ListActivity {
     private String myJid;
     private boolean cipher;
     private Certificate cert;
-    private String passphrase;
+    private String passPhrase;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -63,6 +63,8 @@ public class ChatActivity extends ListActivity {
         destJid = getIntent().getStringExtra("destJid");
         myJid = this.connection.getUser();
         cipher = RosterManager.isSecure(destJid);
+        Bundle bundle = getIntent().getExtras();
+        passPhrase = bundle.getString(AndroidRsaConstants.PASSPHRASE);
 
         if (chat == null) {
             chatMan.createChat(destJid, messageListener);
@@ -94,24 +96,14 @@ public class ChatActivity extends ListActivity {
                 e.printStackTrace();
             }
 
-            // Getting the passphrase to encrypt the private Key
-            SharedPreferences prefs = getSharedPreferences(
-                    AndroidRsaConstants.SHARED_PREFERENCE_FILE,
-                    Context.MODE_PRIVATE);
-            passphrase = prefs.getString(AndroidRsaConstants.USERID,
-                    "thisisapassphrasedefault");
-            Log.d(TAG, "PASSPHRASE (CHAT)" + passphrase);
-            try {
-                Log.d("SEGUIMIENTO",
-                        "private key (chat) "
-                                + RSA.getPrivateKeyDecryted(KeyStore.getInstance().getPk(),
-                                        passphrase));
-            } catch (Exception e1) {
-                // TODO Auto-generated catch block
-                e1.printStackTrace();
-            }
         }
+    }
 
+    public void animate(View view) {
+        Animation animation = new AlphaAnimation(0.0f, 1.0f);
+        animation.setDuration(1000);
+        animation.setStartOffset(500);
+        view.startAnimation(animation);
     }
 
     public void send(View view) {
@@ -129,7 +121,6 @@ public class ChatActivity extends ListActivity {
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
         m.setSubject(sdf.format(new Date()));
         listMessages.add(m);
-
         refreshAdapter();
         myListView.smoothScrollToPosition(adapter.getCount() - 1);
 
@@ -165,15 +156,14 @@ public class ChatActivity extends ListActivity {
 
                     Log.i(TAG, "Recibido mensaje plano: " + message.getBody());
                     listMessages.add(message);
-                    refreshAdapter();
+                    // refreshAdapter();
                     myListView.smoothScrollToPosition(adapter.getCount() - 1);
-
                 }
                 else {
 
                     try {
                         PrivateKey pk = RSA.getPrivateKeyDecryted(KeyStore.getInstance().getPk(),
-                                passphrase);
+                                passPhrase);
                         String decodedMessage = RSA.decipher(message.getBody(), pk);
                         Log.i(TAG, "Recibido mensaje cifrado: " + decodedMessage);
 
@@ -203,6 +193,7 @@ public class ChatActivity extends ListActivity {
         runOnUiThread(new Runnable() {
             public void run() {
                 adapter.notifyDataSetChanged();
+                Log.d(TAG, "listview getLast" + myListView.getLastVisiblePosition());
             }
         });
     }
