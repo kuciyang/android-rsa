@@ -264,17 +264,17 @@ public class RegisterActivity extends Activity {
                     Log.d(TAG, String.valueOf(file.length()));
                     if (file.length() > 500000) {
                         showDialog(DIALOG_IMAGE_TOO_LARGE);
-                    } else {
-                        if (mChosenImage.getHeight() != mChosenImage.getHeight()) {
-                            showDialog(DIALOG_IMAGE_SIZE_FAIL);
-                        }
                     }
+
+                    if (mChosenImage.getHeight() != mChosenImage.getHeight()) {
+                        showDialog(DIALOG_IMAGE_SIZE_FAIL);
+                    }
+
                 }
         }
     }
 
     public void onClickButtonDone(View view) throws IOException {
-        // TODO comprobar tama�o de la foto
 
         if (mChosenFile != null && mChosenImage != null) {
             String mChosenFileStringWithoutExt = mChosenFileString.substring(0,
