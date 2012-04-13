@@ -57,6 +57,7 @@
     <string name="image_size_fail">The size of the image is too large.</string>
     <string name="connection_error">Connection error. Pleas, try again.</string>
     <string name="run_configuration_question">Do you want to pick another certificate ?</string>
+    <string name="hora_default">hora</string>
     
 
 </resources>
