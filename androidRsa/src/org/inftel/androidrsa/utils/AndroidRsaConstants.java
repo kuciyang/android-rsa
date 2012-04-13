@@ -26,7 +26,6 @@ public class AndroidRsaConstants {
 
     public static final File EXTERNAL_SD_PATH = new File(Environment.getExternalStorageDirectory()
             .getAbsolutePath());
-    public static final String SP_KEY_RUN_ONCE = "SP_KEY_RUN_ONCE";
     public static final String FTYPE = ".crt";
     public static final String ENCODED_IMAGE_NAME = "_mobistego";
     public static final String KEY_NAME = "key_";
@@ -41,6 +40,7 @@ public class AndroidRsaConstants {
     public static final String IMAGE_PATH = "img_path";
     public static final String FILE_PATH = "file_path";
     public static final String STEGO_IMAGE_PATH = "stego_img_path";
+    public static final String PASSPHRASE = "passphrase";
 
     // Constants for preferences
 

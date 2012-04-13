@@ -16,6 +16,7 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.ShortBufferException;
 import javax.security.cert.CertificateException;
 
+import org.apache.commons.io.FileUtils;
 import org.inftel.androidrsa.R;
 import org.inftel.androidrsa.rsa.KeyStore;
 import org.inftel.androidrsa.rsa.RSA;
@@ -51,6 +52,7 @@ public class RegisterActivity extends Activity {
     private String mChosenFileString;
     private Bitmap mChosenImage;
     private String mChosenImagePath;
+    private String passphrase;
 
     private static final int DIALOG_LOAD_FILE = 1000;
 
@@ -61,6 +63,7 @@ public class RegisterActivity extends Activity {
     private static final int DIALOG_INVALID_SIGN_CERTIFICATE = 1006;
     private static final int DIALOG_IMAGE_TOO_LARGE = 1007;
     private static final int DIALOG_IMAGE_SIZE_FAIL = 1008;
+    private static final int DIALOG_RUN_ONCE = 1009;
 
     /** Called when the activity is first created. */
     @Override
@@ -69,6 +72,18 @@ public class RegisterActivity extends Activity {
         // Remove title bar
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.register);
+        SharedPreferences prefs = getSharedPreferences(
+                AndroidRsaConstants.SHARED_PREFERENCE_FILE,
+                Context.MODE_PRIVATE);
+        boolean registered = prefs.getBoolean(AndroidRsaConstants.REGISTERED, false);
+
+        // Obtaning intent information
+        Bundle bundle = getIntent().getExtras();
+        passphrase = bundle.getString(AndroidRsaConstants.PASSPHRASE);
+
+        if (!registered)
+            showDialog(DIALOG_RUN_ONCE);
+
     }
 
     public void onClickPickImage(View view) throws IOException {
@@ -100,6 +115,16 @@ public class RegisterActivity extends Activity {
         AlertDialog.Builder builder = new Builder(this);
 
         switch (id) {
+            case DIALOG_RUN_ONCE:
+                builder.setMessage(R.string.first_time_configuration)
+                        .setCancelable(false)
+                        .setPositiveButton(getResources().getString(R.string.ok),
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        dialog.dismiss();
+                                    }
+                                });
+                break;
             case DIALOG_LOAD_FILE:
                 if (mFileList == null) {
                     builder.setMessage(R.string.not_found)
@@ -274,11 +299,6 @@ public class RegisterActivity extends Activity {
                     KeyStore.getInstance().setCertificate(AndroidRsaConstants.OWN_ALIAS,
                             RSA.getCertificate(mChosenFilePath));
                     // Getting the passphrase to encrypt the private Key
-                    SharedPreferences prefs = getSharedPreferences(
-                            AndroidRsaConstants.SHARED_PREFERENCE_FILE,
-                            Context.MODE_PRIVATE);
-                    String passphrase = prefs.getString(AndroidRsaConstants.USERID,
-                            "thisisapassphrasedefault");
 
                     Log.d("SEGUIMIENTO", "PASSPHRASE " + passphrase);
 
@@ -296,17 +316,37 @@ public class RegisterActivity extends Activity {
                                     + RSA.getPrivateKeyDecryted(KeyStore.getInstance().getPk(),
                                             passphrase).toString());
                     // user have been registered
+                    SharedPreferences prefs = getSharedPreferences(
+                            AndroidRsaConstants.SHARED_PREFERENCE_FILE,
+                            Context.MODE_PRIVATE);
                     Editor prefsEditor = prefs.edit();
-                    prefsEditor.putBoolean(AndroidRsaConstants.REGISTERED,
-                            true);
                     prefsEditor.putString(AndroidRsaConstants.KEY_PATH,
                             mKeyPath);
+                    prefsEditor.putString(AndroidRsaConstants.CERT_PATH, mChosenFilePath);
                     prefsEditor.apply();
+
+                    // DEBUG
+                    File file = new File(prefs.getString(AndroidRsaConstants.KEY_PATH, ""));
+
+                    Log.d(TAG, "estoy akiiiiii");
+                    Log.d(TAG, "Private key del store"
+                            + RSA.getPrivateKeyDecryted(KeyStore.getInstance().getPk(),
+                                    "zamparo")
+                                    .toString());
+                    Log.d(TAG,
+                            "PRIVATE KEY DEL ACRHIVO "
+                                    + RSA.getPrivateKeyDecryted(
+                                            FileUtils.readFileToByteArray(file),
+                                            "zamparo")
+                                            .toString());
+
+                    // END DEBUG
 
                     // Applying steganography
                     Intent i = new Intent(getApplicationContext(), EncodeActivity.class);
                     i.putExtra(AndroidRsaConstants.FILE_PATH, mChosenFilePath);
                     i.putExtra(AndroidRsaConstants.IMAGE_PATH, mChosenImagePath);
+                    i.putExtra(AndroidRsaConstants.PASSPHRASE, passphrase);
                     startActivity(i);
 
                 } catch (NoSuchAlgorithmException e) {

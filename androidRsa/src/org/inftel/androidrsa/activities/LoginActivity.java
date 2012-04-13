@@ -3,6 +3,7 @@ package org.inftel.androidrsa.activities;
 
 import java.io.File;
 
+import org.apache.commons.io.FileUtils;
 import org.inftel.androidrsa.R;
 import org.inftel.androidrsa.asynctask.LoginTask;
 import org.inftel.androidrsa.rsa.KeyStore;
@@ -13,12 +14,7 @@ import org.jivesoftware.smack.Connection;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
-import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
@@ -38,8 +34,6 @@ public class LoginActivity extends Activity {
     private String userid;
     private String password;
     private LoginTask task;
-    private static final int DIALOG_RUN_ONCE = 1001;
-    private static final int DIALOG_RUN_OTHER = 1010;
 
     /** Called when the activity is first created. */
     @Override
@@ -67,28 +61,13 @@ public class LoginActivity extends Activity {
                 AndroidRsaConstants.SHARED_PREFERENCE_FILE,
                 Context.MODE_PRIVATE);
 
-        Log.d("SEGUIMIENTO",
-                "login passprhase " + prefs.getString(AndroidRsaConstants.USERID, "default"));
-        Log.d("SEGUIMIENTO",
-                "login path key" + prefs.getString(AndroidRsaConstants.KEY_PATH, "default"));
-
         if (prefs.getBoolean(AndroidRsaConstants.REGISTERED, false)) {
             try {
-                KeyStore.getInstance().setPk(
-                        RSA.getPrivateKeyEncrytedBytes(
-                                new File(prefs.getString(AndroidRsaConstants.KEY_PATH, "")),
-                                prefs.getString(AndroidRsaConstants.USERID, "default")
-                                ));
-            } catch (Exception e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-
-            try {
-                Log.d("SEGUIMIENTO",
-                        " login private key "
-                                + RSA.getPrivateKeyDecryted(KeyStore.getInstance().getPk(),
-                                        prefs.getString(AndroidRsaConstants.USERID, "default")));
+                File file = new File(prefs.getString(AndroidRsaConstants.KEY_PATH, ""));
+                KeyStore.getInstance().setPk(FileUtils.readFileToByteArray(file));
+                KeyStore.getInstance().setPb(RSA.getCAPublicKey(this));
+                KeyStore.getInstance().setCertificate(AndroidRsaConstants.OWN_ALIAS,
+                        RSA.getCertificate(prefs.getString(AndroidRsaConstants.CERT_PATH, "")));
             } catch (Exception e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -139,16 +118,10 @@ public class LoginActivity extends Activity {
             editor.apply();
 
             // Check we've been run once.
-            boolean runOnce = prefs.getBoolean(AndroidRsaConstants.SP_KEY_RUN_ONCE, false);
-            if (!runOnce) {
-                showDialog(DIALOG_RUN_ONCE);
-                Intent i = new Intent(this, RegisterActivity.class);
-                startActivity(i);
-            } else {
-                task = new LoginTask(this, connection,
-                        selectedItem, userid, password, this);
-                showDialog(DIALOG_RUN_OTHER);
-            }
+
+            task = new LoginTask(this, connection,
+                    selectedItem, userid, password, this);
+            task.execute();
         } else {
             Toast.makeText(this, getResources().getString(R.string.info_empty_fields),
                     Toast.LENGTH_LONG)
@@ -185,46 +158,5 @@ public class LoginActivity extends Activity {
     // }
 
     // Dialogs
-    protected Dialog onCreateDialog(int id) {
-        Dialog dialog = null;
-        AlertDialog.Builder builder = new Builder(this);
-        switch (id) {
-            case DIALOG_RUN_ONCE:
-                builder.setMessage(R.string.first_time_configuration)
-                        .setCancelable(false)
-                        .setPositiveButton(getResources().getString(R.string.ok),
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        Intent i = new Intent(getApplicationContext(),
-                                                RegisterActivity.class);
-                                        startActivity(i);
-                                        dialog.dismiss();
-                                    }
-                                });
-                break;
-            case DIALOG_RUN_OTHER:
-                builder.setMessage(R.string.run_configuration_question)
-                        .setCancelable(false)
-                        .setPositiveButton(getResources().getString(R.string.yes),
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        Intent i = new Intent(getApplicationContext(),
-                                                RegisterActivity.class);
-                                        startActivity(i);
-                                        dialog.dismiss();
-                                    }
-                                })
-                        .setNegativeButton(getResources().getString(R.string.no),
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        task.execute();
-                                        dialog.dismiss();
-                                    }
-                                });
-                break;
-        }
-        dialog = builder.show();
-        return dialog;
-    }
 
 }
