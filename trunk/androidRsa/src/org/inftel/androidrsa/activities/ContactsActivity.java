@@ -76,11 +76,12 @@ public class ContactsActivity extends ListActivity {
 
     private void pintarUI() {
         loadContacts();
-
+        myListView = getListView();
+        View headerView = getLayoutInflater().inflate(R.layout.header_contacts, null);
+        myListView.addHeaderView(headerView);
         adapter = new ContactsAdapter(this, listaJid);
         setListAdapter(adapter);
 
-        myListView = getListView();
         myListView.setOnItemClickListener(new OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view,
                     int position, long id) {
