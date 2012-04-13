@@ -98,7 +98,7 @@ public class RSA {
         BufferedReader in = new BufferedReader(new FileReader(privKeyFile));
         String line = in.readLine();
         if (line.contains("-----BEGIN PRIVATE KEY-----") == false)
-            throw new IOException("Couldnt find");
+            throw new InvalidKeyException("Couldnt find");
         line = line.substring(27);
 
         String base64 = new String();
