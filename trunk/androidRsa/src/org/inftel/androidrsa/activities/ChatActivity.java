@@ -167,7 +167,9 @@ public class ChatActivity extends ListActivity {
                         String decodedMessage = RSA.decipher(message.getBody(), pk);
                         Log.i(TAG, "Recibido mensaje cifrado: " + decodedMessage);
 
-                        Message m = new Message(message.getTo());
+                        Message m = new Message();
+                        m.setFrom(message.getFrom());
+                        m.setTo(message.getTo());
 
                         m.setBody(decodedMessage);
                         listMessages.add(m);
