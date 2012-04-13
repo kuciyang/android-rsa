@@ -81,10 +81,10 @@ public class ChatAdapter extends ArrayAdapter<Message> {
         return rowView;
     }
 
-    @Override
-    public int getCount() {
-        return this.list.size();
-    }
+    // @Override
+    // public int getCount() {
+    // return this.list.size();
+    // }
 
     public HashMap<String, Bitmap> getAvatarMap() {
         return avatarMap;

@@ -28,6 +28,7 @@ import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
 
 import android.app.ListActivity;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
@@ -36,6 +37,7 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 public class ChatActivity extends ListActivity {
     private static final String TAG = "ChatActivity";
@@ -51,9 +53,11 @@ public class ChatActivity extends ListActivity {
     private boolean cipher;
     private Certificate cert;
     private String passPhrase;
+    private Context context;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        context = getApplicationContext();
         this.connection = Conexion.getInstance();
         this.roster = RosterManager.getRosterInstance();
         chatMan = ContactsActivity.chatMan;
@@ -156,7 +160,7 @@ public class ChatActivity extends ListActivity {
 
                     Log.i(TAG, "Recibido mensaje plano: " + message.getBody());
                     listMessages.add(message);
-                    // refreshAdapter();
+                    refreshAdapter();
                     myListView.smoothScrollToPosition(adapter.getCount() - 1);
                 }
                 else {
@@ -184,6 +188,17 @@ public class ChatActivity extends ListActivity {
 
                 }
             }
+            else {
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        Toast.makeText(getApplicationContext(),
+                                "Error: es posible que el usuario no este conectado.",
+                                Toast.LENGTH_LONG)
+                                .show();
+                    }
+                });
+
+            }
 
         }
 
@@ -193,7 +208,6 @@ public class ChatActivity extends ListActivity {
         runOnUiThread(new Runnable() {
             public void run() {
                 adapter.notifyDataSetChanged();
-                Log.d(TAG, "listview getLast" + myListView.getLastVisiblePosition());
             }
         });
     }
