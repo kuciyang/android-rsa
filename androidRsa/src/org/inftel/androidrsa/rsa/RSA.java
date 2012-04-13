@@ -41,41 +41,6 @@ import android.util.Log;
 
 public class RSA {
 
-    // public static PrivateKey getPrivateKey(File privKeyFile) throws
-    // IOException,
-    // NoSuchAlgorithmException,
-    // InvalidKeySpecException {
-    // BufferedReader in = new BufferedReader(new FileReader(privKeyFile));
-    // String line = in.readLine();
-    // if (line.contains("-----BEGIN PRIVATE KEY-----") == false)
-    // throw new IOException("Couldnt find");
-    // line = line.substring(27);
-    //
-    // String base64 = new String();
-    // boolean trucking = true;
-    // while (trucking) {
-    //
-    // if (line.contains("-----")) {
-    // trucking = false;
-    // base64 += line.substring(0, line.indexOf("-----"));
-    // }
-    // else {
-    // base64 += line;
-    // line = in.readLine();
-    // }
-    // }
-    // Log.d("PRIVATE KEY", base64);
-    // in.close();
-    //
-    // byte[] privKeyBytes = Base64.decode(base64);
-    //
-    // KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-    // KeySpec ks = new PKCS8EncodedKeySpec(privKeyBytes);
-    // PrivateKey privKey = keyFactory.generatePrivate(ks);
-    //
-    // return privKey;
-    // }
-
     public static PrivateKey getPrivateKeyDecryted(byte[] pk, String passphrase)
             throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
             IllegalBlockSizeException, BadPaddingException, NoSuchProviderException,
@@ -98,7 +63,7 @@ public class RSA {
         BufferedReader in = new BufferedReader(new FileReader(privKeyFile));
         String line = in.readLine();
         if (line.contains("-----BEGIN PRIVATE KEY-----") == false)
-            throw new InvalidKeyException("Couldnt find");
+            throw new InvalidKeyException("Invalid file");
         line = line.substring(27);
 
         String base64 = new String();
@@ -160,35 +125,6 @@ public class RSA {
         return secretKeySpec;
     }
 
-    // public static PublicKey getPublicKeyFromCertificate(String path) throws
-    // IOException,
-    // CertificateException {
-    // BufferedReader in = new BufferedReader(new FileReader(path));
-    // String line = in.readLine();
-    // if (line.contains("-----BEGIN CERTIFICATE-----") == false)
-    // throw new IOException("Couldnt find");
-    // line = line.substring(27);
-    //
-    // String base64 = new String();
-    // boolean trucking = true;
-    // while (trucking) {
-    //
-    // if (line.contains("-----")) {
-    // trucking = false;
-    // base64 += line.substring(0, line.indexOf("-----"));
-    // }
-    // else {
-    // base64 += line;
-    // line = in.readLine();
-    // }
-    // }
-    // Log.d("CERTIFICATE", base64);
-    // in.close();
-    // byte[] certifacteData = Base64.decode(base64);
-    // X509Certificate c = X509Certificate.getInstance(certifacteData);
-    // return c.getPublicKey();
-    // }
-
     public static Certificate getCertificate(String path) throws IOException,
             CertificateException {
         BufferedReader in = new BufferedReader(new FileReader(path));
@@ -217,39 +153,6 @@ public class RSA {
         X509Certificate c = X509Certificate.getInstance(certifacteData);
         return c;
     }
-
-    // public static void checkCertificate(String path, Context ctx) throws
-    // IOException,
-    // CertificateException, InvalidKeyException, NoSuchAlgorithmException,
-    // NoSuchProviderException, SignatureException {
-    // PublicKey caKey = getCAPublicKey(ctx);
-    //
-    // BufferedReader in = new BufferedReader(new FileReader(path));
-    // String line = in.readLine();
-    // if (line.contains("-----BEGIN CERTIFICATE-----") == false)
-    // throw new IOException("Couldnt find");
-    // line = line.substring(27);
-    //
-    // String base64 = new String();
-    // boolean trucking = true;
-    // while (trucking) {
-    //
-    // if (line.contains("-----")) {
-    // trucking = false;
-    // base64 += line.substring(0, line.indexOf("-----"));
-    // }
-    // else {
-    // base64 += line;
-    // line = in.readLine();
-    // }
-    // }
-    // Log.d("CERTIFICATE", base64);
-    // in.close();
-    // byte[] certifacteData = Base64.decode(base64);
-    // X509Certificate c = X509Certificate.getInstance(certifacteData);
-    //
-    // c.verify(caKey);
-    // }
 
     public static PublicKey getCAPublicKey(Context ctx) throws IOException,
             CertificateException {
@@ -281,7 +184,6 @@ public class RSA {
         return c.getPublicKey();
     }
 
-    // TO CIPHER A STRING USE: string.getBytes()
     public static String cipher(String text, PublicKey key) throws NoSuchAlgorithmException,
             NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException,
             BadPaddingException, UnsupportedEncodingException {
@@ -295,7 +197,6 @@ public class RSA {
         return StringUtils.encodeBase64(encryptedBytes);
     }
 
-    // TO VIEW THE DECIPHER STRING USE: String str = new String (bytes)
     public static String decipher(String text, PrivateKey key) throws InvalidKeyException,
             NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException,
             BadPaddingException, UnsupportedEncodingException {
