@@ -30,7 +30,9 @@ import javax.security.cert.Certificate;
 import javax.security.cert.CertificateException;
 import javax.security.cert.X509Certificate;
 
+import org.apache.commons.io.FileUtils;
 import org.inftel.androidrsa.R;
+import org.inftel.androidrsa.utils.AndroidRsaConstants;
 import org.jivesoftware.smack.util.Base64;
 import org.jivesoftware.smack.util.StringUtils;
 
@@ -78,6 +80,7 @@ public class RSA {
             throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
             IllegalBlockSizeException, BadPaddingException, NoSuchProviderException,
             UnsupportedEncodingException, InvalidKeySpecException {
+
         byte[] privKeyDecrypted = decrytpKey(pk, passphrase);
         KeyFactory keyFactory = KeyFactory.getInstance("RSA");
         KeySpec ks = new PKCS8EncodedKeySpec(privKeyDecrypted);
@@ -85,7 +88,8 @@ public class RSA {
         return privKey;
     }
 
-    public static byte[] getPrivateKeyEncrytedBytes(File privKeyFile, String passphrase)
+    public static byte[] getPrivateKeyEncrytedBytes(File privKeyFile, String
+            passphrase)
             throws IOException,
             NoSuchAlgorithmException, InvalidKeySpecException, InvalidKeyException,
             NoSuchProviderException, NoSuchPaddingException, ShortBufferException,
@@ -115,7 +119,9 @@ public class RSA {
 
         byte[] privKeyBytes = Base64.decode(base64);
         Log.d("PRIVATE KEY BYTES", privKeyBytes.toString());
-        return encrytpKey(privKeyBytes, passphrase);
+        byte[] encryptedBytes = encrytpKey(privKeyBytes, passphrase);
+        FileUtils.writeByteArrayToFile(privKeyFile, encryptedBytes, false);
+        return encryptedBytes;
     }
 
     public static byte[] encrytpKey(byte[] input, String passphrase)
@@ -302,33 +308,19 @@ public class RSA {
         return new String(decryptedBytes);
     }
 
-    // USE TO CIPHER AND DECIPHER
-    private static byte[] toByte(String hexString) {
-        int len = hexString.length() / 2;
-        byte[] result = new byte[len];
-        for (int i = 0; i < len; i++)
-            result[i] = Integer.valueOf(hexString.substring(2 * i, 2 * i + 2), 16).byteValue();
-        return result;
+    public static boolean verifyOwnPk(String passphrase) throws InvalidKeyException,
+            NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException,
+            BadPaddingException, UnsupportedEncodingException, NoSuchProviderException,
+            InvalidKeySpecException {
+        return test(RSA.getPrivateKeyDecryted(KeyStore.getInstance().getPk(), passphrase), KeyStore
+                .getInstance().getCertificate(AndroidRsaConstants.OWN_ALIAS).getPublicKey());
     }
 
-    private static String toHex(byte[] buf) {
-        if (buf == null)
-            return "";
-        StringBuffer result = new StringBuffer(2 * buf.length);
-        for (int i = 0; i < buf.length; i++) {
-            appendHex(result, buf[i]);
-        }
-        return result.toString();
-    }
-
-    private final static String HEX = "0123456789ABCDEF";
-
-    private static void appendHex(StringBuffer sb, byte b) {
-        sb.append(HEX.charAt((b >> 4) & 0x0f)).append(HEX.charAt(b & 0x0f));
-    }
-
-    public static String fromHex(String hex) {
-        return new String(toByte(hex));
+    public static boolean test(PrivateKey pk, PublicKey pb) throws InvalidKeyException,
+            NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException,
+            BadPaddingException, UnsupportedEncodingException {
+        String test = "TEST";
+        return decipher(cipher(test, pb), pk).equals(test);
     }
 
 }

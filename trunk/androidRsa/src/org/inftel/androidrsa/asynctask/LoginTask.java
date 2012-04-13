@@ -9,6 +9,8 @@ import java.io.OutputStream;
 import org.inftel.androidrsa.R;
 import org.inftel.androidrsa.activities.ContactsActivity;
 import org.inftel.androidrsa.activities.LoginActivity;
+import org.inftel.androidrsa.activities.RegisterActivity;
+import org.inftel.androidrsa.rsa.RSA;
 import org.inftel.androidrsa.utils.AndroidRsaConstants;
 import org.inftel.androidrsa.utils.ReadFileAsByteArray;
 import org.inftel.androidrsa.xmpp.Conexion;
@@ -18,8 +20,10 @@ import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smackx.packet.VCard;
 import org.jivesoftware.smackx.provider.VCardProvider;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -37,6 +41,7 @@ public class LoginTask extends AsyncTask<Object, Void, Boolean> {
     private LoginActivity activity;
     private ProgressDialog pDialog;
     private Context ctx;
+    private static final int DIALOG_RUN_OTHER = 1000;
 
     public LoginTask(Context ctx, Connection c, String service, String user,
             String password, LoginActivity activity) {
@@ -53,8 +58,71 @@ public class LoginTask extends AsyncTask<Object, Void, Boolean> {
         if (success) {
             Log.i(TAG, "Conexión creada correctamente!");
             Log.i(TAG, "Conectado como " + con.getUser());
-            Intent i = new Intent(activity, ContactsActivity.class);
-            activity.startActivity(i);
+
+            SharedPreferences prefs = ctx.getSharedPreferences(
+                    AndroidRsaConstants.SHARED_PREFERENCE_FILE,
+                    Context.MODE_PRIVATE);
+            boolean registered = prefs.getBoolean(AndroidRsaConstants.REGISTERED, false);
+
+            if (registered) {
+                try {
+                    if (RSA.verifyOwnPk(password)) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
+                        builder.setMessage(R.string.run_configuration_question)
+                                .setCancelable(false)
+                                .setPositiveButton(ctx.getResources().getString(R.string.yes),
+                                        new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int id) {
+                                                Intent i = new Intent(ctx.getApplicationContext(),
+                                                        RegisterActivity.class);
+                                                i.putExtra(AndroidRsaConstants.PASSPHRASE, password);
+                                                ctx.startActivity(i);
+                                                dialog.dismiss();
+                                            }
+                                        })
+                                .setNegativeButton(ctx.getResources().getString(R.string.no),
+                                        new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int id) {
+                                                Intent i = new Intent(activity,
+                                                        ContactsActivity.class);
+                                                i.putExtra(AndroidRsaConstants.PASSPHRASE, password);
+                                                activity.startActivity(i);
+                                                dialog.dismiss();
+                                            }
+                                        });
+                        AlertDialog alert = builder.create();
+                        alert.show();
+                    } else {
+
+                    }
+                } catch (Exception e) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
+                    builder.setMessage(
+                            "Invalid passprhase (you has changed your pass or you has registered another service). Register Again, please.")
+                            .setCancelable(false)
+                            .setPositiveButton(ctx.getResources().getString(R.string.ok),
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            Intent i = new Intent(ctx.getApplicationContext(),
+                                                    RegisterActivity.class);
+                                            i.putExtra(AndroidRsaConstants.PASSPHRASE, password);
+                                            ctx.startActivity(i);
+                                            dialog.dismiss();
+                                        }
+                                    });
+                    AlertDialog alert = builder.create();
+                    alert.show();
+                    Intent i = new Intent(activity, RegisterActivity.class);
+                    i.putExtra(AndroidRsaConstants.PASSPHRASE, password);
+                    activity.startActivity(i);
+                }
+
+            } else {
+                Intent i = new Intent(activity, RegisterActivity.class);
+                i.putExtra(AndroidRsaConstants.PASSPHRASE, password);
+                activity.startActivity(i);
+            }
+
             if (pDialog.isShowing()) {
                 pDialog.dismiss();
             }
@@ -85,10 +153,12 @@ public class LoginTask extends AsyncTask<Object, Void, Boolean> {
                     "vcard-temp",
                     new VCardProvider());
             vCard.load(con);
-            byte[] bytes = ReadFileAsByteArray.getBytesFromFile(new File(avatarPath));
-            vCard.setAvatar(bytes);
-            Thread.sleep(10000);
-            vCard.save(con);
+            if (!avatarPath.equals("default")) {
+                byte[] bytes = ReadFileAsByteArray.getBytesFromFile(new File(avatarPath));
+                vCard.setAvatar(bytes);
+                Thread.sleep(10000);
+                vCard.save(con);
+            }
             return true;
         } catch (XMPPException e) {
             e.printStackTrace();

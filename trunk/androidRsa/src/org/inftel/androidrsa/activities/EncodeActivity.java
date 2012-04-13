@@ -40,6 +40,7 @@ public class EncodeActivity extends Activity {
     private String mChosenImagePath;
     private File mChosenFile;
     private String mChosenFilePath;
+    private String passphrase;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -50,6 +51,7 @@ public class EncodeActivity extends Activity {
         Bundle bundle = getIntent().getExtras();
         mChosenFilePath = bundle.getString(AndroidRsaConstants.FILE_PATH);
         mChosenImagePath = bundle.getString(AndroidRsaConstants.IMAGE_PATH);
+        passphrase = bundle.getString(AndroidRsaConstants.PASSPHRASE);
 
         mChosenImage = BitmapFactory.decodeFile(mChosenImagePath);
         mChosenFile = new File(mChosenFilePath);
@@ -68,14 +70,15 @@ public class EncodeActivity extends Activity {
                 SharedPreferences prefs = getSharedPreferences(
                         AndroidRsaConstants.SHARED_PREFERENCE_FILE,
                         Context.MODE_PRIVATE);
-                boolean runOnce = prefs.getBoolean(AndroidRsaConstants.SP_KEY_RUN_ONCE, false);
-                if (!runOnce) {
+                boolean registered = prefs.getBoolean(AndroidRsaConstants.REGISTERED, false);
+                if (!registered) {
                     Editor prefsEditor = prefs.edit();
-                    prefsEditor.putBoolean(AndroidRsaConstants.SP_KEY_RUN_ONCE, true);
+                    prefsEditor.putBoolean(AndroidRsaConstants.REGISTERED, true);
                     prefsEditor.apply();
                 }
 
-                Intent i = new Intent(context, LoginActivity.class);
+                Intent i = new Intent(context, ContactsActivity.class);
+                i.putExtra(AndroidRsaConstants.PASSPHRASE, passphrase);
                 startActivity(i);
             }
         });
