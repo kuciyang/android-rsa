@@ -3,6 +3,7 @@ package org.inftel.androidrsa.xmpp;
 
 import org.inftel.androidrsa.activities.ChatActivity;
 import org.inftel.androidrsa.activities.ContactsActivity;
+import org.inftel.androidrsa.utils.AndroidRsaConstants;
 import org.jivesoftware.smack.Chat;
 import org.jivesoftware.smack.ChatManager;
 import org.jivesoftware.smack.ChatManagerListener;
@@ -34,6 +35,7 @@ public class ChatMan {
                     ChatMan.chat = chat;
                     Intent i = new Intent(activity, ChatActivity.class);
                     i.putExtra("destJid", chat.getParticipant());
+                    i.putExtra(AndroidRsaConstants.PASSPHRASE, activity.passPhrase);
                     activity.startActivity(i);
                 }
             }
