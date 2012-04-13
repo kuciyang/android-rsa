@@ -16,7 +16,6 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.ShortBufferException;
 import javax.security.cert.CertificateException;
 
-import org.apache.commons.io.FileUtils;
 import org.inftel.androidrsa.R;
 import org.inftel.androidrsa.rsa.KeyStore;
 import org.inftel.androidrsa.rsa.RSA;
@@ -324,23 +323,6 @@ public class RegisterActivity extends Activity {
                             mKeyPath);
                     prefsEditor.putString(AndroidRsaConstants.CERT_PATH, mChosenFilePath);
                     prefsEditor.apply();
-
-                    // DEBUG
-                    File file = new File(prefs.getString(AndroidRsaConstants.KEY_PATH, ""));
-
-                    Log.d(TAG, "estoy akiiiiii");
-                    Log.d(TAG, "Private key del store"
-                            + RSA.getPrivateKeyDecryted(KeyStore.getInstance().getPk(),
-                                    "zamparo")
-                                    .toString());
-                    Log.d(TAG,
-                            "PRIVATE KEY DEL ACRHIVO "
-                                    + RSA.getPrivateKeyDecryted(
-                                            FileUtils.readFileToByteArray(file),
-                                            "zamparo")
-                                            .toString());
-
-                    // END DEBUG
 
                     // Applying steganography
                     Intent i = new Intent(getApplicationContext(), EncodeActivity.class);
