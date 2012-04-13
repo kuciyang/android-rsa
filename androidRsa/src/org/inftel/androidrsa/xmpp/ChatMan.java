@@ -16,7 +16,6 @@ public class ChatMan {
     private final static String TAG = "ChatActivity";
     private Connection connection;
     public static Chat chat = null;
-    public static boolean cipher = false;
     private ContactsActivity activity;
 
     public ChatMan(ContactsActivity cActivity) {
@@ -33,8 +32,6 @@ public class ChatMan {
                 if (!createdLocally) {
                     Log.d(TAG, "Chat Creado localmente por " + chat.getParticipant());
                     ChatMan.chat = chat;
-                    Log.d(TAG, "Listeners: " + chat.getListeners().toString());
-
                     Intent i = new Intent(activity, ChatActivity.class);
                     i.putExtra("destJid", chat.getParticipant());
                     activity.startActivity(i);
@@ -44,21 +41,11 @@ public class ChatMan {
         };
 
         chatmanager.addChatListener(chatManagerListener);
+
     }
 
     public void createChat(String jidDest, MessageListener messageListener) {
-        if (RosterManager.isSecure(jidDest)) {
-            cipher = true;
-        }
-        else {
-            cipher = false;
-        }
-        Log.d(TAG, "Creando chat con: " + jidDest + " cifrado=" + cipher);
         ChatManager chatmanager = connection.getChatManager();
-
-        // Listener para recibir mensajes
-
-        // Creo el chat
         chat = chatmanager.createChat(jidDest, messageListener);
 
     }
@@ -69,14 +56,6 @@ public class ChatMan {
 
     public void setChat(Chat chat) {
         this.chat = chat;
-    }
-
-    public boolean isCipher() {
-        return cipher;
-    }
-
-    public void setCipher(boolean cipher) {
-        this.cipher = cipher;
     }
 
 }
