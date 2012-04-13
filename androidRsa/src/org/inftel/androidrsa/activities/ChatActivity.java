@@ -2,6 +2,7 @@
 package org.inftel.androidrsa.activities;
 
 import java.io.IOException;
+import java.security.PrivateKey;
 import java.util.ArrayList;
 
 import javax.security.cert.Certificate;
@@ -109,16 +110,19 @@ public class ChatActivity extends ListActivity {
         Message message = new Message(destJid);
         EditText editText = (EditText) findViewById(R.id.textInput);
         String plainText = editText.getText().toString();
-        message.setBody(editText.getText().toString());
+        editText.setText("");
+
         message.setFrom(myJid);
         message.setTo(destJid);
+        listMessages.add(message);
+        refreshAdapter();
+        myListView.smoothScrollToPosition(adapter.getCount() - 1);
+
         if (!cipher) {
             try {
+                message.setBody(plainText);
                 chatMan.getChat().sendMessage(message);
-                Log.d(TAG, "Enviando: " + message.getBody());
-                editText.setText("");
-                listMessages.add(message);
-                myListView.setSelection(myListView.getAdapter().getCount() - 1);
+                Log.d(TAG, "Enviando: " + plainText);
 
             } catch (XMPPException e) {
                 Log.d(TAG, "ERROR al enviar mensaje");
@@ -127,19 +131,14 @@ public class ChatActivity extends ListActivity {
         else {
             String encodedMessage = "";
             try {
-                encodedMessage = RSA.cipher(message.getBody(),
+                encodedMessage = RSA.cipher(plainText,
                         cert.getPublicKey());
                 message.setBody(encodedMessage);
-                message.setFrom(myJid);
-                message.setTo(destJid);
                 chatMan.getChat().sendMessage(message);
                 Log.d(TAG, "Enviando cifrado: " + plainText);
-                editText.setText("");
-                message.setBody(plainText);
-                listMessages.add(message);
-                myListView.setSelection(myListView.getAdapter().getCount() - 1);
 
             } catch (Exception e) {
+                Log.d(TAG, "PETO ENVIANDO CIFRADOOOO");
                 e.printStackTrace();
             }
         }
@@ -147,22 +146,22 @@ public class ChatActivity extends ListActivity {
 
     private MessageListener messageListener = new MessageListener() {
         public void processMessage(Chat chat, Message message) {
-            if (!cipher) {
-                if (message.getBody() != null) {
+            if (message.getBody() != null) {
+                if (!cipher) {
+
                     Log.i(TAG, "Recibido mensaje plano: " + message.getBody());
                     listMessages.add(message);
                     refreshAdapter();
                     myListView.smoothScrollToPosition(adapter.getCount() - 1);
 
                 }
-            }
-            else {
-                if (message.getBody() != null) {
+                else {
 
                     try {
-                        String decodedMessage = RSA.decipher(message.getBody(),
-                                RSA.getPrivateKeyDecryted(KeyStore.getInstance().getPk(),
-                                        passphrase));
+                        PrivateKey pk = RSA.getPrivateKeyDecryted(KeyStore.getInstance().getPk(),
+                                passphrase);
+                        Log.d(TAG, "PRIVATE KEY " + pk.toString());
+                        String decodedMessage = RSA.decipher(message.getBody(), pk);
                         Log.i(TAG, "Recibido mensaje cifrado: " + decodedMessage);
 
                         message.setBody(decodedMessage);
@@ -171,8 +170,11 @@ public class ChatActivity extends ListActivity {
                         myListView.smoothScrollToPosition(adapter.getCount() - 1);
 
                     } catch (Exception e) {
+                        Log.d(TAG, "PETO AL DESCIFRAR");
                         e.printStackTrace();
+
                     }
+
                 }
             }
 
