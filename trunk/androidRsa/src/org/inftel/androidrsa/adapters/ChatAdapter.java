@@ -30,6 +30,7 @@ public class ChatAdapter extends ArrayAdapter<Message> {
         public TextView body;
         public ImageView avatar;
         public RelativeLayout layout;
+        public TextView time;
     }
 
     public ChatAdapter(Context context, ArrayList<Message> listMessages) {
@@ -52,6 +53,7 @@ public class ChatAdapter extends ArrayAdapter<Message> {
             viewHolder.body = (TextView) rowView.findViewById(R.id.body);
             viewHolder.avatar = (ImageView) rowView.findViewById(R.id.chatAvatar);
             viewHolder.layout = (RelativeLayout) rowView.findViewById(R.id.chatrow_layout);
+            viewHolder.time = (TextView) rowView.findViewById(R.id.time);
             rowView.setTag(viewHolder);
         }
 
@@ -61,6 +63,9 @@ public class ChatAdapter extends ArrayAdapter<Message> {
             holder.body.setText(m.getBody());
         }
 
+        if ((m.getSubject() != null) && (m.getSubject() != "")) {
+            holder.time.setText(m.getSubject());
+        }
         if (m.getFrom().equals(myJid)) {
             holder.layout.setBackgroundResource(R.drawable.balloon_left);
             holder.avatar.setImageBitmap(avatarMap.get(myJid));

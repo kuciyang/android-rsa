@@ -3,7 +3,9 @@ package org.inftel.androidrsa.activities;
 
 import java.io.IOException;
 import java.security.PrivateKey;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import javax.security.cert.Certificate;
 import javax.security.cert.CertificateException;
@@ -66,7 +68,12 @@ public class ChatActivity extends ListActivity {
             chatMan.createChat(destJid, messageListener);
             chat = chatMan.getChat();
             if (cipher) {
-                Message m = new Message();
+                Message m = new Message(destJid);
+                try {
+                    chat.sendMessage(m);
+                } catch (XMPPException e) {
+                    e.printStackTrace();
+                }
             }
         } else {
             chat.addMessageListener(messageListener);
@@ -75,6 +82,7 @@ public class ChatActivity extends ListActivity {
         adapter = new ChatAdapter(this, listMessages);
         setListAdapter(adapter);
         myListView = getListView();
+        myListView.setDivider(null);
 
         if (cipher) {
             Bitmap bm = AvatarsCache.getAvatar(destJid);
@@ -118,6 +126,8 @@ public class ChatActivity extends ListActivity {
         Message m = new Message();
         m.setFrom(myJid);
         m.setBody(plainText);
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+        m.setSubject(sdf.format(new Date()));
         listMessages.add(m);
 
         refreshAdapter();
@@ -150,7 +160,7 @@ public class ChatActivity extends ListActivity {
 
     private MessageListener messageListener = new MessageListener() {
         public void processMessage(Chat chat, Message message) {
-            if (message.getBody() != null) {
+            if ((message.getBody() != null) && (!message.getType().equals(Message.Type.error))) {
                 if (!cipher) {
 
                     Log.i(TAG, "Recibido mensaje plano: " + message.getBody());
