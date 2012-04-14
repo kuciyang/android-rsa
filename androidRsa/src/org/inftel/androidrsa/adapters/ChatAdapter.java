@@ -16,7 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class ChatAdapter extends ArrayAdapter<Message> {
@@ -29,7 +29,8 @@ public class ChatAdapter extends ArrayAdapter<Message> {
     static class ViewHolder {
         public TextView body;
         public ImageView avatar;
-        public RelativeLayout layout;
+        public LinearLayout layout;
+        public LinearLayout layoutInterno;
         public TextView time;
     }
 
@@ -52,7 +53,9 @@ public class ChatAdapter extends ArrayAdapter<Message> {
             ViewHolder viewHolder = new ViewHolder();
             viewHolder.body = (TextView) rowView.findViewById(R.id.body);
             viewHolder.avatar = (ImageView) rowView.findViewById(R.id.chatAvatar);
-            viewHolder.layout = (RelativeLayout) rowView.findViewById(R.id.chatrow_layout);
+            viewHolder.layout = (LinearLayout) rowView.findViewById(R.id.chatrow_layout);
+            viewHolder.layoutInterno = (LinearLayout) rowView
+                    .findViewById(R.id.chat_imgtext_layout);
             viewHolder.time = (TextView) rowView.findViewById(R.id.time);
             rowView.setTag(viewHolder);
         }
@@ -69,10 +72,12 @@ public class ChatAdapter extends ArrayAdapter<Message> {
         else {
             holder.time.setVisibility(View.GONE);
         }
+
         if (m.getFrom().equals(myJid)) {
             holder.layout.setBackgroundResource(R.drawable.balloon_left);
             holder.avatar.setImageBitmap(avatarMap.get(myJid));
         }
+
         else {
             holder.avatar.setImageBitmap(avatarMap.get(m.getFrom()));
             holder.layout.setBackgroundResource(R.drawable.balloon_right);
@@ -81,10 +86,10 @@ public class ChatAdapter extends ArrayAdapter<Message> {
         return rowView;
     }
 
-    // @Override
-    // public int getCount() {
-    // return this.list.size();
-    // }
+    @Override
+    public int getCount() {
+        return this.list.size();
+    }
 
     public HashMap<String, Bitmap> getAvatarMap() {
         return avatarMap;
