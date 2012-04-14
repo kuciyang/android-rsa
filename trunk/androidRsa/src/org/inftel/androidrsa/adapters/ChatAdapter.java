@@ -1,7 +1,9 @@
 
 package org.inftel.androidrsa.adapters;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 import org.inftel.androidrsa.R;
@@ -70,7 +72,10 @@ public class ChatAdapter extends ArrayAdapter<Message> {
             holder.time.setText(m.getSubject());
         }
         else {
-            holder.time.setVisibility(View.GONE);
+            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+            m.setSubject(sdf.format(new Date()));
+            list.set(position, m);
+            holder.time.setText(m.getSubject());
         }
 
         if (m.getFrom().equals(myJid)) {
