@@ -4,16 +4,9 @@ package org.inftel.androidrsa.utils;
 import java.util.Comparator;
 
 import org.inftel.androidrsa.xmpp.Status;
-import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.packet.Presence;
 
 public class PresenceComparator implements Comparator<Presence> {
-
-    private Roster roster;
-
-    public PresenceComparator(Roster roster) {
-        this.roster = roster;
-    }
 
     public int compare(Presence p1, Presence p2) {
         String name1 = (String) p1.getProperty("name");
