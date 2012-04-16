@@ -132,7 +132,7 @@ public class ContactsActivity extends ListActivity {
                 }
             }
         }
-        Collections.sort(listaPresences, new PresenceComparator(roster));
+        Collections.sort(listaPresences, new PresenceComparator());
     }
 
     private void pintarUI() {
