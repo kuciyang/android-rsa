@@ -112,7 +112,6 @@ public class ContactsActivity extends ListActivity {
                     listaPresences.add(p);
                     Log.d(TAG, "AÑADIDO from:" + p.getFrom() + " name:" +
                             entry.getName());
-
                 }
             }
             else if (((!showAll) && (entry.getName() != null))) {
@@ -158,27 +157,28 @@ public class ContactsActivity extends ListActivity {
             public void entriesDeleted(Collection<String> addresses) {
                 Log.d(TAG, "EntriesDeleted: " + addresses.toString());
                 loadContacts();
-                refreshAdapter();
+                // refreshAdapter();
             }
 
             public void entriesUpdated(Collection<String> addresses) {
                 Log.d(TAG, "EntriesUpdated: " + addresses.toString());
                 loadContacts();
-                refreshAdapter();
+                // refreshAdapter();
             }
 
             public void presenceChanged(Presence presence) {
                 Log.d(TAG, "Presence changed: " + presence.getFrom() + " " + presence.getMode());
                 loadContacts();
+                listaPresences.
                 AvatarsCache.getInstance().put(presence.getFrom(),
                         AvatarsCache.getAvatar(presence.getFrom()));
-                refreshAdapter();
+                // refreshAdapter();
             }
 
             public void entriesAdded(Collection<String> addresses) {
                 Log.d(TAG, "EntriesAdded: " + addresses.toString());
                 loadContacts();
-                refreshAdapter();
+                // refreshAdapter();
             }
         });
 
@@ -232,7 +232,6 @@ public class ContactsActivity extends ListActivity {
     private void refreshAdapter() {
         runOnUiThread(new Runnable() {
             public void run() {
-                adapter.updateRoster();
                 adapter.notifyDataSetChanged();
             }
         });
