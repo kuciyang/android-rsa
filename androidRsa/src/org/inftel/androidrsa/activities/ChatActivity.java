@@ -26,6 +26,7 @@ import org.jivesoftware.smack.MessageListener;
 import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.util.StringUtils;
 
 import android.app.ListActivity;
 import android.content.Context;
@@ -68,6 +69,9 @@ public class ChatActivity extends ListActivity {
         cipher = RosterManager.isSecure(destJid);
         Bundle bundle = getIntent().getExtras();
         passPhrase = bundle.getString(AndroidRsaConstants.PASSPHRASE);
+
+        String parsedDest = StringUtils.parseBareAddress(destJid);
+        Log.d(TAG, "Creado chat con " + roster.getEntry(parsedDest).getName());
 
         if (chat == null) {
             chatMan.createChat(destJid, messageListener);

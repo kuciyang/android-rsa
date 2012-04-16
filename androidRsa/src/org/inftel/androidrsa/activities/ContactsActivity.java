@@ -146,7 +146,7 @@ public class ContactsActivity extends ListActivity {
             public void onItemClick(AdapterView<?> parent, View view,
                     int position, long id) {
                 Intent i = new Intent(getApplicationContext(), ChatActivity.class);
-                i.putExtra("destJid", listaPresences.get(position).getFrom());
+                i.putExtra("destJid", listaPresences.get(position - 1).getFrom());
                 i.putExtra(AndroidRsaConstants.PASSPHRASE, passPhrase);
                 startActivity(i);
             }
@@ -157,13 +157,13 @@ public class ContactsActivity extends ListActivity {
             public void entriesDeleted(Collection<String> addresses) {
                 Log.d(TAG, "EntriesDeleted: " + addresses.toString());
                 loadContacts();
-                // refreshAdapter();
+                refreshAdapter();
             }
 
             public void entriesUpdated(Collection<String> addresses) {
                 Log.d(TAG, "EntriesUpdated: " + addresses.toString());
                 loadContacts();
-                // refreshAdapter();
+                refreshAdapter();
             }
 
             public void presenceChanged(Presence presence) {
@@ -171,13 +171,13 @@ public class ContactsActivity extends ListActivity {
                 loadContacts();
                 AvatarsCache.getInstance().put(presence.getFrom(),
                         AvatarsCache.getAvatar(presence.getFrom()));
-                // refreshAdapter();
+                refreshAdapter();
             }
 
             public void entriesAdded(Collection<String> addresses) {
                 Log.d(TAG, "EntriesAdded: " + addresses.toString());
                 loadContacts();
-                // refreshAdapter();
+                refreshAdapter();
             }
         });
 
