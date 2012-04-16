@@ -5,10 +5,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
 
 import org.inftel.androidrsa.R;
 import org.inftel.androidrsa.adapters.ContactsAdapter;
 import org.inftel.androidrsa.utils.AndroidRsaConstants;
+import org.inftel.androidrsa.utils.PresenceComparator;
 import org.inftel.androidrsa.utils.ReadFileAsByteArray;
 import org.inftel.androidrsa.xmpp.AvatarsCache;
 import org.inftel.androidrsa.xmpp.ChatMan;
@@ -38,13 +41,12 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
-import android.widget.TextView;
 
 public class ContactsActivity extends ListActivity {
     private static final String TAG = "ContactsActivity";
     private Connection connection;
     public static Roster roster;
-    private ArrayList<String> listaJid = new ArrayList<String>();
+    private ArrayList<Presence> listaPresences = new ArrayList<Presence>();
     private boolean showAll = true;
     private ContactsAdapter adapter;
     private ListView myListView;
@@ -73,18 +75,17 @@ public class ContactsActivity extends ListActivity {
                 vCard.setAvatar(bytes);
                 Thread.sleep(10000);
                 vCard.save(connection);
+                Thread.sleep(1000);
             }
 
         } catch (XMPPException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
+
         roster = RosterManager.getRosterInstance();
         Roster.setDefaultSubscriptionMode(Roster.SubscriptionMode.accept_all);
         roster.setSubscriptionMode(Roster.SubscriptionMode.accept_all);
@@ -101,21 +102,37 @@ public class ContactsActivity extends ListActivity {
     private void loadContacts() {
         roster = RosterManager.getRosterInstance();
         Collection<RosterEntry> entries = roster.getEntries();
-        listaJid.clear();
+        listaPresences.clear();
         for (RosterEntry entry : entries) {
             if ((showAll) && (entry.getName() != null)) {
-                listaJid.add(roster.getPresence(entry.getUser()).getFrom());
+                Iterator<Presence> it = roster.getPresences(entry.getUser());
+                while (it.hasNext()) {
+                    Presence p = it.next();
+                    p.setProperty("name", entry.getName());
+                    listaPresences.add(p);
+                    Log.d(TAG, "AÑADIDO from:" + p.getFrom() + " name:" +
+                            entry.getName());
+
+                }
             }
             else if (((!showAll) && (entry.getName() != null))) {
-                int status = Status.getStatusFromPresence(roster.getPresence(entry.getUser()));
-                if ((status == Status.CONTACT_STATUS_AVAILABLE)
-                        || (status == Status.CONTACT_STATUS_AVAILABLE_FOR_CHAT)
-                        || (status == Status.CONTACT_STATUS_AWAY)
-                        || (status == Status.CONTACT_STATUS_BUSY)) {
-                    listaJid.add(roster.getPresence(entry.getUser()).getFrom());
+                Iterator<Presence> it = roster.getPresences(entry.getUser());
+                while (it.hasNext()) {
+                    Presence p = it.next();
+                    int status = Status.getStatusFromPresence(p);
+                    if ((status == Status.CONTACT_STATUS_AVAILABLE)
+                            || (status == Status.CONTACT_STATUS_AVAILABLE_FOR_CHAT)
+                            || (status == Status.CONTACT_STATUS_AWAY)
+                            || (status == Status.CONTACT_STATUS_BUSY)) {
+                        p.setProperty("name", entry.getName());
+                        listaPresences.add(p);
+                        Log.d(TAG, "AÑADIDO from:" + p.getFrom() + " name:" +
+                                entry.getName());
+                    }
                 }
             }
         }
+        Collections.sort(listaPresences, new PresenceComparator(roster));
     }
 
     private void pintarUI() {
@@ -123,16 +140,14 @@ public class ContactsActivity extends ListActivity {
         myListView = getListView();
         View headerView = getLayoutInflater().inflate(R.layout.header_contacts, null);
         myListView.addHeaderView(headerView);
-        adapter = new ContactsAdapter(this, listaJid);
+        adapter = new ContactsAdapter(this, listaPresences);
         setListAdapter(adapter);
 
         myListView.setOnItemClickListener(new OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view,
                     int position, long id) {
-                TextView nombre = (TextView) view.findViewById(R.id.nombre);
                 Intent i = new Intent(getApplicationContext(), ChatActivity.class);
-                i.putExtra("destJid", RosterManager.findByName(nombre.getText().toString())
-                        .getUser());
+                i.putExtra("destJid", listaPresences.get(position).getFrom());
                 i.putExtra(AndroidRsaConstants.PASSPHRASE, passPhrase);
                 startActivity(i);
             }
@@ -154,9 +169,9 @@ public class ContactsActivity extends ListActivity {
 
             public void presenceChanged(Presence presence) {
                 Log.d(TAG, "Presence changed: " + presence.getFrom() + " " + presence.getMode());
+                loadContacts();
                 AvatarsCache.getInstance().put(presence.getFrom(),
                         AvatarsCache.getAvatar(presence.getFrom()));
-                loadContacts();
                 refreshAdapter();
             }
 
@@ -217,6 +232,7 @@ public class ContactsActivity extends ListActivity {
     private void refreshAdapter() {
         runOnUiThread(new Runnable() {
             public void run() {
+                adapter.updateRoster();
                 adapter.notifyDataSetChanged();
             }
         });
@@ -224,9 +240,8 @@ public class ContactsActivity extends ListActivity {
 
     @Override
     public void onBackPressed() {
-        // Conexion.disconnect();
-        // super.onBackPressed();
-        super.finish();
+        Conexion.disconnect();
+        super.onBackPressed();
     }
 
 }

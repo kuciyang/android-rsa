@@ -5,12 +5,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.inftel.androidrsa.R;
-import org.inftel.androidrsa.activities.ContactsActivity;
 import org.inftel.androidrsa.xmpp.AvatarsCache;
 import org.inftel.androidrsa.xmpp.RosterManager;
 import org.inftel.androidrsa.xmpp.Status;
 import org.jivesoftware.smack.Roster;
-import org.jivesoftware.smack.RosterEntry;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
 
@@ -23,11 +21,12 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class ContactsAdapter extends ArrayAdapter<String> {
+public class ContactsAdapter extends ArrayAdapter<Presence> {
     private Context context;
-    private ArrayList<String> list;
+    private ArrayList<Presence> list;
     private String TAG = "ContactsAdapter";
     private HashMap<String, Bitmap> avatarMap;
+    private Roster roster;
 
     static class ViewHolder {
         public TextView textView;
@@ -36,17 +35,18 @@ public class ContactsAdapter extends ArrayAdapter<String> {
         public ImageView imageViewAvatar;
     }
 
-    public ContactsAdapter(Context context, ArrayList<String> lista) {
+    public ContactsAdapter(Context context, ArrayList<Presence> lista) {
         super(context, R.layout.contactrow, lista);
         this.context = context;
         this.list = lista;
-        AvatarsCache.clear();
-        AvatarsCache.populateFromRoster(ContactsActivity.roster);
+        AvatarsCache.populateFromList(lista);
         this.avatarMap = AvatarsCache.getInstance();
+        roster = RosterManager.getRosterInstance();
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        roster = RosterManager.getRosterInstance();
         View rowView = convertView;
         if (rowView == null) {
             LayoutInflater inflater = (LayoutInflater) context
@@ -62,18 +62,15 @@ public class ContactsAdapter extends ArrayAdapter<String> {
 
         ViewHolder holder = (ViewHolder) rowView.getTag();
         holder.imageViewSec.setVisibility(View.GONE);
-        RosterEntry entry = RosterManager.findByJid(list.get(position));
-        String name = null;
-        if (entry != null) {
-            name = entry.getName();
-        }
-        if (name != null) {
-            holder.textView.setText(name);
-        }
-        String jid = list.get(position);
-        setIcons(holder.imageView, holder.imageViewSec, jid, rowView);
-        if (avatarMap.containsKey(jid) && (avatarMap.get(jid)) != null) {
-            holder.imageViewAvatar.setImageBitmap(avatarMap.get(jid));
+        Presence presence = list.get(position);
+
+        holder.textView.setText((CharSequence) presence.getProperty("name"));
+
+        setIcons(holder.imageView, holder.imageViewSec, presence, rowView);
+
+        if (avatarMap.containsKey(presence.getFrom())
+                && (avatarMap.get(presence.getFrom())) != null) {
+            holder.imageViewAvatar.setImageBitmap(avatarMap.get(presence.getFrom()));
         }
         else {
             holder.imageViewAvatar.setImageResource(R.drawable.ic_launcher);
@@ -81,54 +78,53 @@ public class ContactsAdapter extends ArrayAdapter<String> {
         return rowView;
     }
 
-    private void setIcons(ImageView iv, ImageView ivSec, String jid,
+    private void setIcons(ImageView iv, ImageView ivSec, Presence p,
             View rowview) {
-        Roster roster = RosterManager.getRosterInstance();
 
-        RosterEntry entry = RosterManager.findByJid(jid);
-        if ((entry != null) && (entry.getName() != null)) {
-            // icono estado
-            int status = Status.getStatusFromPresence(roster.getPresence(entry.getUser()));
-            if (roster.getPresence(entry.getUser()).equals(Presence.Type.unsubscribed)) {
-                iv.setImageResource(R.drawable.status_unsubscribed);
-            }
-            else if ((status == Status.CONTACT_STATUS_AVAILABLE)
-                    || (status == Status.CONTACT_STATUS_AVAILABLE_FOR_CHAT)) {
-                iv.setImageResource(R.drawable.status_available);
-            }
-            else if ((status == Status.CONTACT_STATUS_AWAY)
-                    || (status == Status.CONTACT_STATUS_BUSY)) {
-                iv.setImageResource(R.drawable.status_idle);
-            }
-            else {
-                iv.setImageResource(R.drawable.status_away);
-            }
+        // icono estado
+        int status = Status.getStatusFromPresence(p);
+        if (p.equals(Presence.Type.unsubscribed)) {
+            iv.setImageResource(R.drawable.status_unsubscribed);
+        }
+        else if ((status == Status.CONTACT_STATUS_AVAILABLE)
+                || (status == Status.CONTACT_STATUS_AVAILABLE_FOR_CHAT)) {
+            iv.setImageResource(R.drawable.status_available);
+        }
+        else if ((status == Status.CONTACT_STATUS_AWAY)
+                || (status == Status.CONTACT_STATUS_BUSY)) {
+            iv.setImageResource(R.drawable.status_idle);
+        }
+        else {
+            iv.setImageResource(R.drawable.status_away);
+        }
 
-            // icono RSA
-            if (StringUtils.parseResource(roster.getPresence(jid).getFrom()).startsWith(
-                    "androidRSA")) {
-                ivSec.setImageResource(R.drawable.secure);
-                ivSec.setVisibility(View.VISIBLE);
-            }
-            else {
-                ivSec.setVisibility(View.GONE);
-            }
-
+        // icono RSA
+        if (StringUtils.parseResource(p.getFrom()).startsWith(
+                "androidRSA")) {
+            ivSec.setImageResource(R.drawable.secure);
+            ivSec.setVisibility(View.VISIBLE);
+        }
+        else {
+            ivSec.setVisibility(View.GONE);
         }
 
     }
 
-    public ArrayList<String> getList() {
+    public ArrayList<Presence> getList() {
         return list;
     }
 
-    public void setList(ArrayList<String> list) {
+    public void setList(ArrayList<Presence> list) {
         this.list = list;
     }
 
-    @Override
-    public void notifyDataSetChanged() {
-        super.notifyDataSetChanged();
+    public void updateRoster() {
+        roster = RosterManager.getRosterInstance();
+    }
+
+    public void updateAvatars() {
+        AvatarsCache.populateFromList(list);
+        this.avatarMap = AvatarsCache.getInstance();
     }
 
 }
