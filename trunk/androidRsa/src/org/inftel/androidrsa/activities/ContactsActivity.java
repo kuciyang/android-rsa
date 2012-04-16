@@ -156,19 +156,21 @@ public class ContactsActivity extends ListActivity {
         roster.addRosterListener(new RosterListener() {
             public void entriesDeleted(Collection<String> addresses) {
                 Log.d(TAG, "EntriesDeleted: " + addresses.toString());
-                loadContacts();
+                // loadContacts();
                 refreshAdapter();
             }
 
             public void entriesUpdated(Collection<String> addresses) {
                 Log.d(TAG, "EntriesUpdated: " + addresses.toString());
-                loadContacts();
+                // loadContacts();
                 refreshAdapter();
             }
 
             public void presenceChanged(Presence presence) {
                 Log.d(TAG, "Presence changed: " + presence.getFrom() + " " + presence.getMode());
-                loadContacts();
+                // loadContacts();
+                removePresence(presence);
+                listaPresences.add(presence);
                 AvatarsCache.getInstance().put(presence.getFrom(),
                         AvatarsCache.getAvatar(presence.getFrom()));
                 refreshAdapter();
@@ -176,7 +178,7 @@ public class ContactsActivity extends ListActivity {
 
             public void entriesAdded(Collection<String> addresses) {
                 Log.d(TAG, "EntriesAdded: " + addresses.toString());
-                loadContacts();
+                // loadContacts();
                 refreshAdapter();
             }
         });
@@ -240,6 +242,14 @@ public class ContactsActivity extends ListActivity {
     public void onBackPressed() {
         Conexion.disconnect();
         super.onBackPressed();
+    }
+
+    public void removePresence(Presence presence) {
+        for (Presence p : listaPresences) {
+            if (p.getFrom().equals(presence.getFrom())) {
+                listaPresences.remove(presence);
+            }
+        }
     }
 
 }
