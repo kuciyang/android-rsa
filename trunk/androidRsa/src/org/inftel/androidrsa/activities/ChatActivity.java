@@ -71,7 +71,8 @@ public class ChatActivity extends ListActivity {
         passPhrase = bundle.getString(AndroidRsaConstants.PASSPHRASE);
 
         String parsedDest = StringUtils.parseBareAddress(destJid);
-        Log.d(TAG, "Creado chat con " + roster.getEntry(parsedDest).getName() + "cifrado=" + cipher);
+        Log.d(TAG, "Creado chat con " + roster.getEntry(parsedDest).getName() + " cifrado="
+                + cipher);
 
         if (chat == null) {
             chatMan.createChat(destJid, messageListener);
