@@ -1,11 +1,11 @@
 
 package org.inftel.androidrsa.xmpp;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.jivesoftware.smack.Roster;
-import org.jivesoftware.smack.RosterEntry;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smackx.packet.VCard;
 import org.jivesoftware.smackx.provider.VCardProvider;
@@ -58,7 +58,6 @@ public class AvatarsCache {
                     new VCardProvider());
             vCard.load(Conexion.getInstance(), jid);
             if (vCard.getAvatar() != null) {
-                Log.d(TAG, "No es NULL");
                 byte[] avatarRaw = vCard.getAvatar();
                 if (avatarRaw.length != 0) {
                     Bitmap bm = BitmapFactory.decodeByteArray(avatarRaw, 0, avatarRaw.length);
@@ -69,7 +68,6 @@ public class AvatarsCache {
                 }
             }
             else {
-                Log.d(TAG, "Si es NULL");
                 return null;
             }
         } catch (XMPPException e) {
@@ -78,10 +76,10 @@ public class AvatarsCache {
         }
     }
 
-    public static void populateFromRoster(Roster roster) {
-        for (RosterEntry entry : roster.getEntries()) {
-            avatarMap
-                    .put(roster.getPresence(entry.getUser()).getFrom(), getAvatar(entry.getUser()));
+    public static void populateFromList(ArrayList<Presence> list) {
+        clear();
+        for (Presence p : list) {
+            avatarMap.put(p.getFrom(), getAvatar(p.getFrom()));
         }
     }
 
