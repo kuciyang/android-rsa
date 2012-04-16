@@ -79,13 +79,13 @@ public class ChatAdapter extends ArrayAdapter<Message> {
         }
 
         if (m.getFrom().equals(myJid)) {
-            holder.layout.setBackgroundResource(R.drawable.balloon_left);
+            holder.layout.setBackgroundResource(R.drawable.a9p_09_11_00089);
             holder.avatar.setImageBitmap(avatarMap.get(myJid));
         }
 
         else {
             holder.avatar.setImageBitmap(avatarMap.get(m.getFrom()));
-            holder.layout.setBackgroundResource(R.drawable.balloon_right);
+            holder.layout.setBackgroundResource(R.drawable.a9p_09_11_00087);
         }
 
         return rowView;
