@@ -6,9 +6,7 @@ import java.util.HashMap;
 
 import org.inftel.androidrsa.R;
 import org.inftel.androidrsa.xmpp.AvatarsCache;
-import org.inftel.androidrsa.xmpp.RosterManager;
 import org.inftel.androidrsa.xmpp.Status;
-import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
 
@@ -26,7 +24,6 @@ public class ContactsAdapter extends ArrayAdapter<Presence> {
     private ArrayList<Presence> list;
     private String TAG = "ContactsAdapter";
     private HashMap<String, Bitmap> avatarMap;
-    private Roster roster;
 
     static class ViewHolder {
         public TextView textView;
@@ -41,12 +38,10 @@ public class ContactsAdapter extends ArrayAdapter<Presence> {
         this.list = lista;
         AvatarsCache.populateFromList(lista);
         this.avatarMap = AvatarsCache.getInstance();
-        roster = RosterManager.getRosterInstance();
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        roster = RosterManager.getRosterInstance();
         View rowView = convertView;
         if (rowView == null) {
             LayoutInflater inflater = (LayoutInflater) context
@@ -116,15 +111,6 @@ public class ContactsAdapter extends ArrayAdapter<Presence> {
 
     public void setList(ArrayList<Presence> list) {
         this.list = list;
-    }
-
-    public void updateRoster() {
-        roster = RosterManager.getRosterInstance();
-    }
-
-    public void updateAvatars() {
-        AvatarsCache.populateFromList(list);
-        this.avatarMap = AvatarsCache.getInstance();
     }
 
 }
