@@ -37,7 +37,6 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Toast;
 
 public class ChatActivity extends ListActivity {
     private static final String TAG = "ChatActivity";
@@ -189,17 +188,6 @@ public class ChatActivity extends ListActivity {
                     }
 
                 }
-            }
-            else {
-                runOnUiThread(new Runnable() {
-                    public void run() {
-                        Toast.makeText(getApplicationContext(),
-                                "Error: es posible que el usuario no este conectado.",
-                                Toast.LENGTH_LONG)
-                                .show();
-                    }
-                });
-
             }
 
         }
