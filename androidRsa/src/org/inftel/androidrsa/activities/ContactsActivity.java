@@ -139,6 +139,7 @@ public class ContactsActivity extends ListActivity {
         myListView = getListView();
         View headerView = getLayoutInflater().inflate(R.layout.header_contacts, null);
         myListView.addHeaderView(headerView);
+        myListView.setDivider(null);
         adapter = new ContactsAdapter(this, listaPresences);
         setListAdapter(adapter);
 
